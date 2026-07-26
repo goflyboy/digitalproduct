@@ -1,0 +1,1422 @@
+{
+  "ontology": {
+    "rid": "ri.ontology.main.ecommerce.product.001",
+    "apiName": "ecommerce_product_ontology",
+    "displayName": "电商产品本体",
+    "version": "1.0.0",
+    "description": "基于 Palantir 范式的电商产品语义建模注册表",
+    "namespace": "digitalproduct.ontology",
+    "status": "ACTIVE",
+    "metadata": {
+      "created_at": "2026-07-26T09:08:00+08:00",
+      "created_by": "ontology-admin",
+      "last_modified_at": "2026-07-26T09:08:00+08:00",
+      "last_modified_by": "ontology-admin",
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "date": "2026-07-26",
+          "changes": [
+            "Initial release: 10 ObjectTypes, 4 InterfaceTypes, 10 LinkTypes, 6 ActionTypes"
+          ]
+        }
+      ]
+    }
+  },
+
+  "objectTypes": [
+    {
+      "apiName": "Category",
+      "displayName": "品类",
+      "description": "产品分类节点，支持层级继承",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "primaryKeyPropertyApiName": "categoryId",
+      "titlePropertyApiName": "categoryName",
+      "propertyTypes": [
+        {
+          "apiName": "categoryId",
+          "displayName": "品类ID",
+          "dataType": {"type": "STRING"},
+          "isPrimaryKey": true,
+          "isRequired": true,
+          "validation": {"pattern": "^[0-9]{4,}$", "unique": true}
+        },
+        {
+          "apiName": "categoryName",
+          "displayName": "品类名称",
+          "dataType": {"type": "STRING"},
+          "isRequired": true,
+          "validation": {"maxLength": 100, "minLength": 1}
+        },
+        {
+          "apiName": "parentCategoryId",
+          "displayName": "父品类ID",
+          "dataType": {"type": "STRING"},
+          "isRequired": false,
+          "description": "为NULL表示根品类"
+        },
+        {
+          "apiName": "level",
+          "displayName": "层级深度",
+          "dataType": {"type": "INTEGER"},
+          "isRequired": true,
+          "validation": {"min": 1, "max": 5}
+        },
+        {
+          "apiName": "path",
+          "displayName": "层级路径",
+          "dataType": {"type": "STRING"},
+          "isRequired": true,
+          "description": "完整路径如 /1001/1002/1003"
+        },
+        {
+          "apiName": "status",
+          "displayName": "状态",
+          "dataType": {"type": "ENUM", "values": ["ACTIVE", "INACTIVE", "DEPRECATED"]},
+          "isRequired": true,
+          "default": "ACTIVE"
+        },
+        {
+          "apiName": "spuTemplateId",
+          "displayName": "SPU模板ID",
+          "dataType": {"type": "STRING"},
+          "isRequired": false,
+          "description": "关联的SPU模板"
+        },
+        {
+          "apiName": "createdAt",
+          "displayName": "创建时间",
+          "dataType": {"type": "TIMESTAMP"},
+          "isRequired": true
+        },
+        {
+          "apiName": "updatedAt",
+          "displayName": "更新时间",
+          "dataType": {"type": "TIMESTAMP"},
+          "isRequired": true
+        }
+      ],
+      "interfaces": ["Inspectable", "Categorizable"],
+      "backingDatasources": [
+        {
+          "apiName": "category_table",
+          "type": "DATASET",
+          "rid": "ri.foundry.main.dataset.category",
+          "joinKey": "categoryId",
+          "isPrimary": true
+        }
+      ],
+      "permissions": {
+        "read": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER", "ROLE_BRAND_OWNER", "ROLE_MERCHANT"],
+        "write": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER"],
+        "delete": ["ROLE_PLATFORM_ADMIN"]
+      }
+    },
+
+    {
+      "apiName": "Brand",
+      "displayName": "品牌",
+      "description": "品牌实体",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "primaryKeyPropertyApiName": "brandId",
+      "titlePropertyApiName": "brandName",
+      "propertyTypes": [
+        {
+          "apiName": "brandId",
+          "displayName": "品牌ID",
+          "dataType": {"type": "STRING"},
+          "isPrimaryKey": true,
+          "isRequired": true
+        },
+        {
+          "apiName": "brandName",
+          "displayName": "品牌名称",
+          "dataType": {"type": "STRING"},
+          "isRequired": true
+        },
+        {
+          "apiName": "brandEnName",
+          "displayName": "英文名称",
+          "dataType": {"type": "STRING"},
+          "isRequired": false
+        },
+        {
+          "apiName": "logoUrl",
+          "displayName": "Logo地址",
+          "dataType": {"type": "STRING"},
+          "isRequired": false,
+          "validation": {"format": "URL"}
+        },
+        {
+          "apiName": "country",
+          "displayName": "所属国家",
+          "dataType": {"type": "STRING"},
+          "isRequired": false
+        },
+        {
+          "apiName": "status",
+          "displayName": "状态",
+          "dataType": {"type": "ENUM", "values": ["ACTIVE", "INACTIVE"]},
+          "default": "ACTIVE"
+        }
+      ],
+      "interfaces": ["Inspectable"],
+      "backingDatasources": [
+        {
+          "apiName": "brand_table",
+          "type": "DATASET",
+          "rid": "ri.foundry.main.dataset.brand",
+          "joinKey": "brandId",
+          "isPrimary": true
+        }
+      ],
+      "permissions": {
+        "read": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER", "ROLE_BRAND_OWNER", "ROLE_MERCHANT"],
+        "write": ["ROLE_PLATFORM_ADMIN"],
+        "delete": ["ROLE_PLATFORM_ADMIN"]
+      }
+    },
+
+    {
+      "apiName": "SPUTemplate",
+      "displayName": "SPU模板",
+      "description": "标准产品模板，定义SPU必须包含的属性和规则",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "primaryKeyPropertyApiName": "templateId",
+      "titlePropertyApiName": "templateName",
+      "propertyTypes": [
+        {
+          "apiName": "templateId",
+          "displayName": "模板ID",
+          "dataType": {"type": "STRING"},
+          "isPrimaryKey": true,
+          "isRequired": true
+        },
+        {
+          "apiName": "templateName",
+          "displayName": "模板名称",
+          "dataType": {"type": "STRING"},
+          "isRequired": true
+        },
+        {
+          "apiName": "version",
+          "displayName": "模板版本",
+          "dataType": {"type": "STRING"},
+          "isRequired": true,
+          "default": "1.0.0"
+        },
+        {
+          "apiName": "status",
+          "displayName": "状态",
+          "dataType": {"type": "ENUM", "values": ["DRAFT", "ACTIVE", "DEPRECATED"]},
+          "default": "DRAFT"
+        }
+      ],
+      "interfaces": ["Inspectable", "Versionable"],
+      "backingDatasources": [
+        {
+          "apiName": "spu_template_table",
+          "type": "DATASET",
+          "rid": "ri.foundry.main.dataset.spu_template",
+          "joinKey": "templateId",
+          "isPrimary": true
+        }
+      ],
+      "permissions": {
+        "read": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER", "ROLE_BRAND_OWNER"],
+        "write": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER"],
+        "delete": ["ROLE_PLATFORM_ADMIN"]
+      }
+    },
+
+    {
+      "apiName": "Attribute",
+      "displayName": "属性",
+      "description": "属性定义",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "primaryKeyPropertyApiName": "attrId",
+      "titlePropertyApiName": "attrName",
+      "propertyTypes": [
+        {
+          "apiName": "attrId",
+          "displayName": "属性ID",
+          "dataType": {"type": "STRING"},
+          "isPrimaryKey": true,
+          "isRequired": true
+        },
+        {
+          "apiName": "attrName",
+          "displayName": "属性名称",
+          "dataType": {"type": "STRING"},
+          "isRequired": true
+        },
+        {
+          "apiName": "dataType",
+          "displayName": "数据类型",
+          "dataType": {"type": "ENUM", "values": ["STRING", "INTEGER", "DECIMAL", "BOOLEAN", "ENUM", "DATE"]},
+          "isRequired": true
+        },
+        {
+          "apiName": "isSalesAttribute",
+          "displayName": "是否销售属性",
+          "dataType": {"type": "BOOLEAN"},
+          "default": false,
+          "description": "销售属性影响SKU生成"
+        },
+        {
+          "apiName": "isInheritable",
+          "displayName": "是否可继承",
+          "dataType": {"type": "BOOLEAN"},
+          "default": true
+        },
+        {
+          "apiName": "isRequired",
+          "displayName": "是否必填",
+          "dataType": {"type": "BOOLEAN"},
+          "default": false
+        },
+        {
+          "apiName": "options",
+          "displayName": "可选值",
+          "dataType": {"type": "ARRAY", "innerType": "STRING"},
+          "isRequired": false,
+          "description": "当dataType为ENUM时使用"
+        },
+        {
+          "apiName": "validationRules",
+          "displayName": "校验规则",
+          "dataType": {"type": "STRUCT"},
+          "isRequired": false
+        }
+      ],
+      "interfaces": ["Inspectable"],
+      "backingDatasources": [
+        {
+          "apiName": "attribute_table",
+          "type": "DATASET",
+          "rid": "ri.foundry.main.dataset.attribute",
+          "joinKey": "attrId",
+          "isPrimary": true
+        }
+      ],
+      "permissions": {
+        "read": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER", "ROLE_BRAND_OWNER"],
+        "write": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER"],
+        "delete": ["ROLE_PLATFORM_ADMIN"]
+      }
+    },
+
+    {
+      "apiName": "AttributeValue",
+      "displayName": "属性值",
+      "description": "具体属性取值",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "primaryKeyPropertyApiName": "valueId",
+      "titlePropertyApiName": "value",
+      "propertyTypes": [
+        {
+          "apiName": "valueId",
+          "displayName": "属性值ID",
+          "dataType": {"type": "STRING"},
+          "isPrimaryKey": true,
+          "isRequired": true
+        },
+        {
+          "apiName": "attrId",
+          "displayName": "属性ID",
+          "dataType": {"type": "STRING"},
+          "isRequired": true
+        },
+        {
+          "apiName": "value",
+          "displayName": "值",
+          "dataType": {"type": "STRING"},
+          "isRequired": true
+        },
+        {
+          "apiName": "displayName",
+          "displayName": "显示名",
+          "dataType": {"type": "STRING"},
+          "isRequired": false
+        },
+        {
+          "apiName": "sortOrder",
+          "displayName": "排序",
+          "dataType": {"type": "INTEGER"},
+          "default": 0
+        }
+      ],
+      "interfaces": ["Inspectable"],
+      "backingDatasources": [
+        {
+          "apiName": "attribute_value_table",
+          "type": "DATASET",
+          "rid": "ri.foundry.main.dataset.attribute_value",
+          "joinKey": "valueId",
+          "isPrimary": true
+        }
+      ],
+      "permissions": {
+        "read": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER", "ROLE_BRAND_OWNER", "ROLE_MERCHANT"],
+        "write": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER"],
+        "delete": ["ROLE_PLATFORM_ADMIN"]
+      }
+    },
+
+    {
+      "apiName": "SPU",
+      "displayName": "标准产品",
+      "description": "Standard Product Unit，标准化产品单元",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "primaryKeyPropertyApiName": "spuId",
+      "titlePropertyApiName": "spuName",
+      "propertyTypes": [
+        {
+          "apiName": "spuId",
+          "displayName": "SPU ID",
+          "dataType": {"type": "STRING"},
+          "isPrimaryKey": true,
+          "isRequired": true
+        },
+        {
+          "apiName": "spuName",
+          "displayName": "SPU名称",
+          "dataType": {"type": "STRING"},
+          "isRequired": true,
+          "validation": {"maxLength": 200}
+        },
+        {
+          "apiName": "templateId",
+          "displayName": "模板ID",
+          "dataType": {"type": "STRING"},
+          "isRequired": true
+        },
+        {
+          "apiName": "description",
+          "displayName": "产品描述",
+          "dataType": {"type": "STRING"},
+          "isRequired": false
+        },
+        {
+          "apiName": "specifications",
+          "displayName": "规格参数",
+          "dataType": {"type": "STRUCT"},
+          "isRequired": false
+        },
+        {
+          "apiName": "status",
+          "displayName": "状态",
+          "dataType": {"type": "ENUM", "values": ["DRAFT", "PENDING_REVIEW", "ACTIVE", "OFFLINE", "DEPRECATED"]},
+          "default": "DRAFT"
+        },
+        {
+          "apiName": "createdAt",
+          "displayName": "创建时间",
+          "dataType": {"type": "TIMESTAMP"},
+          "isRequired": true
+        },
+        {
+          "apiName": "updatedAt",
+          "displayName": "更新时间",
+          "dataType": {"type": "TIMESTAMP"},
+          "isRequired": true
+        }
+      ],
+      "interfaces": ["Inspectable", "Sellable", "Categorizable", "Versionable"],
+      "backingDatasources": [
+        {
+          "apiName": "spu_table",
+          "type": "DATASET",
+          "rid": "ri.foundry.main.dataset.spu",
+          "joinKey": "spuId",
+          "isPrimary": true
+        }
+      ],
+      "permissions": {
+        "read": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER", "ROLE_BRAND_OWNER", "ROLE_MERCHANT"],
+        "write": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER", "ROLE_BRAND_OWNER"],
+        "delete": ["ROLE_PLATFORM_ADMIN"]
+      }
+    },
+
+    {
+      "apiName": "SKU",
+      "displayName": "库存单元",
+      "description": "Stock Keeping Unit，具体可售商品",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "primaryKeyPropertyApiName": "skuId",
+      "titlePropertyApiName": "skuName",
+      "propertyTypes": [
+        {
+          "apiName": "skuId",
+          "displayName": "SKU ID",
+          "dataType": {"type": "STRING"},
+          "isPrimaryKey": true,
+          "isRequired": true
+        },
+        {
+          "apiName": "skuName",
+          "displayName": "SKU名称",
+          "dataType": {"type": "STRING"},
+          "isRequired": true
+        },
+        {
+          "apiName": "salesAttrsHash",
+          "displayName": "销售属性哈希",
+          "dataType": {"type": "STRING"},
+          "isRequired": true,
+          "description": "销售属性组合的唯一标识"
+        },
+        {
+          "apiName": "status",
+          "displayName": "状态",
+          "dataType": {"type": "ENUM", "values": ["DRAFT", "PENDING", "ONLINE", "OFFLINE", "BANNED"]},
+          "default": "DRAFT"
+        },
+        {
+          "apiName": "createdAt",
+          "displayName": "创建时间",
+          "dataType": {"type": "TIMESTAMP"},
+          "isRequired": true
+        }
+      ],
+      "interfaces": ["Inspectable", "Sellable", "InventoryHoldable"],
+      "backingDatasources": [
+        {
+          "apiName": "sku_table",
+          "type": "DATASET",
+          "rid": "ri.foundry.main.dataset.sku",
+          "joinKey": "skuId",
+          "isPrimary": true
+        }
+      ],
+      "permissions": {
+        "read": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER", "ROLE_BRAND_OWNER", "ROLE_MERCHANT"],
+        "write": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER"],
+        "delete": ["ROLE_PLATFORM_ADMIN"]
+      }
+    },
+
+    {
+      "apiName": "Merchant",
+      "displayName": "商家",
+      "description": "在平台上销售商品的商家",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "primaryKeyPropertyApiName": "merchantId",
+      "titlePropertyApiName": "merchantName",
+      "propertyTypes": [
+        {
+          "apiName": "merchantId",
+          "displayName": "商家ID",
+          "dataType": {"type": "STRING"},
+          "isPrimaryKey": true,
+          "isRequired": true
+        },
+        {
+          "apiName": "merchantName",
+          "displayName": "商家名称",
+          "dataType": {"type": "STRING"},
+          "isRequired": true
+        },
+        {
+          "apiName": "merchantLevel",
+          "displayName": "商家等级",
+          "dataType": {"type": "ENUM", "values": ["FLAGSHIP", "PREMIUM", "STANDARD", "NEW"]},
+          "default": "STANDARD"
+        },
+        {
+          "apiName": "status",
+          "displayName": "状态",
+          "dataType": {"type": "ENUM", "values": ["ACTIVE", "FROZEN", "CLOSED"]},
+          "default": "ACTIVE"
+        }
+      ],
+      "interfaces": ["Inspectable"],
+      "backingDatasources": [
+        {
+          "apiName": "merchant_table",
+          "type": "DATASET",
+          "rid": "ri.foundry.main.dataset.merchant",
+          "joinKey": "merchantId",
+          "isPrimary": true
+        }
+      ],
+      "permissions": {
+        "read": ["ROLE_PLATFORM_ADMIN", "ROLE_MERCHANT"],
+        "write": ["ROLE_PLATFORM_ADMIN"],
+        "delete": ["ROLE_PLATFORM_ADMIN"]
+      }
+    },
+
+    {
+      "apiName": "Warehouse",
+      "displayName": "仓库",
+      "description": "物理仓库节点",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "primaryKeyPropertyApiName": "warehouseId",
+      "titlePropertyApiName": "warehouseName",
+      "propertyTypes": [
+        {
+          "apiName": "warehouseId",
+          "displayName": "仓库ID",
+          "dataType": {"type": "STRING"},
+          "isPrimaryKey": true,
+          "isRequired": true
+        },
+        {
+          "apiName": "warehouseName",
+          "displayName": "仓库名称",
+          "dataType": {"type": "STRING"},
+          "isRequired": true
+        },
+        {
+          "apiName": "region",
+          "displayName": "区域",
+          "dataType": {"type": "ENUM", "values": ["EAST", "SOUTH", "WEST", "NORTH", "CENTRAL"]},
+          "isRequired": true
+        },
+        {
+          "apiName": "city",
+          "displayName": "城市",
+          "dataType": {"type": "STRING"},
+          "isRequired": true
+        },
+        {
+          "apiName": "status",
+          "displayName": "状态",
+          "dataType": {"type": "ENUM", "values": ["ACTIVE", "MAINTENANCE", "CLOSED"]},
+          "default": "ACTIVE"
+        }
+      ],
+      "interfaces": ["Inspectable"],
+      "backingDatasources": [
+        {
+          "apiName": "warehouse_table",
+          "type": "DATASET",
+          "rid": "ri.foundry.main.dataset.warehouse",
+          "joinKey": "warehouseId",
+          "isPrimary": true
+        }
+      ],
+      "permissions": {
+        "read": ["ROLE_PLATFORM_ADMIN", "ROLE_MERCHANT"],
+        "write": ["ROLE_PLATFORM_ADMIN"],
+        "delete": ["ROLE_PLATFORM_ADMIN"]
+      }
+    },
+
+    {
+      "apiName": "Customer",
+      "displayName": "消费者",
+      "description": "终端消费者",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "primaryKeyPropertyApiName": "customerId",
+      "titlePropertyApiName": "nickname",
+      "propertyTypes": [
+        {
+          "apiName": "customerId",
+          "displayName": "消费者ID",
+          "dataType": {"type": "STRING"},
+          "isPrimaryKey": true,
+          "isRequired": true
+        },
+        {
+          "apiName": "nickname",
+          "displayName": "昵称",
+          "dataType": {"type": "STRING"},
+          "isRequired": false
+        },
+        {
+          "apiName": "memberLevel",
+          "displayName": "会员等级",
+          "dataType": {"type": "ENUM", "values": ["NORMAL", "SILVER", "GOLD", "DIAMOND"]},
+          "default": "NORMAL"
+        }
+      ],
+      "interfaces": ["Inspectable"],
+      "backingDatasources": [
+        {
+          "apiName": "customer_table",
+          "type": "DATASET",
+          "rid": "ri.foundry.main.dataset.customer",
+          "joinKey": "customerId",
+          "isPrimary": true
+        }
+      ],
+      "permissions": {
+        "read": ["ROLE_PLATFORM_ADMIN"],
+        "write": ["ROLE_PLATFORM_ADMIN"],
+        "delete": ["ROLE_PLATFORM_ADMIN"]
+      }
+    }
+  ],
+
+  "interfaceTypes": [
+    {
+      "apiName": "Inspectable",
+      "displayName": "可审查",
+      "description": "标记所有可被审计/检查的对象",
+      "propertyTypes": [
+        {
+          "apiName": "inspectableId",
+          "displayName": "可审查ID",
+          "dataType": {"type": "STRING"},
+          "isRequired": true
+        }
+      ],
+      "implementedBy": ["Category", "Brand", "SPUTemplate", "Attribute", "AttributeValue", "SPU", "SKU", "Merchant", "Warehouse", "Customer"]
+    },
+    {
+      "apiName": "Categorizable",
+      "displayName": "可分类",
+      "description": "可关联品类的对象",
+      "propertyTypes": [
+        {
+          "apiName": "categoryIds",
+          "displayName": "关联品类ID列表",
+          "dataType": {"type": "ARRAY", "innerType": "STRING"},
+          "isRequired": true
+        },
+        {
+          "apiName": "primaryCategoryId",
+          "displayName": "主品类ID",
+          "dataType": {"type": "STRING"},
+          "isRequired": false
+        }
+      ],
+      "implementedBy": ["Category", "SPU"]
+    },
+    {
+      "apiName": "Sellable",
+      "displayName": "可销售",
+      "description": "可在平台上销售的商品",
+      "propertyTypes": [
+        {
+          "apiName": "isOnSale",
+          "displayName": "是否在售",
+          "dataType": {"type": "BOOLEAN"},
+          "default": false
+        }
+      ],
+      "implementedBy": ["SPU", "SKU"]
+    },
+    {
+      "apiName": "InventoryHoldable",
+      "displayName": "可持有库存",
+      "description": "可关联库存的对象",
+      "propertyTypes": [
+        {
+          "apiName": "totalInventory",
+          "displayName": "总库存",
+          "dataType": {"type": "INTEGER"},
+          "default": 0
+        }
+      ],
+      "implementedBy": ["SKU"]
+    },
+    {
+      "apiName": "Versionable",
+      "displayName": "可版本化",
+      "description": "支持版本管理的对象",
+      "propertyTypes": [
+        {
+          "apiName": "version",
+          "displayName": "版本号",
+          "dataType": {"type": "STRING"},
+          "isRequired": true,
+          "default": "1.0.0"
+        },
+        {
+          "apiName": "versionStatus",
+          "displayName": "版本状态",
+          "dataType": {"type": "ENUM", "values": ["DRAFT", "ACTIVE", "DEPRECATED"]},
+          "default": "DRAFT"
+        }
+      ],
+      "implementedBy": ["SPUTemplate", "SPU"]
+    }
+  ],
+
+  "linkTypes": [
+    {
+      "apiName": "PARENT_OF",
+      "displayName": "品类父子关系",
+      "description": "Category↔Category 的层级继承关系",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "objectTypeAPrimaryKey": "categoryId",
+      "objectTypeBPrimaryKey": "categoryId",
+      "objectTypeAType": "Category",
+      "objectTypeBType": "Category",
+      "cardinality": "ONE_TO_MANY",
+      "aSide": {
+        "apiName": "parentCategory",
+        "displayName": "父品类",
+        "cardinality": "ZERO_OR_ONE"
+      },
+      "bSide": {
+        "apiName": "subCategories",
+        "displayName": "子品类集合",
+        "cardinality": "ZERO_TO_MANY"
+      },
+      "linkProperties": [
+        {
+          "apiName": "rank",
+          "displayName": "顺序",
+          "dataType": {"type": "INTEGER"},
+          "default": 0
+        },
+        {
+          "apiName": "inheritStrategy",
+          "displayName": "继承策略",
+          "dataType": {"type": "ENUM", "values": ["FULL", "PARTIAL", "OVERRIDE"]},
+          "default": "FULL"
+        }
+      ],
+      "backingDatasources": [
+        {
+          "type": "DATASET",
+          "rid": "ri.foundry.main.dataset.category.parent",
+          "joinKey": {"fromA": "categoryId", "fromB": "parentCategoryId"}
+        }
+      ],
+      "permissions": {
+        "read": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER"],
+        "write": ["ROLE_PLATFORM_ADMIN"],
+        "delete": ["ROLE_PLATFORM_ADMIN"]
+      }
+    },
+
+    {
+      "apiName": "BELONGS_TO_CATEGORY",
+      "displayName": "归属品类",
+      "description": "SPU归属品类关系，支持主品类+关联品类",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "objectTypeAPrimaryKey": "spuId",
+      "objectTypeBPrimaryKey": "categoryId",
+      "objectTypeAType": "SPU",
+      "objectTypeBType": "Category",
+      "cardinality": "MANY_TO_MANY",
+      "aSide": {
+        "apiName": "spusInCategory",
+        "displayName": "品类下的SPU集合",
+        "cardinality": "ZERO_TO_MANY"
+      },
+      "bSide": {
+        "apiName": "categoriesOfSpu",
+        "displayName": "SPU所属品类集合",
+        "cardinality": "ONE_TO_MANY"
+      },
+      "linkProperties": [
+        {
+          "apiName": "isPrimary",
+          "displayName": "是否主品类",
+          "dataType": {"type": "BOOLEAN"},
+          "default": false
+        }
+      ],
+      "backingDatasources": [
+        {
+          "type": "DATASET",
+          "rid": "ri.foundry.main.dataset.spu_category",
+          "joinKey": {"fromA": "spuId", "fromB": "categoryId"}
+        }
+      ],
+      "permissions": {
+        "read": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER", "ROLE_BRAND_OWNER"],
+        "write": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER", "ROLE_BRAND_OWNER"],
+        "delete": ["ROLE_PLATFORM_ADMIN"]
+      }
+    },
+
+    {
+      "apiName": "HAS_BRAND",
+      "displayName": "所属品牌",
+      "description": "SPU归属品牌关系",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "objectTypeAPrimaryKey": "spuId",
+      "objectTypeBPrimaryKey": "brandId",
+      "objectTypeAType": "SPU",
+      "objectTypeBType": "Brand",
+      "cardinality": "MANY_TO_ONE",
+      "aSide": {
+        "apiName": "brandedProducts",
+        "displayName": "品牌产品集合",
+        "cardinality": "ZERO_TO_MANY"
+      },
+      "bSide": {
+        "apiName": "brand",
+        "displayName": "品牌",
+        "cardinality": "ONE"
+      },
+      "linkProperties": [],
+      "backingDatasources": [
+        {
+          "type": "DATASET",
+          "rid": "ri.foundry.main.dataset.spu_brand",
+          "joinKey": {"fromA": "spuId", "fromB": "brandId"}
+        }
+      ],
+      "permissions": {
+        "read": ["ROLE_PLATFORM_ADMIN", "ROLE_BRAND_OWNER", "ROLE_CATEGORY_MANAGER"],
+        "write": ["ROLE_PLATFORM_ADMIN", "ROLE_BRAND_OWNER"],
+        "delete": ["ROLE_PLATFORM_ADMIN"]
+      }
+    },
+
+    {
+      "apiName": "USES_TEMPLATE",
+      "displayName": "使用模板",
+      "description": "SPU引用SPUTemplate",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "objectTypeAPrimaryKey": "spuId",
+      "objectTypeBPrimaryKey": "templateId",
+      "objectTypeAType": "SPU",
+      "objectTypeBType": "SPUTemplate",
+      "cardinality": "MANY_TO_ONE",
+      "aSide": {
+        "apiName": "instances",
+        "displayName": "使用此模板的SPU集合",
+        "cardinality": "ZERO_TO_MANY"
+      },
+      "bSide": {
+        "apiName": "template",
+        "displayName": "模板",
+        "cardinality": "ONE"
+      },
+      "linkProperties": [
+        {
+          "apiName": "effectiveDate",
+          "displayName": "生效日期",
+          "dataType": {"type": "TIMESTAMP"}
+        }
+      ],
+      "backingDatasources": [
+        {
+          "type": "DATASET",
+          "rid": "ri.foundry.main.dataset.spu_template_ref",
+          "joinKey": {"fromA": "spuId", "fromB": "templateId"}
+        }
+      ],
+      "permissions": {
+        "read": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER", "ROLE_BRAND_OWNER"],
+        "write": ["ROLE_PLATFORM_ADMIN", "ROLE_BRAND_OWNER"],
+        "delete": ["ROLE_PLATFORM_ADMIN"]
+      }
+    },
+
+    {
+      "apiName": "GENERATES",
+      "displayName": "生成SKU",
+      "description": "SPU通过销售属性组合生成SKU",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "objectTypeAPrimaryKey": "spuId",
+      "objectTypeBPrimaryKey": "skuId",
+      "objectTypeAType": "SPU",
+      "objectTypeBType": "SKU",
+      "cardinality": "ONE_TO_MANY",
+      "aSide": {
+        "apiName": "generatedSkus",
+        "displayName": "生成的SKU集合",
+        "cardinality": "ZERO_TO_MANY"
+      },
+      "bSide": {
+        "apiName": "generatedFromSpu",
+        "displayName": "来源SPU",
+        "cardinality": "ONE"
+      },
+      "linkProperties": [
+        {
+          "apiName": "combinationKey",
+          "displayName": "组合标识",
+          "dataType": {"type": "STRING"},
+          "isRequired": true
+        }
+      ],
+      "backingDatasources": [
+        {
+          "type": "DATASET",
+          "rid": "ri.foundry.main.dataset.sku",
+          "joinKey": {"fromA": "spuId", "fromB": "skuId"}
+        }
+      ],
+      "permissions": {
+        "read": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER", "ROLE_BRAND_OWNER", "ROLE_MERCHANT"],
+        "write": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER"],
+        "delete": ["ROLE_PLATFORM_ADMIN"]
+      }
+    },
+
+    {
+      "apiName": "HAS_ATTR_VALUE",
+      "displayName": "拥有属性值",
+      "description": "SKU关联属性值",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "objectTypeAPrimaryKey": "skuId",
+      "objectTypeBPrimaryKey": "valueId",
+      "objectTypeAType": "SKU",
+      "objectTypeBType": "AttributeValue",
+      "cardinality": "MANY_TO_MANY",
+      "aSide": {
+        "apiName": "attrValues",
+        "displayName": "SKU属性值集合",
+        "cardinality": "ONE_TO_MANY"
+      },
+      "bSide": {
+        "apiName": "skusWithValue",
+        "displayName": "拥有此属性值的SKU集合",
+        "cardinality": "ZERO_TO_MANY"
+      },
+      "linkProperties": [],
+      "backingDatasources": [
+        {
+          "type": "DATASET",
+          "rid": "ri.foundry.main.dataset.sku_attr_value",
+          "joinKey": {"fromA": "skuId", "fromB": "valueId"}
+        }
+      ],
+      "permissions": {
+        "read": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER", "ROLE_BRAND_OWNER", "ROLE_MERCHANT"],
+        "write": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER"],
+        "delete": ["ROLE_PLATFORM_ADMIN"]
+      }
+    },
+
+    {
+      "apiName": "DECLARES_ATTRIBUTE",
+      "displayName": "声明属性",
+      "description": "Category引用Attribute作为模板属性",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "objectTypeAPrimaryKey": "categoryId",
+      "objectTypeBPrimaryKey": "attrId",
+      "objectTypeAType": "Category",
+      "objectTypeBType": "Attribute",
+      "cardinality": "MANY_TO_MANY",
+      "aSide": {
+        "apiName": "declaredAttributes",
+        "displayName": "品类声明的属性集合",
+        "cardinality": "ONE_TO_MANY"
+      },
+      "bSide": {
+        "apiName": "applicableCategories",
+        "displayName": "适用此属性的品类集合",
+        "cardinality": "ZERO_TO_MANY"
+      },
+      "linkProperties": [
+        {
+          "apiName": "isRequired",
+          "displayName": "是否必填",
+          "dataType": {"type": "BOOLEAN"},
+          "default": false
+        },
+        {
+          "apiName": "isSalesAttr",
+          "displayName": "是否销售属性",
+          "dataType": {"type": "BOOLEAN"},
+          "default": false
+        },
+        {
+          "apiName": "isInheritable",
+          "displayName": "是否可继承",
+          "dataType": {"type": "BOOLEAN"},
+          "default": true
+        }
+      ],
+      "backingDatasources": [
+        {
+          "type": "DATASET",
+          "rid": "ri.foundry.main.dataset.category_attribute",
+          "joinKey": {"fromA": "categoryId", "fromB": "attrId"}
+        }
+      ],
+      "permissions": {
+        "read": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER", "ROLE_BRAND_OWNER"],
+        "write": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER"],
+        "delete": ["ROLE_PLATFORM_ADMIN"]
+      }
+    },
+
+    {
+      "apiName": "SOLD_BY",
+      "displayName": "被商家销售",
+      "description": "SKU被商家认领销售的M:N关系（核心LinkType）",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "objectTypeAPrimaryKey": "skuId",
+      "objectTypeBPrimaryKey": "merchantId",
+      "objectTypeAType": "SKU",
+      "objectTypeBType": "Merchant",
+      "cardinality": "MANY_TO_MANY",
+      "aSide": {
+        "apiName": "sellers",
+        "displayName": "售卖商家集合",
+        "cardinality": "ZERO_TO_MANY"
+      },
+      "bSide": {
+        "apiName": "soldSkus",
+        "displayName": "销售的SKU集合",
+        "cardinality": "ZERO_TO_MANY"
+      },
+      "linkProperties": [
+        {
+          "apiName": "merchantSkuId",
+          "displayName": "商家SKU ID",
+          "dataType": {"type": "STRING"},
+          "isPrimaryKey": true,
+          "isRequired": true,
+          "description": "商家侧唯一标识"
+        },
+        {
+          "apiName": "status",
+          "displayName": "销售状态",
+          "dataType": {"type": "ENUM", "values": ["DRAFT", "ONLINE", "OFFLINE", "BANNED"]},
+          "default": "DRAFT"
+        },
+        {
+          "apiName": "listingTime",
+          "displayName": "上架时间",
+          "dataType": {"type": "TIMESTAMP"}
+        },
+        {
+          "apiName": "delistingTime",
+          "displayName": "下架时间",
+          "dataType": {"type": "TIMESTAMP"}
+        },
+        {
+          "apiName": "salePrice",
+          "displayName": "销售价",
+          "dataType": {"type": "DECIMAL"},
+          "isRequired": false,
+          "validation": {"min": 0}
+        },
+        {
+          "apiName": "originalPrice",
+          "displayName": "划线价",
+          "dataType": {"type": "DECIMAL"},
+          "validation": {"min": 0}
+        },
+        {
+          "apiName": "costPrice",
+          "displayName": "成本价",
+          "dataType": {"type": "DECIMAL"},
+          "validation": {"min": 0}
+        },
+        {
+          "apiName": "totalInventory",
+          "displayName": "总库存",
+          "dataType": {"type": "INTEGER"},
+          "default": 0
+        }
+      ],
+      "backingDatasources": [
+        {
+          "apiName": "merchant_sku_table",
+          "type": "DATASET",
+          "rid": "ri.foundry.main.dataset.merchant_sku",
+          "joinKey": {"fromA": "skuId", "fromB": "merchantId"},
+          "isPrimary": true
+        }
+      ],
+      "permissions": {
+        "read": ["ROLE_PLATFORM_ADMIN", "ROLE_MERCHANT"],
+        "write": ["ROLE_PLATFORM_ADMIN", "ROLE_MERCHANT"],
+        "delete": ["ROLE_PLATFORM_ADMIN"]
+      }
+    },
+
+    {
+      "apiName": "HOLDS_INVENTORY",
+      "displayName": "持有库存",
+      "description": "MerchantSKU↔Warehouse的库存分配关系",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "objectTypeAPrimaryKey": "merchantSkuId",
+      "objectTypeBPrimaryKey": "warehouseId",
+      "objectTypeAType": "MerchantSKU",
+      "objectTypeBType": "Warehouse",
+      "cardinality": "MANY_TO_MANY",
+      "aSide": {
+        "apiName": "inventoryHolds",
+        "displayName": "库存持有记录集合",
+        "cardinality": "ONE_TO_MANY"
+      },
+      "bSide": {
+        "apiName": "warehouseHoldings",
+        "displayName": "仓库库存记录集合",
+        "cardinality": "ZERO_TO_MANY"
+      },
+      "linkProperties": [
+        {
+          "apiName": "availableStock",
+          "displayName": "可用库存",
+          "dataType": {"type": "INTEGER"},
+          "default": 0,
+          "validation": {"min": 0}
+        },
+        {
+          "apiName": "reservedStock",
+          "displayName": "预占库存",
+          "dataType": {"type": "INTEGER"},
+          "default": 0
+        },
+        {
+          "apiName": "alertThreshold",
+          "displayName": "预警阈值",
+          "dataType": {"type": "INTEGER"},
+          "default": 10
+        },
+        {
+          "apiName": "lastUpdatedAt",
+          "displayName": "最后更新时间",
+          "dataType": {"type": "TIMESTAMP"}
+        }
+      ],
+      "backingDatasources": [
+        {
+          "apiName": "inventory_table",
+          "type": "DATASET",
+          "rid": "ri.foundry.main.dataset.inventory",
+          "joinKey": {"fromA": "merchantSkuId", "fromB": "warehouseId"}
+        }
+      ],
+      "permissions": {
+        "read": ["ROLE_PLATFORM_ADMIN", "ROLE_MERCHANT"],
+        "write": ["ROLE_PLATFORM_ADMIN", "ROLE_MERCHANT"],
+        "delete": ["ROLE_PLATFORM_ADMIN"]
+      }
+    },
+
+    {
+      "apiName": "PURCHASED",
+      "displayName": "购买",
+      "description": "消费者购买MerchantSKU的关系",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "objectTypeAPrimaryKey": "customerId",
+      "objectTypeBPrimaryKey": "merchantSkuId",
+      "objectTypeAType": "Customer",
+      "objectTypeBType": "MerchantSKU",
+      "cardinality": "ONE_TO_MANY",
+      "aSide": {
+        "apiName": "purchaser",
+        "displayName": "购买者",
+        "cardinality": "ONE"
+      },
+      "bSide": {
+        "apiName": "purchases",
+        "displayName": "购买记录",
+        "cardinality": "ZERO_TO_MANY"
+      },
+      "linkProperties": [
+        {
+          "apiName": "orderId",
+          "displayName": "订单ID",
+          "dataType": {"type": "STRING"},
+          "isPrimaryKey": true
+        },
+        {
+          "apiName": "quantity",
+          "displayName": "数量",
+          "dataType": {"type": "INTEGER"},
+          "isRequired": true,
+          "validation": {"min": 1}
+        },
+        {
+          "apiName": "purchasePrice",
+          "displayName": "成交价",
+          "dataType": {"type": "DECIMAL"},
+          "isRequired": true
+        },
+        {
+          "apiName": "purchaseTime",
+          "displayName": "购买时间",
+          "dataType": {"type": "TIMESTAMP"},
+          "isRequired": true
+        },
+        {
+          "apiName": "orderStatus",
+          "displayName": "订单状态",
+          "dataType": {"type": "ENUM", "values": ["PENDING", "PAID", "SHIPPED", "DELIVERED", "COMPLETED", "REFUNDED", "CANCELLED"]}
+        }
+      ],
+      "backingDatasources": [
+        {
+          "apiName": "order_table",
+          "type": "DATASET",
+          "rid": "ri.foundry.main.dataset.order",
+          "joinKey": {"fromA": "customerId", "fromB": "merchantSkuId"}
+        }
+      ],
+      "permissions": {
+        "read": ["ROLE_PLATFORM_ADMIN"],
+        "write": ["ROLE_PLATFORM_ADMIN"],
+        "delete": ["ROLE_PLATFORM_ADMIN"]
+      }
+    }
+  ],
+
+  "actionTypes": [
+    {
+      "apiName": "createCategory",
+      "displayName": "创建品类",
+      "description": "平台运营或品类经理创建新品类",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "objectTypeApisToModify": ["Category"],
+      "linkTypeApisToModify": ["PARENT_OF"],
+      "parameters": [
+        {"apiName": "categoryName", "dataType": {"type": "STRING"}, "isRequired": true},
+        {"apiName": "parentCategoryId", "dataType": {"type": "STRING"}, "isRequired": false},
+        {"apiName": "spuTemplateId", "dataType": {"type": "STRING"}, "isRequired": false}
+      ],
+      "returnType": {"objectType": "Category"},
+      "permissions": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER"]
+    },
+    {
+      "apiName": "declareAttributeForCategory",
+      "displayName": "为品类声明属性",
+      "description": "为指定品类添加或更新属性声明",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "objectTypeApisToModify": ["Category", "Attribute"],
+      "linkTypeApisToModify": ["DECLARES_ATTRIBUTE"],
+      "parameters": [
+        {"apiName": "categoryId", "dataType": {"type": "STRING"}, "isRequired": true},
+        {"apiName": "attrId", "dataType": {"type": "STRING"}, "isRequired": true},
+        {"apiName": "isRequired", "dataType": {"type": "BOOLEAN"}, "default": false},
+        {"apiName": "isSalesAttr", "dataType": {"type": "BOOLEAN"}, "default": false}
+      ],
+      "returnType": {"linkType": "DECLARES_ATTRIBUTE"},
+      "permissions": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER"]
+    },
+    {
+      "apiName": "createSPU",
+      "displayName": "创建SPU",
+      "description": "基于SPU模板创建标准产品",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "objectTypeApisToModify": ["SPU"],
+      "linkTypeApisToModify": ["USES_TEMPLATE", "BELONGS_TO_CATEGORY", "HAS_BRAND"],
+      "parameters": [
+        {"apiName": "spuName", "dataType": {"type": "STRING"}, "isRequired": true},
+        {"apiName": "templateId", "dataType": {"type": "STRING"}, "isRequired": true},
+        {"apiName": "categoryId", "dataType": {"type": "STRING"}, "isRequired": true},
+        {"apiName": "brandId", "dataType": {"type": "STRING"}, "isRequired": true},
+        {"apiName": "description", "dataType": {"type": "STRING"}, "isRequired": false}
+      ],
+      "returnType": {"objectType": "SPU"},
+      "sideEffects": ["autoGenerateSkus"],
+      "permissions": ["ROLE_PLATFORM_ADMIN", "ROLE_BRAND_OWNER"]
+    },
+    {
+      "apiName": "generateSkusFromSpu",
+      "displayName": "从SPU生成SKU",
+      "description": "基于销售属性笛卡尔积自动生成SKU组合",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "objectTypeApisToModify": ["SKU"],
+      "linkTypeApisToModify": ["GENERATES", "HAS_ATTR_VALUE"],
+      "parameters": [
+        {"apiName": "spuId", "dataType": {"type": "STRING"}, "isRequired": true},
+        {"apiName": "salesAttrValues", "dataType": {"type": "ARRAY", "innerType": "STRING"}, "isRequired": true, "description": "销售属性值组合"}
+      ],
+      "returnType": {"arrayOf": {"objectType": "SKU"}},
+      "permissions": ["ROLE_PLATFORM_ADMIN", "ROLE_CATEGORY_MANAGER"]
+    },
+    {
+      "apiName": "merchantClaimSku",
+      "displayName": "商家认领SKU",
+      "description": "商家认领并设置价格、库存、上架",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "objectTypeApisToModify": [],
+      "linkTypeApisToModify": ["SOLD_BY", "HOLDS_INVENTORY"],
+      "parameters": [
+        {"apiName": "merchantId", "dataType": {"type": "STRING"}, "isRequired": true},
+        {"apiName": "skuId", "dataType": {"type": "STRING"}, "isRequired": true},
+        {"apiName": "salePrice", "dataType": {"type": "DECIMAL"}, "isRequired": true},
+        {"apiName": "originalPrice", "dataType": {"type": "DECIMAL"}, "isRequired": false},
+        {"apiName": "warehouseIds", "dataType": {"type": "ARRAY", "innerType": "STRING"}, "isRequired": true},
+        {"apiName": "initialStock", "dataType": {"type": "INTEGER"}, "isRequired": true, "validation": {"min": 0}}
+      ],
+      "returnType": {"linkType": "SOLD_BY"},
+      "permissions": ["ROLE_PLATFORM_ADMIN", "ROLE_MERCHANT"]
+    },
+    {
+      "apiName": "purchaseSku",
+      "displayName": "购买商品",
+      "description": "消费者下单购买",
+      "status": "ACTIVE",
+      "version": "1.0.0",
+      "objectTypeApisToModify": [],
+      "linkTypeApisToModify": ["PURCHASED", "HOLDS_INVENTORY"],
+      "parameters": [
+        {"apiName": "customerId", "dataType": {"type": "STRING"}, "isRequired": true},
+        {"apiName": "merchantSkuId", "dataType": {"type": "STRING"}, "isRequired": true},
+        {"apiName": "quantity", "dataType": {"type": "INTEGER"}, "isRequired": true, "validation": {"min": 1}},
+        {"apiName": "warehouseId", "dataType": {"type": "STRING"}, "isRequired": true}
+      ],
+      "returnType": {"linkType": "PURCHASED"},
+      "sideEffects": ["decrementInventory", "createPaymentOrder"],
+      "permissions": ["ROLE_CUSTOMER"]
+    }
+  ],
+
+  "validationRules": [
+    {
+      "apiName": "skuUniqueBySalesAttrs",
+      "displayName": "SKU销售属性唯一性",
+      "scope": {"objectType": "SKU"},
+      "rule": "same spuId + same salesAttrsHash → only ONE sku",
+      "errorMessage": "同一SPU下销售属性组合不能重复"
+    },
+    {
+      "apiName": "categoryNoCycle",
+      "displayName": "品类无环",
+      "scope": {"linkType": "PARENT_OF"},
+      "rule": "no cycles in category tree",
+      "errorMessage": "品类层级不能形成环"
+    },
+    {
+      "apiName": "pricePositive",
+      "displayName": "价格非负",
+      "scope": {"linkType": "SOLD_BY"},
+      "rule": "salePrice >= 0 AND originalPrice >= 0",
+      "errorMessage": "价格不能为负数"
+    },
+    {
+      "apiName": "merchantSkuStatusTransition",
+      "displayName": "商家SKU状态流转",
+      "scope": {"linkType": "SOLD_BY"},
+      "rule": "DRAFT → ONLINE → OFFLINE → BANNED",
+      "errorMessage": "状态流转不合法"
+    }
+  ],
+
+  "extensionPoints": {
+    "comment": "Ontology 可扩展点，未来可在此添加 FunctionType、WorkflowType、MediaSetType 等",
+    "futureAdditions": [
+      "FunctionType - 衍生计算属性（如 SKU 历史销量）",
+      "MediaSetType - 富媒体集合（如 SPU 图片集、视频集）",
+      "WorkflowType - 业务工作流（如 SPUTemplate 审批流）",
+      "NotificationRuleType - 变更通知规则",
+      "MarkingType - 数据安全标记（如 机密、内部、公开）"
+    ]
+  }
+}
