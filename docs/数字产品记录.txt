@@ -273,8 +273,6 @@ TODO：查询的场景的来？
 
 
 TODO：
-产品类也有规格定义，还有参数（一线可配置的）？***
 
-ExtensionSchema / LifecycleType 
 
-ConstraintRule改成ConfigRule（配置规则）
+部分图
