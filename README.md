@@ -11,6 +11,7 @@
 | [docs/电商语义模型OpenSPG落地实现方案.md](./docs/电商语义模型OpenSPG落地实现方案.md) | v2.0 | OpenSPG/KAG 落地实现方案（SPGType 定义、关系映射、查询模板） |
 | [docs/Microsoft Fabric IQ 电商语义建模验证操作指南.md](./docs/Microsoft%20Fabric%20IQ%20电商语义建模验证操作指南.md) | v2.0 | Microsoft Fabric IQ Ontology 端到端 PoC 操作指南 |
 | [docs/图业界Ontology产品调研与Palantir电商适配分析.md](./docs/图业界Ontology产品调研与Palantir电商适配分析.md) | v1.3 | Stardog / Fabric IQ / Neo4j Aura / TDengine IDMP / AbutionGraph 五家产品调研与 Palantir 适配对比 |
+| [docs2/复杂产品配置器的数据模型.md](./docs2/复杂产品配置器的数据模型.md) | v1.0 | 复杂产品（部件组合/规格实例化）配置场景的数据模型方案：属性 vs 边、单边多属性 vs 多边等多方案对比 |
 
 ## 关键设计要点
 
