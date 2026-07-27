@@ -23,3 +23,15 @@
 ## 示例数据
 
 `fabricsample/` 目录提供 Microsoft Fabric IQ 示例数据（DimProducts / FactSales / Freezer 等），用于 Graph 验证。
+
+
+
+
+根据 @docs3/复杂产品配置器的数据模型.md ，参考 @docs/Palantir范式电商语义建模方案.md 的文档结构，输出Palantir范式复杂产品配置器语义建模方案，放在docs3里
+
+根据 @docs3/复杂产品配置器的数据模型.md ，参考 @docs/图业界Ontology产品调研与Palantir电商适配分析.md 的文档结构，输出图业界Ontology产品调研与Palantir复杂配置产品器适配分析，放在docs3里
+根据 @docs3/复杂产品配置器的数据模型.md ，参考 @docs/Microsoft Fabric IQ 电商语义建模验证操作指南.md 的文档结构，输出Microsoft Fabric IQ 复杂产品配置器语义建模验证操作指南，放在docs3里
+
+图业界Ontology产品调研与Palantir电商适配分析
+
+Microsoft Fabric IQ 电商语义建模验证操作指南
