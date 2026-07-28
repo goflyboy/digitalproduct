@@ -1,364 +1,369 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 2400" font-family="'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif">
-  <style>
-    .layer-bg { fill: #f8f9fa; stroke: #dee2e6; stroke-width: 1; }
-    .layer-label { font-size: 20px; font-weight: bold; fill: #495057; }
-    .entity { fill: #ffffff; stroke: #343a40; stroke-width: 2; rx: 6; }
-    .entity-title { font-size: 14px; font-weight: bold; fill: #212529; }
-    .entity-type { font-size: 11px; fill: #6c757d; font-style: italic; }
-    .attr { font-size: 12px; fill: #495057; }
-    .attr-key { font-weight: bold; }
-    .relation-line { stroke: #868e96; stroke-width: 1.5; fill: none; }
-    .relation-label { font-size: 10px; fill: #495057; background: white; }
-    .layer-l1 { fill: #e3f2fd; }
-    .layer-l2 { fill: #e8f5e9; }
-    .layer-l3 { fill: #fff3e0; }
-    .card-l1 { fill: #1976d2; }
-    .card-l2 { fill: #388e3c; }
-    .card-l3 { fill: #f57c00; }
-    .legend-box { fill: #ffffff; stroke: #ced4da; stroke-width: 1; }
-    .legend-title { font-size: 12px; font-weight: bold; fill: #212529; }
-    .spec-link { stroke: #9c27b0; stroke-width: 2; stroke-dasharray: 5,3; }
-    .override-link { stroke: #e91e63; stroke-width: 2; }
-  </style>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 2400" width="1400" height="2400">
+  <defs>
+    <!-- Arrow Markers -->
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#333"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#16a34a"/>
+    </marker>
+    <marker id="arrowPurple" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#9333ea"/>
+    </marker>
+    <marker id="arrowOrange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#ea580c"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#dc2626"/>
+    </marker>
+  </defs>
 
-  <!-- ===================== L1 °C!ãB ===================== -->
-  <rect x="20" y="20" width="1360" height="620" class="layer-bg layer-l1" rx="8"/>
-  <rect x="20" y="20" width="1360" height="40" class="card-l1" rx="8"/>
-  <text x="40" y="48" class="layer-label" fill="white">L1 °C!ãB</text>
+  <!-- Background -->
+  <rect width="1400" height="2400" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="700" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#1e293b">
+    Complex Product Configurator Data Model - ER Diagram
+  </text>
+  <text x="700" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#64748b">
+    Three-Layer Model: L1 Business Meta-Model -- L2 Business Object Instances -- L3 Configuration Runtime Instances
+  </text>
+
+  <!-- ========== L1 Business Meta-Model Layer ========== -->
+  <rect x="30" y="90" width="1340" height="420" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="50" y="115" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#1e40af">
+    L1 Business Meta-Model Layer (Type / Template, defined by IT and Business)
+  </text>
 
   <!-- ProductClassType -->
-  <rect x="50" y="80" width="240" height="130" class="entity" rx="6"/>
-  <rect x="50" y="80" width="240" height="30" fill="#1976d2" rx="6"/>
-  <text x="170" y="100" text-anchor="middle" class="entity-title" fill="white">ProductClassType</text>
-  <text x="65" y="125" class="entity-type">ß¡{C!ã</text>
-  <line x1="50" y1="130" x2="290" y2="130" stroke="#dee2e6"/>
-  <text x="65" y="150" class="attr attr-key">code</text>
-  <text x="65" y="168" class="attr">name</text>
-  <text x="65" y="186" class="attr">domain</text>
-  <text x="65" y="204" class="attr">modeling_policy</text>
+  <rect x="80" y="150" width="200" height="100" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="180" y="175" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1e40af">ProductClassType</text>
+  <text x="180" y="195" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#3b82f6">Product Class Meta</text>
+  <line x1="80" y1="220" x2="280" y2="220" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="95" y="235" font-family="Arial, sans-serif" font-size="9" fill="#64748b">code</text>
+  <text x="95" y="248" font-family="Arial, sans-serif" font-size="9" fill="#64748b">name</text>
 
   <!-- PartClassType -->
-  <rect x="50" y="240" width="240" height="140" class="entity" rx="6"/>
-  <rect x="50" y="240" width="240" height="30" fill="#1976d2" rx="6"/>
-  <text x="170" y="260" text-anchor="middle" class="entity-title" fill="white">PartClassType</text>
-  <text x="65" y="285" class="entity-type">Ëˆ{C!ã</text>
-  <line x1="50" y1="290" x2="290" y2="290" stroke="#dee2e6"/>
-  <text x="65" y="310" class="attr attr-key">code</text>
-  <text x="65" y="328" class="attr">name</text>
-  <text x="65" y="346" class="attr">part_kind</text>
-  <text x="65" y="364" class="attr">selection_policy</text>
-  <text x="65" y="382" class="attr">min/max_cardinality</text>
+  <rect x="400" y="150" width="200" height="120" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="500" y="175" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1e40af">PartClassType</text>
+  <text x="500" y="195" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#3b82f6">Part Class Meta</text>
+  <line x1="400" y1="210" x2="600" y2="210" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="415" y="225" font-family="Arial, sans-serif" font-size="9" fill="#64748b">code</text>
+  <text x="415" y="238" font-family="Arial, sans-serif" font-size="9" fill="#64748b">part_kind</text>
+  <text x="415" y="251" font-family="Arial, sans-serif" font-size="9" fill="#64748b">selection_policy</text>
+  <text x="415" y="264" font-family="Arial, sans-serif" font-size="9" fill="#64748b">min/max_cardinality</text>
 
   <!-- SpecDefinition -->
-  <rect x="380" y="100" width="260" height="160" class="entity" rx="6"/>
-  <rect x="380" y="100" width="260" height="30" fill="#1976d2" rx="6"/>
-  <text x="510" y="120" text-anchor="middle" class="entity-title" fill="white">SpecDefinition</text>
-  <text x="395" y="145" class="entity-type">ƒ<öI</text>
-  <line x1="380" y1="150" x2="640" y2="150" stroke="#dee2e6"/>
-  <text x="395" y="170" class="attr attr-key">code</text>
-  <text x="395" y="188" class="attr">name</text>
-  <text x="395" y="206" class="attr">data_type</text>
-  <text x="395" y="224" class="attr">unit</text>
-  <text x="395" y="242" class="attr">value_domain</text>
-  <text x="395" y="260" class="attr">required</text>
+  <rect x="720" y="150" width="200" height="120" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="820" y="175" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1e40af">SpecDefinition</text>
+  <text x="820" y="195" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#3b82f6">Spec Definition</text>
+  <line x1="720" y1="210" x2="920" y2="210" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="735" y="225" font-family="Arial, sans-serif" font-size="9" fill="#64748b">code</text>
+  <text x="735" y="238" font-family="Arial, sans-serif" font-size="9" fill="#64748b">data_type</text>
+  <text x="735" y="251" font-family="Arial, sans-serif" font-size="9" fill="#64748b">unit, value_domain</text>
+  <text x="735" y="264" font-family="Arial, sans-serif" font-size="9" fill="#64748b">required</text>
 
   <!-- Parameter -->
-  <rect x="380" y="290" width="260" height="150" class="entity" rx="6"/>
-  <rect x="380" y="290" width="260" height="30" fill="#1976d2" rx="6"/>
-  <text x="510" y="310" text-anchor="middle" class="entity-title" fill="white">Parameter</text>
-  <text x="395" y="335" class="entity-type">¬pöI</text>
-  <line x1="380" y1="340" x2="640" y2="340" stroke="#dee2e6"/>
-  <text x="395" y="360" class="attr attr-key">code</text>
-  <text x="395" y="378" class="attr">name</text>
-  <text x="395" y="396" class="attr">data_type / unit</text>
-  <text x="395" y="414" class="attr">min / max / default</text>
-  <text x="395" y="432" class="attr">assign_type</text>
+  <rect x="1040" y="150" width="200" height="120" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="1140" y="175" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1e40af">Parameter</text>
+  <text x="1140" y="195" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#3b82f6">Parameter Definition</text>
+  <line x1="1040" y1="210" x2="1240" y2="210" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="1055" y="225" font-family="Arial, sans-serif" font-size="9" fill="#64748b">code</text>
+  <text x="1055" y="238" font-family="Arial, sans-serif" font-size="9" fill="#64748b">data_type, assign_type</text>
+  <text x="1055" y="251" font-family="Arial, sans-serif" font-size="9" fill="#64748b">min, max, default_value</text>
+  <text x="1055" y="264" font-family="Arial, sans-serif" font-size="9" fill="#64748b">description</text>
 
-  <!-- ProductInstanceType -->
-  <rect x="780" y="100" width="220" height="120" class="entity" rx="6"/>
-  <rect x="780" y="100" width="220" height="30" fill="#1976d2" rx="6"/>
-  <text x="890" y="120" text-anchor="middle" class="entity-title" fill="white">ProductInstanceType</text>
-  <text x="795" y="145" class="entity-type">Ô.ß¡C!ã</text>
-  <line x1="780" y1="150" x2="1000" y2="150" stroke="#dee2e6"/>
-  <text x="795" y="170" class="attr attr-key">code</text>
-  <text x="795" y="188" class="attr">name / market</text>
-  <text x="795" y="206" class="attr">status</text>
+  <!-- L1 Relations -->
+  <!-- ProductClassType -> PartClassType -->
+  <path d="M280,200 L400,200" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
+  <text x="340" y="195" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#2563eb">composedOf</text>
 
-  <!-- L1 s˚ø -->
-  <path d="M290 145 Q335 145 335 160 L335 240" class="relation-line" marker-end="url(#arrow)"/>
-  <text x="300" y="195" class="relation-label">composedOf</text>
+  <!-- ProductClassType -> SpecDefinition -->
+  <path d="M280,200 Q500,100 720,200" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
+  <text x="480" y="135" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#2563eb">hasSpec</text>
 
-  <path d="M170 210 L170 240" class="relation-line"/>
-  <text x="140" y="225" class="relation-label">hasSpec</text>
-  <path d="M510 260 L510 290" class="relation-line"/>
-  <text x="480" y="275" class="relation-label">hasSpec</text>
+  <!-- PartClassType -> SpecDefinition -->
+  <path d="M500,270 L820,270" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
+  <text x="660" y="285" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#2563eb">hasSpec</text>
 
-  <path d="M290 305 L335 305 L335 340" class="relation-line"/>
-  <text x="300" y="320" class="relation-label">hasParameter</text>
+  <!-- PartClassType -> Parameter -->
+  <path d="M600,200 L1040,200" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
+  <text x="800" y="195" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#2563eb">hasParameter</text>
 
-  <path d="M640 180 L740 180 L740 140 L780 140" class="relation-line"/>
-  <text x="700" y="172" class="relation-label">realizes</text>
+  <!-- PartClassType recursive -->
+  <path d="M550,270 Q650,320 550,350 Q450,380 400,350 Q350,320 400,270" stroke="#2563eb" stroke-width="1.5" fill="none" stroke-dasharray="4,2" marker-end="url(#arrowBlue)"/>
+  <text x="500" y="365" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#64748b">recursive (sub-part)</text>
 
-  <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#868e96"/>
-    </marker>
-  </defs>
-
-  <!-- L1 ˛ãÙ -->
-  <rect x="1040" y="80" width="320" height="180" class="legend-box" rx="6"/>
-  <text x="1060" y="105" class="legend-title">L1 C!ãs˚Ù</text>
-  <line x1="1060" y1="120" x2="1100" y2="120" class="relation-line"/>
-  <text x="1110" y="125" class="attr">composedOf: ß¡{1Ëˆ{ƒ</text>
-  <line x1="1060" y1="145" x2="1100" y2="145" class="relation-line"/>
-  <text x="1110" y="150" class="attr">hasSpec: öI˙	ƒ<</text>
-  <line x1="1060" y1="170" x2="1100" y2="170" class="relation-line"/>
-  <text x="1110" y="175" class="attr">hasParameter: öIÔMn¬p</text>
-  <line x1="1060" y1="195" x2="1100" y2="195" class="relation-line"/>
-  <text x="1110" y="200" class="attr">realizes: Ô.ß¡û∞ß¡{</text>
-  <text x="1060" y="230" class="attr" fill="#6c757d">C!ãöI"{ã/!"</text>
-  <text x="1060" y="250" class="attr" fill="#6c757d">1IT°∫XÙ§</text>
-
-  <!-- ===================== L2 °˘aûãB ===================== -->
-  <rect x="20" y="660" width="1360" height="820" class="layer-bg layer-l2" rx="8"/>
-  <rect x="20" y="660" width="1360" height="40" class="card-l2" rx="8"/>
-  <text x="40" y="688" class="layer-label" fill="white">L2 °˘aûãB</text>
+  <!-- ========== L2 Business Object Instances Layer ========== -->
+  <rect x="30" y="530" width="1340" height="1100" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="50" y="555" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#166534">
+    L2 Business Object Instances Layer (Concrete Data, maintained by Product Data Architect)
+  </text>
 
   <!-- ProductClass -->
-  <rect x="50" y="720" width="240" height="150" class="entity" rx="6"/>
-  <rect x="50" y="720" width="240" height="30" fill="#388e3c" rx="6"/>
-  <text x="170" y="740" text-anchor="middle" class="entity-title" fill="white">ProductClass</text>
-  <text x="65" y="765" class="entity-type">ß¡{Úûã	</text>
-  <line x1="50" y1="770" x2="290" y2="770" stroke="#dee2e6"/>
-  <text x="65" y="790" class="attr attr-key">id / code</text>
-  <text x="65" y="808" class="attr">name / version</text>
-  <text x="65" y="826" class="attr">status</text>
-  <text x="65" y="844" class="attr">effective_from/to</text>
-  <text x="65" y="862" class="attr">ê Í&H,Wµ</text>
+  <rect x="80" y="590" width="200" height="130" rx="6" fill="#bbf7d0" stroke="#16a34a" stroke-width="2"/>
+  <text x="180" y="615" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#166534">ProductClass</text>
+  <text x="180" y="635" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#22c55e">Product Class</text>
+  <line x1="80" y1="650" x2="280" y2="650" stroke="#86efac" stroke-width="1"/>
+  <text x="95" y="665" font-family="Arial, sans-serif" font-size="9" fill="#64748b">id, code, name</text>
+  <text x="95" y="678" font-family="Arial, sans-serif" font-size="9" fill="#64748b">version (built-in)</text>
+  <text x="95" y="691" font-family="Arial, sans-serif" font-size="9" fill="#64748b">status, effective_from/to</text>
+  <text x="95" y="704" font-family="Arial, sans-serif" font-size="9" fill="#64748b">e.g. SERVER_X86@1.0.0</text>
 
   <!-- PartClass -->
-  <rect x="50" y="900" width="240" height="140" class="entity" rx="6"/>
-  <rect x="50" y="900" width="240" height="30" fill="#388e3c" rx="6"/>
-  <text x="170" y="920" text-anchor="middle" class="entity-title" fill="white">PartClass</text>
-  <text x="65" y="945" class="entity-type">Ëˆ{Úûã	</text>
-  <line x1="50" y1="950" x2="290" y2="950" stroke="#dee2e6"/>
-  <text x="65" y="970" class="attr attr-key">id / code</text>
-  <text x="65" y="988" class="attr">product_class_id</text>
-  <text x="65" y="1006" class="attr">selection_policy</text>
-  <text x="65" y="1024" class="attr">min_qty / max_qty</text>
-  <text x="65" y="1042" class="attr">multi_instance</text>
-
-  <!-- SpecValue (}π) -->
-  <rect x="340" y="720" width="200" height="130" class="entity" rx="6"/>
-  <rect x="340" y="720" width="200" height="30" fill="#9c27b0" rx="6"/>
-  <text x="440" y="740" text-anchor="middle" class="entity-title" fill="white">SpecValue</text>
-  <text x="355" y="765" class="entity-type">ƒ<<}(ûã
-	</text>
-  <line x1="340" y1="770" x2="540" y2="770" stroke="#dee2e6"/>
-  <text x="355" y="790" class="attr attr-key">id</text>
-  <text x="355" y="808" class="attr">owner_type / owner_id</text>
-  <text x="355" y="826" class="attr">spec_code / value</text>
-  <text x="355" y="844" class="attr">unit</text>
+  <rect x="400" y="590" width="200" height="150" rx="6" fill="#bbf7d0" stroke="#16a34a" stroke-width="2"/>
+  <text x="500" y="615" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#166534">PartClass</text>
+  <text x="500" y="635" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#22c55e">Part Class</text>
+  <line x1="400" y1="650" x2="600" y2="650" stroke="#86efac" stroke-width="1"/>
+  <text x="415" y="665" font-family="Arial, sans-serif" font-size="9" fill="#64748b">id, code, name</text>
+  <text x="415" y="678" font-family="Arial, sans-serif" font-size="9" fill="#64748b">product_class_id</text>
+  <text x="415" y="691" font-family="Arial, sans-serif" font-size="9" fill="#64748b">selection_policy</text>
+  <text x="415" y="704" font-family="Arial, sans-serif" font-size="9" fill="#64748b">min_qty, max_qty</text>
+  <text x="415" y="717" font-family="Arial, sans-serif" font-size="9" fill="#64748b">multi_instance</text>
+  <text x="415" y="730" font-family="Arial, sans-serif" font-size="9" fill="#64748b">e.g. cpu, drive, memory</text>
 
   <!-- Part -->
-  <rect x="340" y="880" width="220" height="180" class="entity" rx="6"/>
-  <rect x="340" y="880" width="220" height="30" fill="#388e3c" rx="6"/>
-  <text x="450" y="900" text-anchor="middle" class="entity-title" fill="white">Part</text>
-  <text x="355" y="925" class="entity-type">ËˆPartClassûã	</text>
-  <line x1="340" y1="930" x2="560" y2="930" stroke="#dee2e6"/>
-  <text x="355" y="950" class="attr attr-key">id / code</text>
-  <text x="355" y="968" class="attr">part_class_id</text>
-  <text x="355" y="986" class="attr">name / status</text>
-  <text x="355" y="1004" class="attr">price</text>
-  <text x="355" y="1022" class="attr attr-key">SpecValue 1:N</text>
-  <text x="355" y="1042" class="attr" fill="#6c757d">ê Part	˙	ƒ<<</text>
-  <text x="355" y="1058" class="attr" fill="#6c757d">ê ProductClass_	ƒ<<</text>
+  <rect x="720" y="590" width="200" height="150" rx="6" fill="#bbf7d0" stroke="#16a34a" stroke-width="2"/>
+  <text x="820" y="615" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#166534">Part</text>
+  <text x="820" y="635" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#22c55e">Part</text>
+  <line x1="720" y1="650" x2="920" y2="650" stroke="#86efac" stroke-width="1"/>
+  <text x="735" y="665" font-family="Arial, sans-serif" font-size="9" fill="#64748b">id, code, name</text>
+  <text x="735" y="678" font-family="Arial, sans-serif" font-size="9" fill="#64748b">part_class_id</text>
+  <text x="735" y="691" font-family="Arial, sans-serif" font-size="9" fill="#64748b">status, price</text>
+  <text x="735" y="704" font-family="Arial, sans-serif" font-size="9" fill="#64748b">e.g. cpu1, sd1, md1</text>
+
+  <!-- SpecValue -->
+  <rect x="1040" y="590" width="200" height="130" rx="6" fill="#bbf7d0" stroke="#16a34a" stroke-width="2"/>
+  <text x="1140" y="615" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#166534">SpecValue</text>
+  <text x="1140" y="635" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#22c55e">Spec Value</text>
+  <line x1="1040" y1="650" x2="1240" y2="650" stroke="#86efac" stroke-width="1"/>
+  <text x="1055" y="665" font-family="Arial, sans-serif" font-size="9" fill="#64748b">id</text>
+  <text x="1055" y="678" font-family="Arial, sans-serif" font-size="9" fill="#64748b">owner_type (ProductClass/Part)</text>
+  <text x="1055" y="691" font-family="Arial, sans-serif" font-size="9" fill="#64748b">owner_id</text>
+  <text x="1055" y="704" font-family="Arial, sans-serif" font-size="9" fill="#64748b">spec_code, value, unit</text>
+
+  <!-- L2 Core Relations -->
+  <!-- ProductClass -> PartClass -->
+  <path d="M280,655 L400,655" stroke="#16a34a" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
+  <text x="340" y="650" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#16a34a">contains (1:N)</text>
+
+  <!-- ProductClass -> SpecValue -->
+  <path d="M280,590 L1040,590" stroke="#16a34a" stroke-width="2" fill="none" stroke-dasharray="4,2"/>
+  <text x="660" y="585" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#16a34a">has (Product-Class Spec)</text>
+
+  <!-- PartClass -> Part -->
+  <path d="M500,740 L720,740" stroke="#16a34a" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
+  <text x="610" y="735" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#16a34a">hasPart (1:N)</text>
+
+  <!-- Part -> SpecValue -->
+  <path d="M920,655 L1040,655" stroke="#16a34a" stroke-width="2" fill="none" stroke-dasharray="4,2"/>
+  <text x="980" y="650" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#16a34a">has (Part Spec)</text>
+
+  <!-- ========== ProductInstance Layer ========== -->
+  <rect x="50" y="820" width="1300" height="780" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="70" y="845" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#92400e">
+    ProductInstance Layer (Sellable Product Instances with Cutting Semantics)
+  </text>
 
   <!-- ProductInstance -->
-  <rect x="700" y="720" width="240" height="150" class="entity" rx="6"/>
-  <rect x="700" y="720" width="240" height="30" fill="#388e3c" rx="6"/>
-  <text x="820" y="740" text-anchor="middle" class="entity-title" fill="white">ProductInstance</text>
-  <text x="715" y="765" class="entity-type">Ô.ß¡ûãS1110/S22	</text>
-  <line x1="700" y1="770" x2="940" y2="770" stroke="#dee2e6"/>
-  <text x="715" y="790" class="attr attr-key">id / code / version</text>
-  <text x="715" y="808" class="attr">name / market</text>
-  <text x="715" y="826" class="attr">status</text>
-  <text x="715" y="844" class="attr">ê realizes ProductClass</text>
+  <rect x="80" y="880" width="240" height="160" rx="6" fill="#fde68a" stroke="#d97706" stroke-width="2"/>
+  <text x="200" y="905" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#92400e">ProductInstance</text>
+  <text x="200" y="925" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#b45309">Sellable Product (built-in version)</text>
+  <line x1="80" y1="940" x2="320" y2="940" stroke="#fcd34d" stroke-width="1"/>
+  <text x="95" y="955" font-family="Arial, sans-serif" font-size="9" fill="#64748b">id, code, name</text>
+  <text x="95" y="968" font-family="Arial, sans-serif" font-size="9" fill="#64748b">version (built-in)</text>
+  <text x="95" y="981" font-family="Arial, sans-serif" font-size="9" fill="#64748b">market</text>
+  <text x="95" y="994" font-family="Arial, sans-serif" font-size="9" fill="#64748b">positioning</text>
+  <text x="95" y="1007" font-family="Arial, sans-serif" font-size="9" fill="#64748b">status</text>
+  <text x="95" y="1020" font-family="Arial, sans-serif" font-size="9" fill="#b45309">e.g. S1110, S22</text>
 
   <!-- SpecOverride -->
-  <rect x="700" y="900" width="240" height="130" class="entity" rx="6"/>
-  <rect x="700" y="900" width="240" height="30" fill="#e91e63" rx="6"/>
-  <text x="820" y="920" text-anchor="middle" class="entity-title" fill="white">SpecOverride</text>
-  <text x="715" y="945" class="entity-type">ƒ<Ü÷¯˘é˙øÑÓ	</text>
-  <line x1="700" y1="950" x2="940" y2="950" stroke="#dee2e6"/>
-  <text x="715" y="970" class="attr attr-key">id</text>
-  <text x="715" y="988" class="attr">product_instance_id</text>
-  <text x="715" y="1006" class="attr">spec_code</text>
-  <text x="715" y="1024" class="attr">override_value</text>
+  <rect x="380" y="880" width="220" height="110" rx="6" fill="#fde68a" stroke="#d97706" stroke-width="2"/>
+  <text x="490" y="905" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#92400e">SpecOverride</text>
+  <text x="490" y="925" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#b45309">Spec Override</text>
+  <line x1="380" y1="940" x2="600" y2="940" stroke="#fcd34d" stroke-width="1"/>
+  <text x="395" y="955" font-family="Arial, sans-serif" font-size="9" fill="#64748b">id</text>
+  <text x="395" y="968" font-family="Arial, sans-serif" font-size="9" fill="#64748b">product_instance_id</text>
+  <text x="395" y="981" font-family="Arial, sans-serif" font-size="9" fill="#64748b">spec_code, override_value</text>
+  <text x="395" y="994" font-family="Arial, sans-serif" font-size="9" fill="#64748b">reason</text>
 
-  <!-- offersPart π^'Ù -->
-  <rect x="990" y="720" width="370" height="310" class="legend-box" rx="6"/>
-  <text x="1010" y="745" class="legend-title">ProductInstance í Part (offersPart)</text>
-  <text x="1010" y="770" class="attr">¡jπ:&Â^'</text>
-  <text x="1010" y="795" class="attr">" enabled: true/false  /(/Å(</text>
-  <text x="1010" y="815" class="attr">" defaultSelected: ÿ§	-</text>
-  <text x="1010" y="835" class="attr">" minQty / maxQty: pœπL</text>
-  <text x="1010" y="855" class="attr">" fixed: /&˙öÔ9</text>
+  <!-- ProductInstance -> SpecOverride -->
+  <path d="M320,930 L380,930" stroke="#d97706" stroke-width="2" fill="none" marker-end="url(#arrowOrange)"/>
+  <text x="350" y="925" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#d97706">overrides</text>
 
-  <line x1="1010" y1="880" x2="1340" y2="880" stroke="#dee2e6"/>
+  <!-- ProductInstance -> ProductClass (realizes) -->
+  <path d="M200,880 L200,770 L180,770" stroke="#16a34a" stroke-width="2" fill="none"/>
+  <path d="M180,770 L80,770 L80,710" stroke="#16a34a" stroke-width="2" fill="none"/>
+  <path d="M80,710 L80,670" stroke="#16a34a" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
+  <text x="100" y="755" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#16a34a">realizes</text>
 
-  <text x="1010" y="905" class="legend-title">SpecDefinition í SpecValue í SpecOverride</text>
-  <text x="1010" y="930" class="attr spec-link" stroke="#9c27b0"> SpecDefinition: ƒ<öI</text>
-  <text x="1010" y="955" class="attr" fill="#6c757d">  öI code/data_type/unit/value_domain</text>
-  <text x="1010" y="980" class="attr" fill="#e91e63"> SpecOverride: ƒ<Ü÷</text>
-  <text x="1010" y="1005" class="attr" fill="#6c757d">  ProductInstance Ü÷˙ø SpecValue</text>
-  <text x="1010" y="1030" fill="#6c757d" class="attr">ã: S22 :6 FormFactor=4U</text>
-  <text x="1010" y="1055" fill="#6c757d" class="attr">    Ü÷˙ø SERVER_X86 Ñ FormFactor=2U</text>
+  <!-- offersPart area -->
+  <rect x="650" y="870" width="680" height="200" rx="6" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="670" y="895" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#854d0e">offersPart Cutting Semantics (N:M)</text>
 
-  <!-- L2 s˚ø -->
-  <!-- ProductClass í PartClass -->
-  <path d="M170 870 L170 900" class="relation-line"/>
-  <text x="140" y="890" class="relation-label">contains 1:N</text>
+  <!-- Part (in offersPart area) -->
+  <rect x="680" y="910" width="160" height="140" rx="5" fill="#d9f99d" stroke="#65a30d" stroke-width="1.5"/>
+  <text x="760" y="935" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#3f6212">Part</text>
+  <text x="760" y="955" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#65a30d">Part</text>
+  <line x1="680" y1="970" x2="840" y2="970" stroke="#bef264" stroke-width="1"/>
+  <text x="695" y="985" font-family="Arial, sans-serif" font-size="8" fill="#64748b">e.g. cpu1, cpu2,</text>
+  <text x="695" y="998" font-family="Arial, sans-serif" font-size="8" fill="#64748b">sd1, md1...</text>
 
-  <!-- PartClass í Part -->
-  <path d="M170 1040 L340 970" class="relation-line"/>
-  <text x="200" y="1030" class="relation-label">candidate 1:N</text>
+  <!-- ProductInstance to Part offersPart edge -->
+  <path d="M320,930 Q480,930 540,980" stroke="#ea580c" stroke-width="2" fill="none" marker-end="url(#arrowOrange)"/>
+  <text x="400" y="920" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#ea580c">offersPart</text>
 
-  <!-- Part í SpecValue -->
-  <path d="M340 970 L340 850" class="spec-link" marker-end="url(#arrow-purple)"/>
-  <text x="300" y="920" class="relation-label" fill="#9c27b0">hasSpecValue 1:N</text>
+  <!-- offersPart edge attributes box -->
+  <rect x="880" y="910" width="420" height="140" rx="5" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="900" y="935" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#b45309">offersPart Edge Attributes</text>
+  <text x="900" y="955" font-family="Arial, sans-serif" font-size="10" fill="#92400e">enabled / disabled -> enable / disable Part</text>
+  <text x="900" y="975" font-family="Arial, sans-serif" font-size="10" fill="#92400e">defaultSelected -> default selected</text>
+  <text x="900" y="995" font-family="Arial, sans-serif" font-size="10" fill="#92400e">minQty / maxQty -> quantity bounds</text>
+  <text x="900" y="1015" font-family="Arial, sans-serif" font-size="10" fill="#92400e">fixed -> not editable</text>
+  <text x="900" y="1035" font-family="Arial, sans-serif" font-size="9" fill="#dc2626">e.g. S1110 disables cpu3/cpu4, enables cpu1/cpu2</text>
 
-  <!-- ProductClass í SpecValue -->
-  <path d="M290 770 L340 770" class="spec-link"/>
-  <text x="295" y="760" class="relation-label" fill="#9c27b0">hasSpecValue 1:N</text>
+  <!-- S1110 vs S22 comparison -->
+  <rect x="680" y="1090" width="640" height="180" rx="5" fill="#fff7ed" stroke="#f97316" stroke-width="1.5"/>
+  <text x="700" y="1115" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#c2410c">S1110 vs S22 Product Instance Comparison</text>
 
-  <!-- SpecDefinition í SpecValue (Zø) -->
-  <path d="M540 800 Q590 800 590 780 Q590 760 590 770" class="spec-link" stroke-dasharray="5,3"/>
-  <text x="560" y="790" class="relation-label" fill="#9c27b0" font-size="9">definedBy</text>
+  <text x="720" y="1140" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#c2410c">S1110 Entry-Level</text>
+  <text x="720" y="1155" font-family="Arial, sans-serif" font-size="9" fill="#64748b">- realizes: SERVER_X86@1.0.0</text>
+  <text x="720" y="1170" font-family="Arial, sans-serif" font-size="9" fill="#64748b">- enabled: cpu1, cpu2, md1, md2, sd1</text>
+  <text x="720" y="1185" font-family="Arial, sans-serif" font-size="9" fill="#64748b">- excluded: cpu3, cpu4, sd2, sd3, md3</text>
+  <text x="720" y="1200" font-family="Arial, sans-serif" font-size="9" fill="#64748b">- default: cpu1, md1 (minQty=1)</text>
 
-  <!-- ProductInstance í ProductClass -->
-  <path d="M700 795 L480 795" class="relation-line"/>
-  <text x="550" y="785" class="relation-label">realizes</text>
+  <text x="980" y="1140" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#c2410c">S22 High-End</text>
+  <text x="980" y="1155" font-family="Arial, sans-serif" font-size="9" fill="#64748b">- realizes: SERVER_X86@1.0.0</text>
+  <text x="980" y="1170" font-family="Arial, sans-serif" font-size="9" fill="#64748b">- enabled: cpu2, cpu3, cpu4, sd2, sd3, md2, md3</text>
+  <text x="980" y="1185" font-family="Arial, sans-serif" font-size="9" fill="#64748b">- excluded: cpu1, sd1, md1</text>
+  <text x="980" y="1200" font-family="Arial, sans-serif" font-size="9" fill="#64748b">- default: cpu3, sd2 (minQty=1)</text>
+  <text x="980" y="1215" font-family="Arial, sans-serif" font-size="9" fill="#dc2626">- SpecOverride: FormFactor=4U (overrides baseline 2U)</text>
 
-  <!-- ProductInstance í SpecOverride -->
-  <path d="M820 870 L820 900" class="override-link"/>
-  <text x="830" y="890" class="relation-label" fill="#e91e63">overrides 1:N</text>
-
-  <!-- SpecOverride í SpecValue -->
-  <path d="M700 965 L540 850" class="override-link" stroke-dasharray="4,2"/>
-  <text x="580" y="920" class="relation-label" fill="#e91e63" font-size="9">Ü÷˛</text>
-
-  <!-- ProductInstance í Part (offersPart) -->
-  <path d="M940 795 L560 920" class="relation-line"/>
-  <text x="800" y="870" class="relation-label">offersPart N:M</text>
-
-  <defs>
-    <marker id="arrow-purple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#9c27b0"/>
-    </marker>
-  </defs>
-
-  <!-- ===================== L3 Mn–LûãB ===================== -->
-  <rect x="20" y="1500" width="1360" height="400" class="layer-bg layer-l3" rx="8"/>
-  <rect x="20" y="1500" width="1360" height="40" class="card-l3" rx="8"/>
-  <text x="40" y="1528" class="layer-label" fill="white">L3 Mn–LûãB</text>
+  <!-- ========== L3 Configuration Runtime Layer ========== -->
+  <rect x="30" y="1630" width="1340" height="520" rx="8" fill="#fdf4ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="50" y="1655" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#7e22ce">
+    L3 Configuration Runtime Layer (Runtime, executed by Configuration Engine)
+  </text>
 
   <!-- Configuration -->
-  <rect x="100" y="1570" width="280" height="180" class="entity" rx="6"/>
-  <rect x="100" y="1570" width="280" height="30" fill="#f57c00" rx="6"/>
-  <text x="240" y="1590" text-anchor="middle" class="entity-title" fill="white">Configuration</text>
-  <text x="115" y="1615" class="entity-type">MnπH !¢7Mn›	</text>
-  <line x1="100" y1="1620" x2="380" y2="1620" stroke="#dee2e6"/>
-  <text x="115" y="1640" class="attr attr-key">id</text>
-  <text x="115" y="1658" class="attr">product_instance_id</text>
-  <text x="115" y="1676" class="attr">model_snapshot</text>
-  <text x="115" y="1694" class="attr">status</text>
-  <text x="115" y="1712" class="attr">customer_context</text>
+  <rect x="80" y="1690" width="260" height="180" rx="6" fill="#e9d5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="210" y="1715" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#7e22ce">Configuration</text>
+  <text x="210" y="1735" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#a855f7">Configuration Solution</text>
+  <line x1="80" y1="1750" x2="340" y2="1750" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="95" y="1765" font-family="Arial, sans-serif" font-size="9" fill="#64748b">id</text>
+  <text x="95" y="1778" font-family="Arial, sans-serif" font-size="9" fill="#64748b">product_instance_id</text>
+  <text x="95" y="1791" font-family="Arial, sans-serif" font-size="9" fill="#64748b">model_snapshot</text>
+  <text x="95" y="1804" font-family="Arial, sans-serif" font-size="9" fill="#64748b">status</text>
+  <text x="95" y="1817" font-family="Arial, sans-serif" font-size="9" fill="#64748b">customer_context</text>
+  <text x="95" y="1830" font-family="Arial, sans-serif" font-size="9" fill="#a855f7">e.g. CFG-001</text>
 
   <!-- ConfiguredPart -->
-  <rect x="500" y="1570" width="280" height="180" class="entity" rx="6"/>
-  <rect x="500" y="1570" width="280" height="30" fill="#f57c00" rx="6"/>
-  <text x="640" y="1590" text-anchor="middle" class="entity-title" fill="white">ConfiguredPart</text>
-  <text x="515" y="1615" class="entity-type">Ú	ËˆPartInstïq	</text>
-  <line x1="500" y1="1620" x2="780" y2="1620" stroke="#dee2e6"/>
-  <text x="515" y="1640" class="attr attr-key">configuration_id</text>
-  <text x="515" y="1658" class="attr">part_id / part_code</text>
-  <text x="515" y="1676" class="attr">instance_no / quantity</text>
-  <text x="515" y="1694" class="attr">selected / hidden</text>
-  <text x="515" y="1712" class="attr">reason</text>
+  <rect x="480" y="1690" width="240" height="180" rx="6" fill="#e9d5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="600" y="1715" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#7e22ce">ConfiguredPart</text>
+  <text x="600" y="1735" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#a855f7">Selected Part</text>
+  <line x1="480" y1="1750" x2="720" y2="1750" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="495" y="1765" font-family="Arial, sans-serif" font-size="9" fill="#64748b">id</text>
+  <text x="495" y="1778" font-family="Arial, sans-serif" font-size="9" fill="#64748b">configuration_id</text>
+  <text x="495" y="1791" font-family="Arial, sans-serif" font-size="9" fill="#64748b">part_id</text>
+  <text x="495" y="1804" font-family="Arial, sans-serif" font-size="9" fill="#64748b">quantity</text>
+  <text x="495" y="1817" font-family="Arial, sans-serif" font-size="9" fill="#64748b">selected, reason</text>
+  <text x="495" y="1830" font-family="Arial, sans-serif" font-size="9" fill="#a855f7">e.g. cpu2 x2, md1 x5</text>
 
   <!-- ConfiguredValue -->
-  <rect x="100" y="1790" width="280" height="130" class="entity" rx="6"/>
-  <rect x="100" y="1790" width="280" height="30" fill="#f57c00" rx="6"/>
-  <text x="240" y="1810" text-anchor="middle" class="entity-title" fill="white">ConfiguredValue</text>
-  <text x="115" y="1835" class="entity-type">Ú	¬p<(7ìeÑParameter<	</text>
-  <line x1="100" y1="1840" x2="380" y2="1840" stroke="#dee2e6"/>
-  <text x="115" y="1860" class="attr attr-key">configuration_id</text>
-  <text x="115" y="1878" class="attr">parameter_code / part_class</text>
-  <text x="115" y="1896" class="attr">value / filter / source</text>
+  <rect x="860" y="1690" width="240" height="160" rx="6" fill="#e9d5ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="980" y="1715" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#7e22ce">ConfiguredValue</text>
+  <text x="980" y="1735" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#a855f7">Selected Parameter Value</text>
+  <line x1="860" y1="1750" x2="1100" y2="1750" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="875" y="1765" font-family="Arial, sans-serif" font-size="9" fill="#64748b">id</text>
+  <text x="875" y="1778" font-family="Arial, sans-serif" font-size="9" fill="#64748b">configuration_id</text>
+  <text x="875" y="1791" font-family="Arial, sans-serif" font-size="9" fill="#64748b">parameter_code</text>
+  <text x="875" y="1804" font-family="Arial, sans-serif" font-size="9" fill="#64748b">value, filter</text>
+  <text x="875" y="1817" font-family="Arial, sans-serif" font-size="9" fill="#64748b">source</text>
 
-  <!-- Artifacts -->
-  <rect x="500" y="1790" width="280" height="130" class="entity" rx="6"/>
-  <rect x="500" y="1790" width="280" height="30" fill="#f57c00" rx="6"/>
-  <text x="640" y="1810" text-anchor="middle" class="entity-title" fill="white">ConfigurationArtifact</text>
-  <text x="515" y="1835" class="entity-type">8ßiBOM/•˜/§ÿƒ<	</text>
-  <line x1="500" y1="1840" x2="780" y2="1840" stroke="#dee2e6"/>
-  <text x="515" y="1860" class="attr">bom (iôU)</text>
-  <text x="515" y="1878" class="attr">price (•˜)</text>
-  <text x="515" y="1896" class="attr">delivery_spec (§ÿƒ<)</text>
+  <!-- Part (referenced in L3) -->
+  <rect x="1150" y="1690" width="180" height="100" rx="5" fill="#d9f99d" stroke="#65a30d" stroke-width="1.5"/>
+  <text x="1240" y="1715" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#3f6212">Part</text>
+  <text x="1240" y="1735" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#65a30d">Part</text>
+  <line x1="1150" y1="1750" x2="1330" y2="1750" stroke="#bef264" stroke-width="1"/>
+  <text x="1165" y="1765" font-family="Arial, sans-serif" font-size="8" fill="#64748b">refers to L2 Part</text>
 
-  <!-- L3 s˚ø -->
-  <path d="M380 1660 L500 1660" class="relation-line"/>
-  <text x="420" y="1650" class="relation-label">selects 1:N</text>
+  <!-- L3 Relations -->
+  <!-- Configuration -> ConfiguredPart -->
+  <path d="M340,1780 L480,1780" stroke="#9333ea" stroke-width="2" fill="none" marker-end="url(#arrowPurple)"/>
+  <text x="410" y="1775" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#9333ea">selects</text>
 
-  <path d="M240 1750 L240 1790" class="relation-line"/>
-  <text x="200" y="1770" class="relation-label">input 1:N</text>
+  <!-- Configuration -> ConfiguredValue -->
+  <path d="M340,1720 L860,1720" stroke="#9333ea" stroke-width="2" fill="none" stroke-dasharray="4,2"/>
+  <text x="600" y="1715" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#9333ea">hasConfiguredValue</text>
 
-  <path d="M640 1750 L640 1790" class="relation-line"/>
-  <text x="660" y="1770" class="relation-label">produces</text>
+  <!-- ConfiguredPart -> Part -->
+  <path d="M720,1780 L1150,1780" stroke="#65a30d" stroke-width="2" fill="none" stroke-dasharray="4,2"/>
+  <text x="935" y="1775" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#65a30d">references</text>
 
-  <!-- ===================== BßÙs˚ ===================== -->
-  <!-- L1 í L2 Ë -->
-  <path d="M200 650 L200 720" stroke="#495057" stroke-width="2" stroke-dasharray="8,4"/>
-  <text x="210" y="690" fill="#495057" font-size="11">instantiate</text>
+  <!-- Configuration produces artifacts -->
+  <rect x="400" y="1900" width="600" height="220" rx="6" fill="#fdf2f8" stroke="#ec4899" stroke-width="2"/>
+  <text x="420" y="1925" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#be185d">Configuration produces Downstream Artifacts</text>
 
-  <!-- L2 í L3 Ë -->
-  <path d="M900 870 L900 1500" stroke="#495057" stroke-width="2" stroke-dasharray="8,4"/>
-  <text x="910" y="1180" fill="#495057" font-size="11">configure</text>
+  <text x="430" y="1955" font-family="Arial, sans-serif" font-size="11" fill="#9d174d">BOM (Bill of Materials)</text>
+  <text x="430" y="1975" font-family="Arial, sans-serif" font-size="10" fill="#64748b">- cpu2 x2 -&gt; $400</text>
+  <text x="430" y="1990" font-family="Arial, sans-serif" font-size="10" fill="#64748b">- md1 x5 -&gt; $150</text>
 
-  <!-- ===================== ˛ã ===================== -->
-  <rect x="1020" y="1570" width="340" height="350" class="legend-box" rx="6"/>
-  <text x="1040" y="1595" class="legend-title">úrs˚˛ã</text>
-  <line x1="1040" y1="1610" x2="1080" y2="1610" stroke="#343a40" stroke-width="2"/>
-  <text x="1090" y="1615" class="attr">1:1 s˚</text>
-  <line x1="1040" y1="1635" x2="1080" y2="1635" stroke="#343a40" stroke-width="2"/>
-  <polygon points="1080,1632 1088,1635 1080,1638" fill="#343a40"/>
-  <text x="1090" y="1640" class="attr">N:1 / 1:N / N:M s˚</text>
-  <line x1="1040" y1="1660" x2="1080" y2="1660" stroke="#495057" stroke-width="2" stroke-dasharray="8,4"/>
-  <text x="1090" y="1665" class="attr">Bßlb (instantiate/configure)</text>
+  <text x="650" y="1955" font-family="Arial, sans-serif" font-size="11" fill="#9d174d">Quotation</text>
+  <text x="650" y="1975" font-family="Arial, sans-serif" font-size="10" fill="#64748b">- $550 (tax incl.)</text>
 
-  <line x1="1040" y1="1690" x2="1080" y2="1690" stroke="#9c27b0" stroke-width="2" stroke-dasharray="5,3"/>
-  <text x="1090" y="1695" class="attr" fill="#9c27b0">SpecDefinition í SpecValue ˛Ô</text>
+  <text x="430" y="2015" font-family="Arial, sans-serif" font-size="11" fill="#9d174d">Sales Spec</text>
+  <text x="430" y="2035" font-family="Arial, sans-serif" font-size="10" fill="#64748b">- 4-core CPU, 512GB RAM, 5TB HDD</text>
 
-  <line x1="1040" y1="1715" x2="1080" y2="1715" stroke="#e91e63" stroke-width="2"/>
-  <text x="1090" y="1720" class="attr" fill="#e91e63">SpecOverride Ü÷˛Ô</text>
+  <text x="650" y="2015" font-family="Arial, sans-serif" font-size="11" fill="#9d174d">Delivery Spec</text>
+  <text x="650" y="2035" font-family="Arial, sans-serif" font-size="10" fill="#64748b">- 7-day delivery, std package</text>
 
-  <line x1="1040" y1="1745" x2="1340" y2="1745" stroke="#dee2e6"/>
+  <!-- ========== Inter-Layer Connections ========== -->
+  <!-- L1 -> L2 -->
+  <path d="M700,510 L700,590" stroke="#64748b" stroke-width="1.5" fill="none" stroke-dasharray="6,3"/>
+  <text x="720" y="550" font-family="Arial, sans-serif" font-size="10" fill="#64748b">instantiate</text>
 
-  <rect x="1040" y="1760" width="30" height="20" fill="#1976d2" rx="3"/>
-  <text x="1080" y="1775" class="attr">L1 °C!ã</text>
-  <rect x="1040" y="1790" width="30" height="20" fill="#388e3c" rx="3"/>
-  <text x="1080" y="1805" class="attr">L2 °˘aûã</text>
-  <rect x="1040" y="1820" width="30" height="20" fill="#f57c00" rx="3"/>
-  <text x="1080" y="1835" class="attr">L3 Mn–Lûã</text>
-  <rect x="1040" y="1850" width="30" height="20" fill="#9c27b0" rx="3"/>
-  <text x="1080" y="1865" class="attr">ƒ<< SpecValue</text>
-  <rect x="1040" y="1880" width="30" height="20" fill="#e91e63" rx="3"/>
-  <text x="1080" y="1895" class="attr">ƒ<Ü÷ SpecOverride</text>
+  <!-- L2 -> L3 -->
+  <path d="M700,1630 L700,1690" stroke="#64748b" stroke-width="1.5" fill="none" stroke-dasharray="6,3"/>
+  <text x="720" y="1660" font-family="Arial, sans-serif" font-size="10" fill="#64748b">configure</text>
 
-  <!-- ===================== u ===================== -->
-  <text x="700" y="2350" text-anchor="middle" font-size="12" fill="#6c757d">
-    Bß¡Mnhpn!ã ER ˛ | ˛ 1.5 | v1.2
+  <!-- ========== Legend ========== -->
+  <rect x="30" y="2140" width="1340" height="220" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1"/>
+  <text x="50" y="2165" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#475569">Legend</text>
+
+  <!-- Legend: Entities -->
+  <rect x="50" y="2180" width="18" height="14" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="75" y="2192" font-family="Arial, sans-serif" font-size="10" fill="#64748b">L1 Meta-Model (ProductClassType, PartClassType, SpecDefinition, Parameter)</text>
+
+  <rect x="50" y="2200" width="18" height="14" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="75" y="2212" font-family="Arial, sans-serif" font-size="10" fill="#64748b">L2 Instances (ProductClass, PartClass, Part, SpecValue)</text>
+
+  <rect x="50" y="2220" width="18" height="14" fill="#fde68a" stroke="#d97706" stroke-width="1.5"/>
+  <text x="75" y="2232" font-family="Arial, sans-serif" font-size="10" fill="#64748b">ProductInstance Sellable Instance (built-in version)</text>
+
+  <rect x="50" y="2240" width="18" height="14" fill="#e9d5ff" stroke="#9333ea" stroke-width="1.5"/>
+  <text x="75" y="2252" font-family="Arial, sans-serif" font-size="10" fill="#64748b">L3 Runtime (Configuration, ConfiguredPart, ConfiguredValue)</text>
+
+  <!-- Legend: Relations -->
+  <line x1="650" y1="2187" x2="680" y2="2187" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowBlue)"/>
+  <text x="690" y="2192" font-family="Arial, sans-serif" font-size="10" fill="#64748b">hasSpec / composedOf</text>
+
+  <line x1="650" y1="2207" x2="680" y2="2207" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowGreen)"/>
+  <text x="690" y="2212" font-family="Arial, sans-serif" font-size="10" fill="#64748b">contains / hasPart</text>
+
+  <line x1="650" y1="2227" x2="680" y2="2227" stroke="#ea580c" stroke-width="2" marker-end="url(#arrowOrange)"/>
+  <text x="690" y="2232" font-family="Arial, sans-serif" font-size="10" fill="#ea580c">offersPart (Cutting Edge)</text>
+
+  <line x1="650" y1="2247" x2="680" y2="2247" stroke="#9333ea" stroke-width="2" marker-end="url(#arrowPurple)"/>
+  <text x="690" y="2252" font-family="Arial, sans-serif" font-size="10" fill="#64748b">selects / hasConfiguredValue</text>
+
+  <line x1="900" y1="2207" x2="930" y2="2207" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="940" y="2212" font-family="Arial, sans-serif" font-size="10" fill="#64748b">Indirect / Reference</text>
+
+  <!-- Version info -->
+  <text x="1350" y="2350" text-anchor="end" font-family="Arial, sans-serif" font-size="9" fill="#94a3b8">
+    Doc Version: v1.1 | Complex Product Configurator Data Model
   </text>
 </svg>
