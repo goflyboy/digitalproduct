@@ -1,12 +1,14 @@
 # Microsoft Fabric IQ 复杂产品配置器语义建模验证操作指南
 
-> **用途**：在 Microsoft Fabric IQ 中，对 [`复杂产品配置器的数据模型.md`](./复杂产品配置器的数据模型.md) 和 [`Palantir范式复杂产品配置器语义建模方案.md`](./Palantir范式复杂产品配置器语义建模方案.md) 做一套可重复的 PoC 验证。
+> **用途**：在 Microsoft Fabric IQ 中，对 [`复杂产品配置器的数据模型.md`](./复杂产品配置器的数据模型.md) v1.4 做一套可重复的 PoC 验证。
 >
 > **适用版本**：Microsoft Fabric IQ / Ontology（当前官方文档仍标注为 Preview；界面和能力可能变化）。
 >
-> **文档版本**：v1.0
+> **文档版本**：v1.1
 >
-> **编写日期**：2026-07-28
+> **编写日期**：2026-07-29
+>
+> **数据模型版本**：复杂产品配置器数据模型 v1.4（简化两层模型：业务建模层 + 产品实例化层，去掉 ProductClassType/PartClassType）
 >
 > **验证方式**：OneLake Lakehouse + Ontology（Preview）+ Fabric Graph + Fabric Data Agent；配置约束扩展使用 Fabric Activator / Operations Agent。
 
@@ -14,21 +16,35 @@
 
 ## 1. 先看结论：这次验证要证明什么
 
-原方案不是一份可以直接导入 Fabric IQ 的 JSON Schema。它是一套 Palantir 风格的**业务语义设计**，需要先转换为 Fabric IQ 能消费的三类资源：
+原方案（v1.4）不是一份可以直接导入 Fabric IQ 的 JSON Schema。它是一套 **业务语义设计**（简化两层模型），需要先转换为 Fabric IQ 能消费的两类资源：
 
 1. **OneLake 中的托管表**：承载对象实例和关系映射数据。
 2. **Ontology item**：承载 Entity Type、Property、Entity Type Key、Relationship Type 和数据绑定。
 3. **Graph / Agent / Activator**：分别验证多跳关系，自然语言查询和配置约束触发。
 
+### 1.0 v1.4 关键模型变更（必读）
+
+**与上一版本的主要差异**：v1.4 简化了元模型，从三层（ProductClassType → ProductClass → PartClass → Part → ProductInstance）简化为两层（业务建模层 + 产品实例化层），去掉了 ProductClassType 和 PartClassType。
+
+| 变更维度 | 旧版本（v1.0参考） | v1.4 新模型 |
+|---------|-------------------|-------------|
+| 元模型层 | ProductClassType / PartClassType（显式） | **去掉**，直接业务建模 |
+| 规格定义位置 | PartClassType 上 | ProductClass 或 PartClass 上 |
+| ProductClass 规格值 | 无 | 有 SpecValue（如 FormFactor=2U） |
+| Specification definedOn | PART_CLASS_TYPE | PRODUCT_CLASS / PART_CLASS |
+| Parameter definedOn | PART_CLASS_TYPE | PRODUCT_CLASS / PART_CLASS |
+| Entity Type 数 | 14 个 | 约 12 个 |
+| 表数量 | 14 张（含 type 表） | 约 12 张（去掉 type 表） |
+
 本指南的最终验收结果不是"画出一张图"，而是下面 8 个能力都能用样例数据复现：
 
-|| 验收编号 | 原方案能力 | Fabric IQ 验证结果 |
+| 验收编号 | 原方案能力 | Fabric IQ 验证结果 |
 |---|---|---|
-| A1 | ObjectType 一等公民 | Ontology 中存在 ProductClass、PartClass、Part、ProductInstance、Configuration 等 Entity Type，并能看到实例 |
+| A1 | ObjectType 一等公民 | Ontology 中存在 ProductClass、PartClass、Part、ProductInstance、Specification 等 Entity Type，并能看到实例 |
 | A2 | LinkType 一等公民 | Ontology 中存在方向明确的 Relationship Type，并能在 Graph 中遍历；特别是 `OFFERS_PART` 边属性（enabled/disabled/minQty/maxQty） |
-| A3 | 三层业务模型 | L1元模型（ProductClassType/PartClassType/SpecDefinition/Parameter）、L2业务对象（ProductClass/PartClass/Part/ProductInstance）、L3配置运行（Configuration/ConfiguredPart）均有可查询实体 |
+| A3 | 两层业务模型 | L1业务对象（ProductClass/PartClass/Part/ProductInstance）、L2配置运行（Configuration/ConfiguredPart）均有可查询实体 |
 | A4 | Backing Datasource | Entity Type 和 Relationship Type 均能追溯到 OneLake Lakehouse 表 |
-| A5 | SpecDefinition + SpecValue 规格体系 | 产品/部件的固有规格定义与持有值分离；Part 持有 SpecValue |
+| A5 | SpecDefinition + SpecValue 规格体系 | ProductClass 和 Part 都有 SpecValue；规格定义在 ProductClass 或 PartClass 上 |
 | A6 | offersPart 裁剪语义 | 能从 ProductInstance 查询到 Part，并验证 enabled/disabled/minQty/maxQty 裁剪属性 |
 | A7 | Agent 消费 | Fabric Data Agent 能用业务术语回答产品配置、价格查询问题，并引用 Ontology 中的实体关系 |
 | A8 | Action / Operationalization | Activator 或 Operations Agent 能检测配置约束冲突并发出通知；不把它误认为完整的 Palantir Action Type 注册中心 |
@@ -37,7 +53,7 @@
 
 不要一开始就创建全部实体和关系。建议按以下闸门推进：
 
-```text
+```
 数据准备 → Ontology 骨架 → 核心实体 → 静态绑定 → 核心关系
     → Graph 单跳/多跳 → 扩展实体 → Agent → Activator → 权限与成本检查
 ```
@@ -50,14 +66,14 @@
 
 原方案中的某些概念不能原样当作 Fabric IQ 的原生能力：
 
-|| 原方案概念 | 本指南的 Fabric IQ 落地方式 | 验证边界 |
+| 原方案概念 | 本指南的 Fabric IQ 落地方式 | 验证边界 |
 |---|---|---|
 | ObjectType | Entity Type | 直接支持 |
 | Object Instance | Entity Instance | 绑定静态表后支持 |
 | LinkType | Relationship Type | 方向和两端键通过映射表定义 |
 | offersPart 边属性 | 沉淀为 `ProductInstancePartOffer` 桥接实体的属性 | enabled/disabled/minQty/maxQty/fixed 承载在桥接表列 |
-| SpecDefinition + SpecValue | `SpecDefinition` Entity + `SpecValue` Entity + `PartHasSpecValue` 关系 | Part 持有 SpecValue |
-| Parameter | `Parameter` Entity + `PartClassHasParameter` 关系 | 参数定义在 PartClass 上 |
+| SpecDefinition + SpecValue | `SpecDefinition` Entity + `SpecValue` Entity + `PartHasSpecValue` 关系 | ProductClass 和 Part 都有 SpecValue |
+| Parameter | `Parameter` Entity + `ProductClassHasParameter` / `PartClassHasParameter` 关系 | 参数定义在 ProductClass 或 PartClass 上 |
 | SpecOverride | `SpecOverride` Entity + `ProductInstanceOverridesSpec` 关系 | ProductInstance 覆盖基线规格 |
 | Configuration | `Configuration` Entity + `selectsPart` / `hasConfiguredValue` 关系 | 配置方案驱动求解 |
 | Backing Datasource | OneLake managed Lakehouse 表绑定 | 不是任意外部数据库联邦 |
@@ -72,7 +88,7 @@
 
 ### 2.1 必备资源与角色
 
-|| 资源 | 是否必须 | 说明 |
+| 资源 | 是否必须 | 说明 |
 |---|---|---|
 | Microsoft Fabric 租户 | 是 | 需要 Fabric-enabled capacity（如 F2 或更高）。试用版可在 `https://app.fabric.microsoft.com` 申请 |
 | Workspace（不是 *My workspace*） | 是 | 所有 Ontology 资源必须放在普通 Workspace；`My workspace` 不支持生成或绑定 |
@@ -90,7 +106,7 @@ Tenant 设置必须开启以下几项（在 Admin Portal → Tenant settings）�
 
 Workspace 角色要求：
 
-|| 角色 | 工作内容 |
+| 角色 | 工作内容 |
 |---|
 | Workspace Admin | 第一次引导时一次性配置 |
 | Contributor | 创建 Ontology、Lakehouse、Graph、Agent、Activator |
@@ -128,17 +144,15 @@ Workspace 角色要求：
 
 Fabric IQ 的 Ontology 只能绑定 OneLake 中的表。第一步就是按 Entity Type 与 Relationship Type 的语义，在 Lakehouse 中建立**扁平关系型 schema**。所有映射字段必须遵循 Fabric 限制：列名以字母数字开头并结束，仅含 `A-Z`、`a-z`、`0-9`、`-`、`_`；不出现 `,`、`;`、`{}`、`()`、空格、`=`、换行等触发 column mapping 的字符。
 
-### 3.1 表清单与命名映射
+### 3.1 表清单与命名映射（v1.4 简化两层模型）
 
-下表把原方案中的核心 ObjectType 映射到 OneLake 表：
+下表把原方案中的核心实体映射到 OneLake 表（v1.4 去掉了 ProductClassType 和 PartClassType）：
 
-|| 表名 | 对应原方案 | OneLake schema | 用途 |
+| 表名 | 对应原方案 | OneLake schema | 用途 |
 |---|---|---|---|
-| `product_class_type` | OT_PRODUCT_CLASS_TYPE | ontology | 产品类类型定义 |
-| `part_class_type` | OT_PART_CLASS_TYPE | ontology | 部件类类型定义 |
-| `spec_definition` | OT_SPEC_DEFINITION | ontology | 规格定义 |
-| `parameter` | OT_PARAMETER | ontology | 参数定义 |
-| `product_class` | OT_PRODUCT_CLASS | ontology | 产品类实例（含 version） |
+| `spec_definition` | OT_SPEC_DEFINITION | ontology | 规格定义（在 ProductClass 或 PartClass 上） |
+| `parameter` | OT_PARAMETER | ontology | 参数定义（在 ProductClass 或 PartClass 上） |
+| `product_class` | OT_PRODUCT_CLASS | ontology | 产品类实例（含 version 和产品类 SpecValue） |
 | `part_class` | OT_PART_CLASS | ontology | 部件分类实例 |
 | `part` | OT_PART | ontology | 部件实例 |
 | `spec_value` | OT_SPEC_VALUE | ontology | 规格值（挂在 ProductClass 或 Part 上） |
@@ -149,9 +163,9 @@ Fabric IQ 的 Ontology 只能绑定 OneLake 中的表。第一步就是按 Entit
 | `configured_part` | OT_CONFIGURED_PART | ontology | 已选部件 |
 | `configured_value` | OT_CONFIGURED_VALUE | ontology | 已选参数值 |
 
-> **关键设计**：`offersPart` 的边属性（enabled/disabled/minQty/maxQty/fixed）不直接挂在边上，而是沉淀到 `product_instance_part_offer` 桥接表。这是复杂产品配置器在 Fabric IQ 中的核心适配点。
+> **v1.4 变更**：去掉 `product_class_type` 和 `part_class_type` 表。ProductClass 自身可以持有 SpecValue（如 FormFactor=2U），规格定义和参数定义的 `defined_on_type` 改为 PRODUCT_CLASS / PART_CLASS。
 
-### 3.2 表结构（DDL）与列约定
+### 3.2 表结构（DDL）与列约定（v1.4 简化版）
 
 下面给出 Lakehouse Spark SQL 表结构。所有主键字段都用 `STRING`，符合 Entity Type Key 当前仅支持 `string` / `integer` 的限制。所有时间戳列用 `TIMESTAMP`。所有金额用 `DECIMAL(18,2)`。删除原方案中容易触发表名/列名限制的字符。
 
@@ -159,33 +173,12 @@ Fabric IQ 的 Ontology 只能绑定 OneLake 中的表。第一步就是按 Entit
 CREATE SCHEMA IF NOT EXISTS ontology;
 USE SCHEMA ontology;
 
--- 产品类类型
-CREATE TABLE IF NOT EXISTS product_class_type (
-    type_code          STRING  NOT NULL,
-    type_name          STRING  NOT NULL,
-    domain             STRING,
-    modeling_policy    STRING,
-    description        STRING,
-    PRIMARY KEY (type_code) DISABLE NOVALIDATE
-) USING DELTA;
-
--- 部件类类型
-CREATE TABLE IF NOT EXISTS part_class_type (
-    type_code          STRING  NOT NULL,
-    type_name          STRING  NOT NULL,
-    part_kind          STRING,
-    selection_policy   STRING,
-    min_cardinality    INT,
-    max_cardinality    INT,
-    multi_instance     BOOLEAN,
-    PRIMARY KEY (type_code) DISABLE NOVALIDATE
-) USING DELTA;
-
--- 规格定义
+-- 规格定义（v1.4: defined_on_type 改为 PRODUCT_CLASS / PART_CLASS）
 CREATE TABLE IF NOT EXISTS spec_definition (
     spec_code          STRING  NOT NULL,
     spec_name          STRING  NOT NULL,
-    defined_on_type    STRING,  -- PRODUCT_CLASS_TYPE / PART_CLASS_TYPE
+    defined_on_type    STRING,  -- PRODUCT_CLASS / PART_CLASS
+    defined_on_code    STRING,  -- ProductClass.code 或 PartClass.code
     data_type          STRING  NOT NULL,
     unit               STRING,
     value_domain       STRING,  -- JSON array: ["1U","2U","4U"]
@@ -193,11 +186,12 @@ CREATE TABLE IF NOT EXISTS spec_definition (
     PRIMARY KEY (spec_code) DISABLE NOVALIDATE
 ) USING DELTA;
 
--- 参数定义
+-- 参数定义（v1.4: defined_on_type 改为 PRODUCT_CLASS / PART_CLASS）
 CREATE TABLE IF NOT EXISTS parameter (
     param_code         STRING  NOT NULL,
     param_name         STRING  NOT NULL,
-    defined_on_type    STRING,  -- PART_CLASS_TYPE
+    defined_on_type    STRING,  -- PRODUCT_CLASS / PART_CLASS
+    defined_on_code    STRING,  -- ProductClass.code 或 PartClass.code
     data_type          STRING  NOT NULL,
     unit               STRING,
     assign_type        STRING,  -- INPUT / COMPUTED / SUMMARY
@@ -208,27 +202,30 @@ CREATE TABLE IF NOT EXISTS parameter (
     PRIMARY KEY (param_code) DISABLE NOVALIDATE
 ) USING DELTA;
 
--- 产品类
+-- 产品类（v1.4: 自身可持有 SpecValue，故增加 domain/modeling_policy/description）
 CREATE TABLE IF NOT EXISTS product_class (
     id                 STRING  NOT NULL,
     code               STRING  NOT NULL,
     name               STRING  NOT NULL,
     version            STRING  NOT NULL,
+    domain             STRING,
+    modeling_policy    STRING,
+    description        STRING,
     status             STRING,
     effective_from     TIMESTAMP,
     effective_to       TIMESTAMP,
     PRIMARY KEY (id) DISABLE NOVALIDATE
 ) USING DELTA;
 
--- 部件分类
+-- 部件分类（v1.4: selection_policy/min_qty/max_qty/multi_instance 直接在此表）
 CREATE TABLE IF NOT EXISTS part_class (
     id                 STRING  NOT NULL,
     code               STRING  NOT NULL,
     name               STRING  NOT NULL,
     product_class_id   STRING,
-    selection_policy    STRING,
-    min_qty             INT,
-    max_qty             INT,
+    selection_policy    STRING,  -- REQUIRED / OPTIONAL
+    min_qty            INT,
+    max_qty            INT,
     multi_instance      BOOLEAN,
     PRIMARY KEY (id) DISABLE NOVALIDATE
 ) USING DELTA;
@@ -244,7 +241,7 @@ CREATE TABLE IF NOT EXISTS part (
     PRIMARY KEY (id) DISABLE NOVALIDATE
 ) USING DELTA;
 
--- 规格值
+-- 规格值（v1.4: owner_type 支持 PRODUCT_CLASS 和 PART）
 CREATE TABLE IF NOT EXISTS spec_value (
     id                 STRING  NOT NULL,
     owner_type         STRING,  -- PRODUCT_CLASS / PART
@@ -326,44 +323,37 @@ CREATE TABLE IF NOT EXISTS configured_value (
 ) USING DELTA;
 ```
 
-### 3.3 样例数据：用一份能复现的最小数据集
+### 3.3 样例数据（v1.4 简化版）
 
-下面给出一份完整的样例数据（对应原方案 §2 的服务器配置案例）。把下面这段 Spark SQL 在 Notebook 中跑一遍，即可作为整套验证的基线。
+下面给出一份完整的样例数据（对应原方案 v1.4 §2 的服务器配置案例）。把下面这段 Spark SQL 在 Notebook 中跑一遍，即可作为整套验证的基线。
 
 ```sql
--- 产品类类型
-INSERT INTO product_class_type VALUES
-('SERVER_X86', 'X86服务器平台', 'IT硬件', 'PLATFORM_STANDARDIZATION', '面向研发和后端复用的通用服务器平台');
-
--- 部件类类型
-INSERT INTO part_class_type VALUES
-('cpu',      'CPU',       'COMPONENT', 'REQUIRED', 1, 2, false),
-('drive',     '硬盘',      'STORAGE',   'OPTIONAL', 0, 8, true),
-('memory',   '内存',      'COMPONENT', 'REQUIRED', 1, 16, true),
-('software', '配套软件',   'SERVICE',   'OPTIONAL', 0, 10, false);
-
--- 规格定义
+-- 规格定义（v1.4: defined_on_type 改为 PRODUCT_CLASS / PART_CLASS）
+-- 产品类规格（定义在 SERVER_X86 上）
 INSERT INTO spec_definition VALUES
-('FormFactor',  '外形规格', 'PRODUCT_CLASS_TYPE', 'STRING', 'U', '["1U","2U","4U"]', true),
-('PowerSupply', '电源类型', 'PRODUCT_CLASS_TYPE', 'STRING', '-', '["SINGLE","DUAL"]', true),
-('CoreNum',     '核心数',   'PART_CLASS_TYPE',   'INTEGER', 'core', '[2,4,8,18]', true),
-('Memory',      '内存容量',  'PART_CLASS_TYPE',   'INTEGER', 'GB', '[123,256,512,1024]', true),
-('ConfigType',  '配置类型',  'PART_CLASS_TYPE',   'INTEGER', '配置', '[2,5]', true),
-('Speed',       '转速',     'PART_CLASS_TYPE',   'STRING', 'rpm', '[3000,5400,7200,9000]', true),
-('Capacity',    '容量',     'PART_CLASS_TYPE',   'INTEGER', 'TB', '[1,2,3,6,9]', true),
-('Type',        '类型',     'PART_CLASS_TYPE',   'STRING', '-', '["sd","md"]', true);
+('FormFactor',  '外形规格', 'PRODUCT_CLASS', 'SERVER_X86', 'STRING', 'U', '["1U","2U","4U"]', true),
+('PowerSupply', '电源类型', 'PRODUCT_CLASS', 'SERVER_X86', 'STRING', '-', '["SINGLE","DUAL"]', true);
 
--- 参数定义
+-- 部件规格（定义在 PartClass 上）
+INSERT INTO spec_definition VALUES
+('CoreNum',     '核心数',   'PART_CLASS', 'cpu',    'INTEGER', 'core', '[2,4,8,18]', true),
+('Memory',      '内存容量',  'PART_CLASS', 'cpu',    'INTEGER', 'GB', '[123,256,512,1024]', true),
+('ConfigType',  '配置类型',  'PART_CLASS', 'cpu',    'INTEGER', '配置', '[2,5]', true),
+('Speed',       '转速',     'PART_CLASS', 'drive',  'STRING', 'rpm', '[3000,5400,7200,9000]', true),
+('Capacity',    '容量',     'PART_CLASS', 'drive',  'INTEGER', 'TB', '[1,2,3,6,9]', true),
+('Type',        '类型',     'PART_CLASS', 'drive',  'STRING', '-', '["sd","md"]', true);
+
+-- 参数定义（v1.4: defined_on_type 改为 PRODUCT_CLASS / PART_CLASS）
 INSERT INTO parameter VALUES
-('Sum_Capacity', '硬盘总容量需求', 'PART_CLASS_TYPE', 'INTEGER', 'TB', 'INPUT', NULL, NULL, NULL, '客户要求的硬盘总容量下限'),
-('Sum_Memory',   'CPU总内存需求', 'PART_CLASS_TYPE', 'INTEGER', 'GB', 'INPUT', NULL, NULL, NULL, '客户要求的某型号CPU总内存下限'),
-('Quantity',     '硬盘数量需求',   'PART_CLASS_TYPE', 'INTEGER', '块', 'INPUT', NULL, NULL, NULL, '客户要求的硬盘总数量');
+('Sum_Capacity', '硬盘总容量需求', 'PART_CLASS', 'drive', 'INTEGER', 'TB', 'INPUT', NULL, NULL, NULL, '客户要求的硬盘总容量下限'),
+('Sum_Memory',   'CPU总内存需求', 'PART_CLASS', 'cpu',   'INTEGER', 'GB', 'INPUT', NULL, NULL, NULL, '客户要求的某型号CPU总内存下限'),
+('Quantity',     '硬盘数量需求',   'PART_CLASS', 'drive', 'INTEGER', '块', 'INPUT', NULL, NULL, NULL, '客户要求的硬盘总数量');
 
--- 产品类
+-- 产品类（v1.4: 增加 domain/modeling_policy/description）
 INSERT INTO product_class VALUES
-('PC-001', 'SERVER_X86', 'X86服务器平台', '1.0.0', 'PUBLISHED', TIMESTAMP '2026-07-01', NULL);
+('PC-001', 'SERVER_X86', 'X86服务器平台', '1.0.0', 'IT硬件', 'PLATFORM_STANDARDIZATION', '面向研发和后端复用的通用服务器平台', 'PUBLISHED', TIMESTAMP '2026-07-01', NULL);
 
--- 部件分类
+-- 部件分类（v1.4: selection_policy 直接在此表，不再从 Type 表继承）
 INSERT INTO part_class VALUES
 ('PCL-cpu',     'cpu',     'CPU',      'PC-001', 'REQUIRED', 1, 2, false),
 ('PCL-drive',   'drive',   '硬盘',     'PC-001', 'OPTIONAL', 0, 8, true),
@@ -375,7 +365,7 @@ INSERT INTO part VALUES
 ('P-cpu1', 'cpu1', 'CPU 2核 123GB',  'PCL-cpu',    'ACTIVE', 100),
 ('P-cpu2', 'cpu2', 'CPU 4核 256GB',  'PCL-cpu',    'ACTIVE', 200),
 ('P-cpu3', 'cpu3', 'CPU 8核 512GB',  'PCL-cpu',    'ACTIVE', 400),
-('P-cpu4', 'cpu4', 'CPU 18核 1024GB', 'PCL-cpu',   'ACTIVE', 800),
+('P-cpu4', 'cpu4', 'CPU 18核 1024GB', 'PCL-cpu',    'ACTIVE', 800),
 ('P-sd1',  'sd1',  '固态硬盘 5400rpm 3TB', 'PCL-drive', 'ACTIVE', 50),
 ('P-sd2',  'sd2',  '固态硬盘 7200rpm 6TB', 'PCL-drive', 'ACTIVE', 80),
 ('P-sd3',  'sd3',  '固态硬盘 9000rpm 9TB', 'PCL-drive', 'ACTIVE', 90),
@@ -404,10 +394,10 @@ INSERT INTO spec_value VALUES
 ('SV-sd2-Capacity',    'PART', 'P-sd2',  'Capacity',   '6',    'TB'),
 ('SV-sd2-Type',        'PART', 'P-sd2',  'Type',       'sd',   '-'),
 ('SV-md1-Speed',       'PART', 'P-md1',  'Speed',      '5400', 'rpm'),
-('SV-md1-Capacity',     'PART', 'P-md1',  'Capacity',   '1',    'TB'),
+('SV-md1-Capacity',    'PART', 'P-md1',  'Capacity',   '1',    'TB'),
 ('SV-md1-Type',        'PART', 'P-md1',  'Type',       'md',   '-');
 
--- 规格值（ProductClass 持有）
+-- 规格值（ProductClass 持有 - v1.4 新增）
 INSERT INTO spec_value VALUES
 ('SV-PC-FormFactor',   'PRODUCT_CLASS', 'PC-001', 'FormFactor',  '2U',  'U'),
 ('SV-PC-PowerSupply',  'PRODUCT_CLASS', 'PC-001', 'PowerSupply', 'DUAL', '-');
@@ -470,16 +460,22 @@ INSERT INTO configured_value VALUES
 
 ```sql
 -- Part 必须指向一个存在的 PartClass
-SELECT p.part_id
+SELECT p.id
 FROM ontology.part p
 LEFT JOIN ontology.part_class pc ON p.part_class_id = pc.id
 WHERE pc.id IS NULL;
 
+-- PartClass 必须指向一个存在的 ProductClass
+SELECT pc.id
+FROM ontology.part_class pc
+LEFT JOIN ontology.product_class pcg ON pc.product_class_id = pcg.id
+WHERE pcg.id IS NULL;
+
 -- ProductInstance 必须指向一个存在的 ProductClass
 SELECT pi.id
 FROM ontology.product_instance pi
-LEFT JOIN ontology.product_class pc ON pi.realizes_product_class_id = pc.id
-WHERE pc.id IS NULL;
+LEFT JOIN ontology.product_class pcg ON pi.realizes_product_class_id = pcg.id
+WHERE pcg.id IS NULL;
 
 -- OFFERS_PART 的 Part 必须存在
 SELECT pip.product_instance_id, pip.part_id
@@ -490,7 +486,7 @@ WHERE p.id IS NULL;
 -- SpecValue 的 owner_id 必须存在
 SELECT sv.id
 FROM ontology.spec_value sv
-WHERE sv.owner_type = 'PART' 
+WHERE sv.owner_type = 'PART'
   AND sv.owner_id NOT IN (SELECT id FROM ontology.part)
    OR sv.owner_type = 'PRODUCT_CLASS'
   AND sv.owner_id NOT IN (SELECT id FROM ontology.product_class);
@@ -511,26 +507,26 @@ Entity Type 的创建流程是统一的：在 Home configuration canvas → Add 
 - Entity Type Key：必须是 string 或 integer 属性。
 - 推荐使用业务可读名 `ProductClass` / `PartClass` / `Part` 等，让 Data Agent 回答时更自然。
 
-### 4.2 一次性创建核心 Entity Type
+### 4.2 一次性创建核心 Entity Type（v1.4 简化版）
 
 按以下顺序操作，每一步都在 Ontology item 中点 Add entity type → 输入名字 → Add Entity Type → 进入 Configure 页。
 
-|| # | Entity Type 名 | Entity Type Key | 主要 Property | 绑定 OneLake 表 |
+| # | Entity Type 名 | Entity Type Key | 主要 Property | 绑定 OneLake 表 |
 |---|---|---|---|---|
-| 1 | `ProductClassType` | `typeCode` (string) | `typeCode`, `typeName`, `domain`, `modelingPolicy` | `ontology.product_class_type` |
-| 2 | `PartClassType` | `typeCode` (string) | `typeCode`, `typeName`, `partKind`, `selectionPolicy`, `minCardinality`, `maxCardinality` | `ontology.part_class_type` |
-| 3 | `SpecDefinition` | `specCode` (string) | `specCode`, `specName`, `definedOnType`, `dataType`, `unit`, `valueDomain` | `ontology.spec_definition` |
-| 4 | `Parameter` | `paramCode` (string) | `paramCode`, `paramName`, `definedOnType`, `dataType`, `unit`, `assignType` | `ontology.parameter` |
-| 5 | `ProductClass` | `id` (string) | `id`, `code`, `name`, `version`, `status` | `ontology.product_class` |
-| 6 | `PartClass` | `id` (string) | `id`, `code`, `name`, `productClassId`, `selectionPolicy`, `minQty`, `maxQty` | `ontology.part_class` |
-| 7 | `Part` | `id` (string) | `id`, `code`, `name`, `partClassId`, `status`, `price` | `ontology.part` |
-| 8 | `SpecValue` | `id` (string) | `id`, `ownerType`, `ownerId`, `specCode`, `value`, `unit` | `ontology.spec_value` |
-| 9 | `ProductInstance` | `id` (string) | `id`, `code`, `name`, `version`, `realizesProductClassId`, `market`, `positioning`, `status` | `ontology.product_instance` |
-| 10 | `ProductInstancePartOffer` | `productInstanceId` (string) | `productInstanceId`, `partId`, `enabled`, `disabled`, `defaultSelected`, `minQty`, `maxQty`, `fixed` | `ontology.product_instance_part_offer` |
-| 11 | `SpecOverride` | `id` (string) | `id`, `productInstanceId`, `specCode`, `overrideValue`, `reason` | `ontology.spec_override` |
-| 12 | `Configuration` | `id` (string) | `id`, `productInstanceId`, `modelSnapshot`, `status` | `ontology.configuration` |
-| 13 | `ConfiguredPart` | `id` (string) | `id`, `configurationId`, `partId`, `instanceNo`, `quantity`, `selected`, `reason` | `ontology.configured_part` |
-| 14 | `ConfiguredValue` | `id` (string) | `id`, `configurationId`, `parameterCode`, `partClass`, `value`, `filter`, `source` | `ontology.configured_value` |
+| 1 | `SpecDefinition` | `specCode` (string) | `specCode`, `specName`, `definedOnType`, `definedOnCode`, `dataType`, `unit`, `valueDomain` | `ontology.spec_definition` |
+| 2 | `Parameter` | `paramCode` (string) | `paramCode`, `paramName`, `definedOnType`, `definedOnCode`, `dataType`, `unit`, `assignType` | `ontology.parameter` |
+| 3 | `ProductClass` | `id` (string) | `id`, `code`, `name`, `version`, `domain`, `modelingPolicy`, `description`, `status` | `ontology.product_class` |
+| 4 | `PartClass` | `id` (string) | `id`, `code`, `name`, `productClassId`, `selectionPolicy`, `minQty`, `maxQty`, `multiInstance` | `ontology.part_class` |
+| 5 | `Part` | `id` (string) | `id`, `code`, `name`, `partClassId`, `status`, `price` | `ontology.part` |
+| 6 | `SpecValue` | `id` (string) | `id`, `ownerType`, `ownerId`, `specCode`, `value`, `unit` | `ontology.spec_value` |
+| 7 | `ProductInstance` | `id` (string) | `id`, `code`, `name`, `version`, `realizesProductClassId`, `market`, `positioning`, `status` | `ontology.product_instance` |
+| 8 | `ProductInstancePartOffer` | `productInstanceId` (string) | `productInstanceId`, `partId`, `enabled`, `disabled`, `defaultSelected`, `minQty`, `maxQty`, `fixed` | `ontology.product_instance_part_offer` |
+| 9 | `SpecOverride` | `id` (string) | `id`, `productInstanceId`, `specCode`, `overrideValue`, `reason` | `ontology.spec_override` |
+| 10 | `Configuration` | `id` (string) | `id`, `productInstanceId`, `modelSnapshot`, `status` | `ontology.configuration` |
+| 11 | `ConfiguredPart` | `id` (string) | `id`, `configurationId`, `partId`, `instanceNo`, `quantity`, `selected`, `reason` | `ontology.configured_part` |
+| 12 | `ConfiguredValue` | `id` (string) | `id`, `configurationId`, `parameterCode`, `partClass`, `value`, `filter`, `source` | `ontology.configured_value` |
+
+> **v1.4 变更**：去掉了 `ProductClassType` 和 `PartClassType`。ProductClass 直接持有 domain/modelingPolicy/description 属性；PartClass 直接持有 selectionPolicy/minQty/maxQty/multiInstance 属性。
 
 完整步骤示例（以 `ProductClass` 为例）：
 
@@ -543,7 +539,7 @@ Entity Type 的创建流程是统一的：在 Home configuration canvas → Add 
 
 > **陷阱**：如果 Lakehouse 表里有 OneLake Security 或 column mapping（特殊字符列名），binding 列表里就看不到该 Lakehouse。
 
-把以上 14 行重复 14 遍。MVP 阶段（§1.1）可以只做 5-9（核心业务对象），完整闸门再补齐。
+把以上 12 行重复 12 遍。MVP 阶段（§1.1）可以只做 3-6（核心业务对象），完整闸门再补齐。
 
 ---
 
@@ -551,25 +547,27 @@ Entity Type 的创建流程是统一的：在 Home configuration canvas → Add 
 
 Fabric IQ 的 Relationship Type 与 Entity Type 平级，必须单独创建并显式绑定映射表（mapping table）。
 
-### 5.1 关系清单与映射
+### 5.1 关系清单与映射（v1.4 简化版）
 
-|| # | Relationship 名 | Origin | Target | Mapping Table | Matched Origin | Matched Target |
+| # | Relationship 名 | Origin | Target | Mapping Table | Matched Origin | Matched Target |
 |---|---|---|---|---|---|
 | 1 | `ProductClassContainsPartClass` | `ProductClass` | `PartClass` | `ontology.part_class` | `product_class_id` | `id` |
-| 2 | `PartClassHasSpecDefinition` | `PartClass` | `SpecDefinition` | `ontology.spec_definition` | `defined_on_type` → `type_code` | `spec_code` |
-| 3 | `PartClassDefinesParameter` | `PartClass` | `Parameter` | `ontology.parameter` | `defined_on_type` → `type_code` | `param_code` |
-| 4 | `PartClassHasPart` | `PartClass` | `Part` | `ontology.part` | `part_class_id` | `id` |
-| 5 | `PartHasSpecValue` | `Part` | `SpecValue` | `ontology.spec_value` | `owner_id` | `id` |
-| 6 | `ProductClassHasSpecValue` | `ProductClass` | `SpecValue` | `ontology.spec_value` | `owner_id` | `id` |
-| 7 | `ProductInstanceRealizesProductClass` | `ProductInstance` | `ProductClass` | `ontology.product_instance` | `realizes_product_class_id` | `id` |
-| 8 | `ProductInstanceOffersPart` | `ProductInstance` | `ProductInstancePartOffer` | `ontology.product_instance_part_offer` | `product_instance_id` | `product_instance_id` |
-| 9 | `PartOfferedByProductInstance` | `Part` | `ProductInstancePartOffer` | `ontology.product_instance_part_offer` | `part_id` | `part_id` |
-| 10 | `ProductInstanceOverridesSpec` | `ProductInstance` | `SpecOverride` | `ontology.spec_override` | `product_instance_id` | `id` |
-| 11 | `ConfigurationSelectsPart` | `Configuration` | `ConfiguredPart` | `ontology.configured_part` | `configuration_id` | `id` |
-| 12 | `ConfiguredPartReferencesPart` | `ConfiguredPart` | `Part` | `ontology.configured_part` | `part_id` | `id` |
-| 13 | `ConfigurationHasConfiguredValue` | `Configuration` | `ConfiguredValue` | `ontology.configured_value` | `configuration_id` | `id` |
+| 2 | `PartClassHasSpecDefinition` | `PartClass` | `SpecDefinition` | `ontology.spec_definition` | `defined_on_code` | `spec_code` |
+| 3 | `PartClassDefinesParameter` | `PartClass` | `Parameter` | `ontology.parameter` | `defined_on_code` | `param_code` |
+| 4 | `ProductClassHasSpecDefinition` | `ProductClass` | `SpecDefinition` | `ontology.spec_definition` | `defined_on_code` | `spec_code` |
+| 5 | `ProductClassDefinesParameter` | `ProductClass` | `Parameter` | `ontology.parameter` | `defined_on_code` | `param_code` |
+| 6 | `PartClassHasPart` | `PartClass` | `Part` | `ontology.part` | `part_class_id` | `id` |
+| 7 | `PartHasSpecValue` | `Part` | `SpecValue` | `ontology.spec_value` | `owner_id` | `id` |
+| 8 | `ProductClassHasSpecValue` | `ProductClass` | `SpecValue` | `ontology.spec_value` | `owner_id` | `id` |
+| 9 | `ProductInstanceRealizesProductClass` | `ProductInstance` | `ProductClass` | `ontology.product_instance` | `realizes_product_class_id` | `id` |
+| 10 | `ProductInstanceOffersPart` | `ProductInstance` | `ProductInstancePartOffer` | `ontology.product_instance_part_offer` | `product_instance_id` | `product_instance_id` |
+| 11 | `PartOfferedByProductInstance` | `Part` | `ProductInstancePartOffer` | `ontology.product_instance_part_offer` | `part_id` | `part_id` |
+| 12 | `ProductInstanceOverridesSpec` | `ProductInstance` | `SpecOverride` | `ontology.spec_override` | `product_instance_id` | `id` |
+| 13 | `ConfigurationSelectsPart` | `Configuration` | `ConfiguredPart` | `ontology.configured_part` | `configuration_id` | `id` |
+| 14 | `ConfiguredPartReferencesPart` | `ConfiguredPart` | `Part` | `ontology.configured_part` | `part_id` | `id` |
+| 15 | `ConfigurationHasConfiguredValue` | `Configuration` | `ConfiguredValue` | `ontology.configured_value` | `configuration_id` | `id` |
 
-> **关键设计**：`OFFERS_PART` 边属性（enabled/disabled/minQty/maxQty/fixed）通过 `ProductInstancePartOffer` 桥接实体承载。Relationship #8 和 #9 分别从 ProductInstance 和 Part 两侧指向这个桥接实体。
+> **v1.4 变更**：去掉了 Type 层相关的关系（ProductClassTypeContainsPartClassType 等）。新增 ProductClassHasSpecDefinition 和 ProductClassDefinesParameter，因为 v1.4 中规格定义和参数定义可以在 ProductClass 层定义。
 
 ### 5.2 一次性创建所有 Relationship Type
 
@@ -588,7 +586,7 @@ Fabric IQ 的 Relationship Type 与 Entity Type 平级，必须单独创建并�
 
 ### 5.3 常见错误的处理
 
-|| 报错 | 排查 |
+| 报错 | 排查 |
 |---|
 | Save 后红字：No matching key column | 检查 mapping table 是否有 origin 或 target 的 Entity Type Key 列 |
 | Save 后红字：origin/target entity type not bound | 一定是 origin 或 target 实体还没绑表，回 §4 绑定 |
@@ -632,7 +630,7 @@ MATCH (pi:ProductInstance WHERE pi.code = 'S1110')
 MATCH (pi)-[:ProductInstanceOffersPart]->(offer:ProductInstancePartOffer)
 MATCH (offer)-[:PartOfferedByProductInstance]->(p:Part)
 WHERE offer.enabled = true
-RETURN p.code AS part_code, 
+RETURN p.code AS part_code,
        offer.default_selected AS default_selected,
        offer.min_qty AS min_qty,
        offer.max_qty AS max_qty
@@ -686,7 +684,21 @@ RETURN pi.code AS product_instance,
        collect(p.code) AS enabled_parts
 ```
 
-#### Q5：Configuration 配置求解结果
+#### Q5：ProductClass 的规格值查询（v1.4 新增）
+
+验证 SERVER_X86 的产品类规格：
+
+```gql
+MATCH (pc:ProductClass WHERE pc.code = 'SERVER_X86')
+MATCH (pc)-[:ProductClassHasSpecValue]->(sv:SpecValue)
+RETURN sv.spec_code AS spec,
+       sv.value AS value,
+       sv.unit AS unit
+```
+
+预期返回：FormFactor=2U, PowerSupply=DUAL
+
+#### Q6：Configuration 配置求解结果
 
 验证配置方案 CFG-001 的求解结果：
 
@@ -702,7 +714,7 @@ RETURN p.code AS part_code,
 
 预期返回：cpu2 x2, md1 x5
 
-#### Q6：基于 Parameter 的 Part 筛选
+#### Q7：基于 Parameter 的 Part 筛选
 
 验证 Sum_Capacity >= 5 的 Part（5400rpm 硬盘）：
 
@@ -726,8 +738,9 @@ ORDER BY CAST(svCap.value AS INTEGER) DESC
 [ ] Q2 返回 cpu2 的规格值：CoreNum=4, Memory=256, ConfigType=2
 [ ] Q3 返回 S22 的 SpecOverride：FormFactor=4U
 [ ] Q4 返回完整链路：S1110 → SERVER_X86 → PartClass → Part
-[ ] Q5 返回配置结果：cpu2 x2, md1 x5
-[ ] Q6 返回筛选结果：sd1, md1
+[ ] Q5 返回 ProductClass 规格值：FormFactor=2U, PowerSupply=DUAL
+[ ] Q6 返回配置结果：cpu2 x2, md1 x5
+[ ] Q7 返回筛选结果：sd1, md1
 ```
 
 ---
@@ -746,7 +759,7 @@ Fabric IQ 的 Ontology 可以作为 Data Agent 的数据源，让用户用业务
 
 ### 7.2 验收对话样本（复制即可发送）
 
-|| # | 用户问题 | 期望 Agent 行为 |
+| # | 用户问题 | 期望 Agent 行为 |
 |---|---|---|
 | N1 | `列出 S1110 服务器可以选哪些 CPU` | 引用 `ProductInstance` 与 `Part`，输出至少 cpu1, cpu2 |
 | N2 | `S1110 禁用了哪些硬盘型号` | 引用 `ProductInstancePartOffer`，输出 disabled=true 的 Part |
@@ -754,7 +767,8 @@ Fabric IQ 的 Ontology 可以作为 Data Agent 的数据源，让用户用业务
 | N4 | `S22 和 S1110 有什么配置差异？` | 引用 `SpecOverride`，输出 FormFactor 的差异（S22=4U, S1110=2U） |
 | N5 | `满足 5400rpm 转速的硬盘有哪些？` | 引用 `Part` 与 `SpecValue`，筛选 Speed=5400 |
 | N6 | `最近一次配置方案选择了哪些部件？` | 引用 `Configuration` 与 `ConfiguredPart`，输出 cpu2 x2, md1 x5 |
-| N7 | `解释一下 SpecDefinition 和 Parameter 的区别` | 引用 `SpecDefinition` 与 `Parameter` Entity Type 描述，输出业务语义区分 |
+| N7 | `SERVER_X86 平台的外形规格是什么？` | 引用 `ProductClass` 与 `SpecValue`，输出 FormFactor=2U |
+| N8 | `解释一下 SpecDefinition 和 Parameter 的区别` | 引用 `SpecDefinition` 与 `Parameter` Entity Type 描述，输出业务语义区分 |
 
 ### 7.3 调试 Agent 的常用动作
 
@@ -794,7 +808,7 @@ Fabric IQ 的 Ontology 可以作为 Data Agent 的数据源，让用户用业务
 
 ### 8.3 验证 A8 动作能力
 
-|| 检查 | 期望 |
+| 检查 | 期望 |
 |---|
 | Activator 规则触发后 Teams 收到消息 | 是 |
 | Operations Agent playbook 中能列出 `ConfiguredPart` / `Part` / `ProductInstancePartOffer` 三种实体 | 是 |
@@ -808,11 +822,11 @@ Fabric IQ 的 Ontology 可以作为 Data Agent 的数据源，让用户用业务
 
 ### 9.1 用 Workspace 角色做粗粒度视图
 
-|| 角色 | Workspace 角色 | 能看什么 | 不能做什么 |
+| 角色 | Workspace 角色 | 能看什么 | 不能做什么 |
 |---|---|---|
 | 平台架构师 | Workspace Admin | 所有 Ontology、Lakehouse、Graph、Agent、Activator | — |
 | 产品数据架构师 | Workspace Contributor | 所有 Ontology + Graph，能修改本域数据 | 不能修改 Workspace 设置 |
-| 产品数据工程师 | Workspace Contributor | ProductInstance、ProductInstancePartOffer；用 OneLake 数据权限缩窄源表可见性 | 不能修改 ProductClassType |
+| 产品数据工程师 | Workspace Contributor | ProductInstance、ProductInstancePartOffer、PartClass；用 OneLake 数据权限缩窄源表可见性 | 不能修改 ProductClass 骨架 |
 | 销售/客户 | Workspace Viewer | Configuration、ConfiguredPart、ConfiguredValue；用 Lakehouse Row-Level Security 缩窄可见集 | 不能写入 |
 | Agent | 通过专用 service principal | 只读 Graph | 写权限单独审批 |
 
@@ -835,22 +849,22 @@ SET ROW FILTER ontology.fn_current_user_filter ON;
 
 把下面 8 项当作正式 PoC 的"放行条件"。每完成一项在对应行打钩，并把验证截图 / 输出留到 `docs/verifications/`。
 
-|| 编号 | 验收点 | 通过标准 | 负责人 |
+| 编号 | 验收点 | 通过标准 | 负责人 |
 |---|---|---|
-| A1 | Ontology 中存在 14 个 Entity Type | 14 个 Entity Type 全部显示在 Home configuration canvas | |
-| A1 | Entity Type 都能在 Instances 标签下看到实例 | 实例数量 = 源表行数 | |
-| A2 | 13 个 Relationship Type 全部创建成功 | 配置 canvas 全部出现，无红字警告 | |
-| A2 | Graph tile 中看到节点和边 | 至少 5 个节点类型可见 | |
-| A3 | 三层业务模型显式可见 | L1（ProductClassType/PartClassType）、L2（ProductClass/Part）、L3（Configuration）均有 | |
-| A4 | 每张源表都被绑定到至少一个 Entity / Relationship | binding 列表中无 unbound warning | |
-| A5 | SpecDefinition + SpecValue 规格体系可查询 | Q2 返回 Part 的规格值 | |
-| A6 | offersPart 裁剪语义可查询 | Q1 返回 ProductInstance 启用的 Part | |
-| A7 | Data Agent 答对 N1–N7 中至少 6 题 | 引用 Ontology 实体名 | |
-| A8 | Activator 规则触发 Teams 通知 | 收到包含 part_id / qty 的告警 | |
+| A1 | Ontology 中存在 12 个 Entity Type | 12 个 Entity Type 全部显示在 Home configuration canvas |
+| A1 | Entity Type 都能在 Instances 标签下看到实例 | 实例数量 = 源表行数 |
+| A2 | 15 个 Relationship Type 全部创建成功 | 配置 canvas 全部出现，无红字警告 |
+| A2 | Graph tile 中看到节点和边 | 至少 5 个节点类型可见 |
+| A3 | 两层业务模型显式可见 | L1（ProductClass/PartClass/Part/ProductInstance）、L2（Configuration）均有 |
+| A4 | 每张源表都被绑定到至少一个 Entity / Relationship | binding 列表中无 unbound warning |
+| A5 | SpecDefinition + SpecValue 规格体系可查询 | Q2 和 Q5 分别返回 Part 和 ProductClass 的规格值 |
+| A6 | offersPart 裁剪语义可查询 | Q1 返回 ProductInstance 启用的 Part |
+| A7 | Data Agent 答对 N1–N8 中至少 6 题 | 引用 Ontology 实体名 |
+| A8 | Activator 规则触发 Teams 通知 | 收到包含 part_id / qty 的告警 |
 
 ### 10.1 失败兜底
 
-|| 现象 | 兜底动作 |
+| 现象 | 兜底动作 |
 |---|
 | Entity Type Key mapping 红字 | 检查 mapping table 是否同时含有 origin 和 target 主键 |
 | Graph 刷新超时（>20 分钟） | 缩减 mapping table 的列数；删掉示例数据；分批绑定 |
@@ -859,13 +873,13 @@ SET ROW FILTER ontology.fn_current_user_filter ON;
 
 ### 10.2 与原方案的 8 条能力诉求对账
 
-|| 原方案能力诉求 | 落地路径 | 验收编号 |
+| 原方案能力诉求 | 落地路径 | 验收编号 |
 |---|---|---|
 | A1 ObjectType 一等公民 | Ontology Entity Type | A1 |
 | A2 LinkType 一等公民 + 边属性 | Relationship Type + ProductInstancePartOffer 沉淀 linkProperties | A2 |
-| A3 三层业务模型 | ProductClassType → ProductClass → Part → ProductInstance → Configuration | A3 |
+| A3 两层业务模型 | ProductClass/PartClass/Part → ProductInstance → Configuration | A3 |
 | A4 Backing Datasource | OneLake Lakehouse 表绑定 | A4 |
-| A5 SpecDefinition + SpecValue | SpecDefinition Entity + SpecValue Entity + PartHasSpecValue 关系 | A5 |
+| A5 SpecDefinition + SpecValue | SpecDefinition Entity + SpecValue Entity + PartHasSpecValue/ProductClassHasSpecValue 关系 | A5 |
 | A6 offersPart 裁剪语义 | ProductInstancePartOffer 桥接实体 + enabled/disabled/minQty/maxQty | A6 |
 | A7 Agent / GraphRAG | Fabric Data Agent | A7 |
 | A8 Action / Operationalization | Activator + Operations Agent | A8 |
@@ -891,12 +905,14 @@ SET ROW FILTER ontology.fn_current_user_filter ON;
 
 ## 附录 B. 原方案 LinkType → Fabric IQ Relationship Type 的对照清单
 
-|| 原方案 LinkType | Fabric IQ 落地 | 关系属性如何承载 |
+| 原方案 LinkType | Fabric IQ 落地 | 关系属性如何承载 |
 |---|---|---|
 | COMPOSED_OF | `ProductClassContainsPartClass` | 直接关系；selection_policy 在 PartClass 上 |
-| HAS_SPEC | `PartClassHasSpecDefinition` | 直接关系 |
+| HAS_SPEC（PartClass） | `PartClassHasSpecDefinition` | 直接关系 |
+| HAS_SPEC（ProductClass） | `ProductClassHasSpecDefinition` | 直接关系（v1.4 新增） |
 | SPEC_VALUE | `PartHasSpecValue` / `ProductClassHasSpecValue` | Part 或 ProductClass 持有 SpecValue |
-| DEFINES_PARAMETER | `PartClassDefinesParameter` | 直接关系 |
+| DEFINES_PARAMETER（PartClass） | `PartClassDefinesParameter` | 直接关系 |
+| DEFINES_PARAMETER（ProductClass） | `ProductClassDefinesParameter` | 直接关系（v1.4 新增） |
 | REALIZES | `ProductInstanceRealizesProductClass` | 直接关系 |
 | OFFERS_PART | `ProductInstanceOffersPart` + `PartOfferedByProductInstance` | linkProperties 沉淀到 ProductInstancePartOffer（enabled/disabled/minQty/maxQty/fixed） |
 | OVERRIDES_SPEC | `ProductInstanceOverridesSpec` | SpecOverride 实体承载 override_value |
@@ -912,7 +928,7 @@ SET ROW FILTER ontology.fn_current_user_filter ON;
 
 ## 附录 D. 参考资料
 
-|| 资源 | 链接 |
+| 资源 | 链接 |
 |---|
 | What is Fabric IQ? | https://learn.microsoft.com/en-us/fabric/iq/overview |
 | What is ontology (preview)? | https://learn.microsoft.com/en-us/fabric/iq/ontology/overview |
@@ -921,14 +937,14 @@ SET ROW FILTER ontology.fn_current_user_filter ON;
 | Add relationship types | https://learn.microsoft.com/en-us/fabric/iq/ontology/how-to-create-relationship-types |
 | GQL language guide for graph in Microsoft Fabric | https://learn.microsoft.com/en-us/fabric/graph/gql-language-guide |
 | Add rules (Fabric Activator) | https://learn.microsoft.com/en-us/fabric/real-time-intelligence/data-activator/activator-introduction |
-| 原方案：复杂产品配置器的数据模型详解 | `./复杂产品配置器的数据模型详解.md` |
-| 原方案：Palantir范式复杂产品配置器语义建模方案 | `./Palantir范式复杂产品配置器语义建模方案.md` |
+| 原方案：复杂产品配置器的数据模型详解 v1.4 | `./复杂产品配置器的数据模型.md` |
 
 ## 附录 E. 变更记录
 
-|| 版本 | 日期 | 主要变更 |
+| 版本 | 日期 | 主要变更 |
 |---|---|---|
 | v1.0 | 2026-07-28 | 初始版本：参考电商方案结构，适配复杂产品配置器场景（offersPart裁剪、SpecOverride覆盖、Parameter参数体系、Configuration配置求解） |
+| v1.1 | 2026-07-29 | 刷新以适配数据模型 v1.4：去掉 ProductClassType/PartClassType；调整 SpecDefinition/Parameter 的 definedOnType 为 PRODUCT_CLASS/PART_CLASS；ProductClass 直接持有 domain/modelingPolicy/description；PartClass 直接持有 selection_policy/min_qty/max_qty/multi_instance；ProductClass 持有 SpecValue；新增 Q5 查询 ProductClass 规格值；调整 Entity Type 从 14 → 12，Relationship 从 13 → 15；更新验收清单和变更记录 |
 
 ---
 

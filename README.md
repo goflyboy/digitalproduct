@@ -35,3 +35,14 @@
 图业界Ontology产品调研与Palantir电商适配分析
 
 Microsoft Fabric IQ 电商语义建模验证操作指南
+
+
+TODO：维护态，和发布态的模型要分开？ ***
+
+设计的权衡点？
+
+PartClassType->contains → PartClassType(暂不支持） 考虑到数组产品？ 子模块得了？***
+
+Interface在图上是怎么实现的？***
+| **规格覆盖** | SpecOverride |  ？ 
+| -------- | ------------ |

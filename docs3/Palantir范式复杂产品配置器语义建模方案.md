@@ -1,9 +1,9 @@
 # 基于 Palantir 范式的复杂产品配置器语义建模方案
 
-> **文档版本**: v1.0
+> **文档版本**: v1.1
 > **创建时间**: 2026-07-28
-> **核心主题**: 复杂产品配置器的 Palantir Ontology 语义建模、三层业务模型到双层元模型的映射
-> **重写说明**: v1.0 将复杂产品配置器的三层业务模型（L1业务元模型/L2业务对象实例/L3配置运行实例）映射到 Palantir 范式的双层语义模型（Meta Layer / Object Instance Layer），保持原有建模语义不变，同时获得 Ontology 的可组合、可扩展能力。
+> **更新说明**: v1.1 适配数据模型 v1.4——去掉 ProductClassType/PartClassType，从三层元模型简化为两层业务模型
+> **核心主题**: 复杂产品配置器的 Palantir Ontology 语义建模、两层业务模型到 Palantir 双层语义的映射
 
 ---
 
@@ -11,38 +11,40 @@
 
 ### 1.1 Palantir 核心概念回顾
 
-|| Palantir 概念 | 定义 | 文档中的定义位置 | 复杂产品配置器映射 |
-|--------------|------|------------------|-------------------|
-| **Object Type** | 对象的类型定义（实体/事件） | §2.1 | ProductClassType、PartClassType、SpecDefinition、PartClass、Part | 复杂产品领域的核心实体类型 |
-| **Property Type** | 对象类型的属性定义（含基础类型、约束） | 在每个 ObjectType 的 `properties` 中 | SpecDefinition.spec_code、Part.price、PartClass.selection_policy | 规格、参数、数量边界等属性 |
-| **Object Instance** | ObjectType 的具体实例 | §2.2 | SERVER_X86@1.0.0、cpu1、cpu2、S1110@1.0.0 | 具体的产品类、部件、可售型号 |
-| **Link Type** | **连接两个 ObjectType 的关系类型定义（与 ObjectType 平级的一等公民）** | §1.1.1 | composedOf、offersPart、realizes、hasSpec | 部件组成关系、裁剪关系、实现关系、规格关联 |
-| **Interface Type** | 多 ObjectType 可实现的共享 shape | 规划 | Configurable、HasPrice、HasSpec | 可配置性接口、价格能力接口 |
-| **Backing Datasource** | ObjectType / LinkType 背后的物理数据源 | §4.2 | 数据库表、JSON 配置 | 部件主数据、规则引擎数据 |
+| Palantir 概念 | 定义 | 复杂产品配置器映射 |
+|--------------|------|-------------------|
+| **Object Type** | 对象的类型定义（实体/事件） | ProductClass、PartClass、SpecDefinition、Part、ProductInstance |
+| **Property Type** | 对象类型的属性定义（含基础类型、约束） | SpecDefinition.spec_code、Part.price、PartClass.selection_policy |
+| **Object Instance** | ObjectType 的具体实例 | SERVER_X86@1.0.0、cpu1、cpu2、S1110@1.0.0 |
+| **Link Type** | **连接两个 ObjectType 的关系类型定义（与 ObjectType 平级的一等公民）** | composedOf、offersPart、realizes、hasSpec |
+| **Interface Type** | 多 ObjectType 可实现的共享 shape | Configurable、HasPrice、HasSpec |
+| **Backing Datasource** | ObjectType / LinkType 背后的物理数据源 | 数据库表、JSON 配置 |
 
-### 1.1.1 LinkType 详解（复杂产品配置器扩展）
+### 1.1.1 LinkType 详解（v1.4 简化版）
 
-复杂产品配置器的 LinkType 设计：
+**v1.4 变更**：去掉了 ProductClassType 和 PartClassType，LinkType 不再跨越类型层。
 
-|| # | LinkType Id | A-side | B-side | 一端类型 | 另一端类型 | A-side API | B-side API | Link Properties | 说明 |
-|---|------------|--------|--------|---------|-----------|------------|------------|-----------------|---------|
-| 1 | `COMPOSED_OF` | productClass | partClass | OT_PRODUCT_CLASS | OT_PART_CLASS | containedPartClasses | parentProductClass | selection_policy, min_cardinality, max_cardinality, multi_instance | 产品类包含部件分类 |
-| 2 | `CANDIDATE_PART` | partClass | part | OT_PART_CLASS | OT_PART | availableParts | partClass | — | 部件分类下有候选部件 |
-| 3 | `HAS_SPEC` | productClass/partClass | specDefinition | OT_PRODUCT_CLASS / OT_PART_CLASS | OT_SPEC_DEFINITION | specs | definedOn | scope: product_level / part_level | 定义固有规格 |
-| 4 | `SPEC_VALUE` | productClass / part | specValue | OT_PRODUCT_CLASS / OT_PART | OT_SPEC_VALUE | specValues | ownedBy | — | 持有规格值 |
-| 5 | `DEFINES_PARAMETER` | partClass | parameter | OT_PART_CLASS | OT_PARAMETER | parameters | definedOn | assign_type: INPUT/COMPUTED/SUMMARY | 定义可配置参数 |
-| 6 | `REALIZES` | productInstance | productClass | OT_PRODUCT_INSTANCE | OT_PRODUCT_CLASS | realizedProduct | productClass | — | 产品实例实现产品类 |
-| 7 | `OFFERS_PART` | productInstance | part | OT_PRODUCT_INSTANCE | OT_PART | offeredParts | offeredIn | enabled, disabled, defaultSelected, minQty, maxQty, fixed | 产品实例裁剪部件候选集 |
-| 8 | `OVERRIDES_SPEC` | productInstance | specOverride | OT_PRODUCT_INSTANCE | OT_SPEC_OVERRIDE | specOverrides | overriddenBy | override_value, reason | 产品实例覆盖基线规格 |
-| 9 | `SELECTS_PART` | configuration | configuredPart | OT_CONFIGURATION | OT_CONFIGURED_PART | selectedParts | configuration | quantity, selected, reason | 配置方案选择部件 |
-| 10 | `HAS_CONFIGURED_VALUE` | configuration | configuredValue | OT_CONFIGURATION | OT_CONFIGURED_VALUE | configuredValues | owner | value, unit, source | 配置方案持有参数值 |
+| # | LinkType Id | A-side | B-side | Link Properties | 说明 |
+|---|------------|--------|--------|-----------------|------|
+| 1 | `COMPOSED_OF` | ProductClass | PartClass | selection_policy, min_qty, max_qty, multi_instance | 产品类包含部件分类 |
+| 2 | `HAS_SPEC` | ProductClass / PartClass | SpecDefinition | scope: product_level / part_level | 定义固有规格 |
+| 3 | `DEFINES_PARAMETER` | ProductClass / PartClass | Parameter | assign_type: INPUT/COMPUTED/SUMMARY | 定义可配置参数 |
+| 4 | `CANDIDATE_PART` | PartClass | Part | — | 部件分类下有候选部件 |
+| 5 | `SPEC_VALUE` | ProductClass / Part | SpecValue | — | 持有规格值 |
+| 6 | `REALIZES` | ProductInstance | ProductClass | — | 产品实例实现产品类 |
+| 7 | `OFFERS_PART` | ProductInstance | Part | enabled, disabled, defaultSelected, minQty, maxQty, fixed | 产品实例裁剪部件候选集 |
+| 8 | `OVERRIDES_SPEC` | ProductInstance | SpecOverride | override_value, reason | 产品实例覆盖基线规格 |
+| 9 | `SELECTS_PART` | Configuration | ConfiguredPart | quantity, selected, reason | 配置方案选择部件 |
+| 10 | `HAS_CONFIGURED_VALUE` | Configuration | ConfiguredValue | value, unit, source | 配置方案持有参数值 |
 
 > **关键认知**：LinkType 在复杂产品配置器中承载了核心业务语义：
 > - `COMPOSED_OF` 表达产品的递归组成结构
 > - `OFFERS_PART` 表达可售型号的部件裁剪（enabled/disabled/minQty/maxQty/fixed）
 > - `OVERRIDES_SPEC` 表达产品实例相对于基线的规格差异
 
-### 1.2 复杂产品配置器语义两层模型架构
+### 1.2 复杂产品配置器语义两层模型架构（v1.4）
+
+**v1.4 简化说明**：去掉了模板类型层（ProductClassType/PartClassType），直接从业务视角建模。
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────┐
@@ -50,48 +52,36 @@
 ├────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                │
 │  ┌──────────────────────────────────────────────────────────────────────────┐ │
-│  │                第一层：元数据层 (Meta Layer)                               │ │
+│  │                第一层：元数据层 (Meta Layer) - v1.4 简化版                 │ │
 │  │  ──────────────────────────────────────────────────────────────────────  │ │
 │  │                                                                           │ │
+│  │  v1.4 变更：去掉 ProductClassType / PartClassType，直接定义业务对象          │ │
+│  │                                                                           │ │
 │  │  ┌────────────────────────────────────────────────────────────────────┐  │ │
-│  │  │  A. 模板类型（复杂产品特有）                                          │  │ │
-│  │  │     —— "元数据的元数据"，规定某类 ObjectType 应有哪些规格/参数        │  │ │
-│  │  │                                                                    │  │ │
-│  │  │    ┌────────────────────────┐      ┌────────────────────────┐     │  │ │
-│  │  │    │ OT_PRODUCT_CLASS_TYPE   │      │ OT_PART_CLASS_TYPE      │     │  │ │
-│  │  │    │ (产品类类型：定义       │ ───▶ │ (部件类类型：定义        │     │  │ │
-│  │  │    │  产品实例的元数据)       │ 驱动 │  部件实例的元数据)       │     │  │ │
-│  │  │    └────────────────────────┘      └────────────────────────┘     │  │ │
-│  │  └────────┬───────────────────┬────────────────────┬─────────────────┘  │ │
-│  │           │COMPOSED_OF         │HAS_SPEC             │DEFINES_PARAMETER   │ │
-│  │           ▼                    ▼                     ▼                    │ │
-│  │  ┌────────────────────────────────────────────────────────────────────┐  │ │
-│  │  │  B. ObjectType 定义（Palantir 原生概念，对应"实例的数据结构"）        │  │ │
-│  │  │     ——  与 LinkType 平级，均为一等公民，需被注册/版本化/权限控制      │  │ │
-│  │  │                                                                    │  │ │
+│  │  │  ObjectType 定义（Palantir 原生概念，对应"实例的数据结构"）            │  │ │
+│  │  │     ——  与 LinkType 平级，均为一等公民，需被注册/版本化/权限控制        │  │ │
+│  │  │                                                                     │  │ │
 │  │  │    规格字典（全局平台级）     │    参数定义（全局平台级）              │  │ │
 │  │  │    ┌─────────────────────┐ │      ┌─────────────────────┐         │  │ │
-│  │  │    │  OT_SPEC_DEFINITION  │ │      │  OT_PARAMETER        │         │  │ │
-│  │  │    │  规格定义             │ │      │  参数定义             │         │  │ │
-│  │  │    │  §2.1.3              │ │      │  §2.1.4              │         │  │ │
+│  │  │    │  SpecDefinition      │ │      │  Parameter          │         │  │ │
+│  │  │    │  规格定义            │ │      │  参数定义           │         │  │ │
+│  │  │    │  (可在PC或PartClass上)│ │      │  (可在PC或PartClass上)│         │  │ │
 │  │  │    └─────────────────────┘ │      └─────────────────────┘         │  │ │
-│  │  │                                                                    │  │ │
+│  │  │                                                                     │  │ │
 │  │  │    ┌────────────┐ ┌────────────┐ ┌────────────┐ ┌────────────┐    │  │ │
-│  │  │    │OT_PRODUCT  │ │OT_PART_    │ │OT_PRODUCT_ │ │OT_SPEC_    │    │  │ │
-│  │  │    │_CLASS      │ │CLASS       │ │INSTANCE    │ │OVERRIDE    │    │  │ │
-│  │  │    │ 产品类      │ │ 部件分类    │ │ 可售产品实例 │ │ 规格覆盖    │    │  │ │
-│  │  │    │ §2.1.5    │ │ §2.1.6    │ │ §2.1.7    │ │ §2.1.8    │    │  │ │
+│  │  │    │ Product    │ │  Part      │ │ Product    │ │  Spec      │    │  │ │
+│  │  │    │ Class      │ │  Class     │ │ Instance   │ │  Override  │    │  │ │
+│  │  │    │ 产品类      │ │  部件分类   │ │ 可售产品实例 │ │  规格覆盖   │    │  │ │
 │  │  │    └────────────┘ └────────────┘ └────────────┘ └────────────┘    │  │ │
-│  │  │                                                                    │  │ │
 │  │  │    ┌────────────┐ ┌────────────┐ ┌────────────┐ ┌────────────┐    │  │ │
-│  │  │    │OT_PART     │ │OT_SPEC_    │ │OT_CONFIGUR │ │OT_CONFIGUR│    │  │ │
-│  │  │    │ 部件        │ │VALUE       │ │ATION       │ │ED_PART    │    │  │ │
-│  │  │    │ §2.1.9    │ │ 规格值      │ │ 配置方案    │ │ 已选部件   │    │  │ │
+│  │  │    │   Part     │ │  Spec      │ │ Config     │ │ Config    │    │  │ │
+│  │  │    │   部件      │ │  Value     │ │ uration    │ │ ured      │    │  │ │
+│  │  │    │            │ │  规格值     │ │  配置方案   │ │  Part     │    │  │ │
 │  │  │    └────────────┘ └────────────┘ └────────────┘ └────────────┘    │  │ │
-│  │  │                                                                    │  │ │
-│  │  │  LinkType（与 ObjectType 平级，本方案共 10 个）                     │  │ │
-│  │  │  COMPOSED_OF / CANDIDATE_PART / HAS_SPEC / SPEC_VALUE /           │  │ │
-│  │  │  DEFINES_PARAMETER / REALIZES / OFFERS_PART / OVERRIDES_SPEC /    │  │ │
+│  │  │                                                                     │  │ │
+│  │  │  LinkType（与 ObjectType 平级，本方案共 10 个）                      │  │ │
+│  │  │  COMPOSED_OF / HAS_SPEC / DEFINES_PARAMETER / CANDIDATE_PART /    │  │ │
+│  │  │  SPEC_VALUE / REALIZES / OFFERS_PART / OVERRIDES_SPEC /          │  │ │
 │  │  │  SELECTS_PART / HAS_CONFIGURED_VALUE                               │  │ │
 │  │  └────────────────────────────────────────────────────────────────────┘  │ │
 │  └──────────────────────────────────────────────────────────────────────────┘ │
@@ -103,170 +93,82 @@
 │  │  ──────────────────────────────────────────────────────────────────────  │ │
 │  │                                                                           │ │
 │  │  ┌──────────────┐   COMPOSED_OF   ┌──────────────┐                      │ │
-│  │  │ ProductClass │─────────────────▶│ PartClass    │  …… §2.2.1           │ │
-│  │  │ SERVER_X86   │    (1:N)        │ cpu/drive    │                      │ │
-│  │  │ @1.0.0       │                 │ §2.2.2       │                      │ │
-│  │  └──────┬───────┘                 └──────┬───────┘                      │ │
-│  │         │ CANDIDATE_PART                  │ HAS_SPEC / DEFINES_PARAMETER  │ │
-│  │         ▼                                 ▼                              │ │
-│  │  ┌──────────────┐                 ┌──────────────┐                      │ │
-│  │  │ Part         │                 │ SpecDefinition / Parameter         │ │
-│  │  │ cpu1/cpu2    │                 │ CoreNum/Memory/Sum_Capacity       │ │
-│  │  │ §2.2.3       │                 │ §2.2.4                              │ │
-│  │  └──────┬───────┘                 └──────────────┘                      │ │
-│  │         │ SPEC_VALUE                        │                              │ │
-│  │         ▼                                  │                              │ │
-│  │  ┌──────────────┐                          │                              │ │
-│  │  │ SpecValue    │◀─────────────────────────┘                              │ │
-│  │  │ CoreNum=2    │                          │                              │ │
-│  │  │ Memory=123   │                          │                              │ │
-│  │  └──────────────┘                          │                              │ │
-│  │                                             │                              │ │
-│  │  ┌────────────────────────────────────────────────────────────────────┐ │ │
-│  │  │                        ProductInstance 层                             │ │ │
-│  │  │                                                                     │ │ │
-│  │  │  ┌──────────────┐   REALIZES   ┌──────────────┐                    │ │ │
-│  │  │  │ProductInstance│──────────────▶│ ProductClass │                    │ │ │
-│  │  │  │ S1110/S22    │              │ SERVER_X86   │                    │ │ │
-│  │  │  │ @1.0.0       │              │ @1.0.0       │                    │ │ │
-│  │  │  └──────┬───────┘              └──────────────┘                    │ │ │
-│  │  │         │ OFFERS_PART (N:M, linkProps 裁剪)                         │ │ │
-│  │  │         ▼                                                            │ │ │
-│  │  │  ┌──────────────┐                                                   │ │ │
-│  │  │  │ Part         │ ← S1110 禁用 cpu3/cpu4，启用 cpu1/cpu2              │ │ │
-│  │  │  │ (裁剪后)     │                                                   │ │ │
-│  │  │  └──────────────┘                                                   │ │ │
-│  │  │                                                                     │ │ │
-│  │  │  ┌────────────────────────────────────────────────────────────────┐ │ │ │
-│  │  │  │ ProductInstance ──OVERRIDES_SPEC──▶ SpecOverride              │ │ │ │
-│  │  │  │ S22 强制 FormFactor=4U（覆盖基线 2U）                          │ │ │ │
-│  │  │  └────────────────────────────────────────────────────────────────┘ │ │ │
-│  │  └────────────────────────────────────────────────────────────────────┘ │ │
-│  │                                                                           │ │
-│  │  ┌────────────────────────────────────────────────────────────────────┐ │ │
-│  │  │                        Configuration 层                             │ │ │
-│  │  │                                                                     │ │ │
-│  │  │  ┌──────────────┐   SELECTS_PART   ┌──────────────┐              │ │ │
-│  │  │  │Configuration │──────────────────▶│ ConfiguredPart│              │ │ │
-│  │  │  │ 客户配置      │                  │ 已选部件      │              │ │ │
-│  │  │  └──────┬───────┘                  └──────────────┘              │ │ │
-│  │  │         │ HAS_CONFIGURED_VALUE                                   │ │ │
-│  │  │         ▼                                                        │ │ │
-│  │  │  ┌──────────────┐                                                │ │ │
-│  │  │  │ConfiguredValue│                                               │ │ │
-│  │  │  │ Sum_Capacity │                                                │ │ │
-│  │  │  │ = 5 TB       │                                                │ │ │
-│  │  │  └──────────────┘                                                │ │ │
-│  │  └────────────────────────────────────────────────────────────────────┘ │ │
-│  │                                                                           │ │
+│  │  │ ProductClass │──────────────────▶│ PartClass   │  ……                │ │
+│  │  │ SERVER_X86  │    (1:N)        │ cpu/drive   │                      │ │
+│  │  │ @1.0.0     │                 │             │                      │ │
+│  │  │ (含SpecValue)│                 └──────┬───────┘                      │ │
+│  │  └──────┬───────┘                 │                                      │ │
+│  │         │ HAS_SPEC                │ CANDIDATE_PART                      │ │
+│  │         │ /DEFINES_PARAMETER      ▼                                      │ │
+│  │         ▼                 ┌──────────────┐                              │ │
+│  │  ┌──────────────┐        │    Part      │                              │ │
+│  │  │SpecDefinition│        │ cpu1/cpu2    │                              │ │
+│  │  │CoreNum/Memory│        └──────┬───────┘                              │ │
+│  │  │Sum_Capacity │              │ SPEC_VALUE                            │ │
+│  │  └──────────────┘              ▼                                      │ │
+│  │                        ┌──────────────┐                              │ │
+│  │                        │  SpecValue   │◀─────────────────────────┐    │ │
+│  │                        │  CoreNum=2   │                          │    │ │
+│  │                        │  Memory=123  │                          │    │ │
+│  │                        └──────────────┘                          │    │ │
+│  │                                                                     │    │ │
+│  │  ┌────────────────────────────────────────────────────────────┐  │    │ │
+│  │  │                     ProductInstance 层                      │  │    │ │
+│  │  │                                                               │  │    │ │
+│  │  │  ┌──────────────┐   REALIZES   ┌──────────────┐           │  │    │ │
+│  │  │  │ProductInstance│──────────────▶│ ProductClass │           │  │    │ │
+│  │  │  │ S1110/S22  │              │ SERVER_X86  │           │  │    │ │
+│  │  │  │ @1.0.0     │              │ @1.0.0      │           │  │    │ │
+│  │  │  └──────┬───────┘              └──────────────┘           │  │    │ │
+│  │  │         │ OFFERS_PART (N:M, linkProps 裁剪)               │  │    │ │
+│  │  │         ▼                                               │  │    │ │
+│  │  │  ┌──────────────┐                                       │  │    │ │
+│  │  │  │ Part        │ ← S1110 禁用 cpu3/cpu4，启用 cpu1/cpu2 │  │    │ │
+│  │  │  │ (裁剪后)   │                                       │  │    │ │
+│  │  │  └──────────────┘                                       │  │    │ │
+│  │  │                                                            │  │    │ │
+│  │  │  ┌────────────────────────────────────────────────────┐│  │    │ │
+│  │  │  │ ProductInstance ──OVERRIDES_SPEC──▶ SpecOverride ││  │    │ │
+│  │  │  │ S22 强制 FormFactor=4U（覆盖基线 2U）           ││  │    │ │
+│  │  │  └────────────────────────────────────────────────────┘│  │    │ │
+│  │  └─────────────────────────────────────────────────────────────┘  │    │ │
+│  │                                                                     │    │ │
+│  │  ┌────────────────────────────────────────────────────────────┐  │    │ │
+│  │  │                     Configuration 层                      │  │    │ │
+│  │  │                                                             │  │    │ │
+│  │  │  ┌──────────────┐   SELECTS_PART   ┌──────────────┐    │  │    │ │
+│  │  │  │Configuration │─────────────────────▶│ ConfiguredPart│    │  │    │ │
+│  │  │  │ 客户配置    │                    │ 已选部件     │    │  │    │ │
+│  │  │  └──────┬───────┘                    └──────────────┘    │  │    │ │
+│  │  │         │ HAS_CONFIGURED_VALUE                           │  │    │ │
+│  │  │         ▼                                                │  │    │ │
+│  │  │  ┌──────────────┐                                         │  │    │ │
+│  │  │  │ConfiguredValue│                                        │  │    │ │
+│  │  │  │ Sum_Capacity │                                        │  │    │ │
+│  │  │  │ = 5 TB      │                                        │  │    │ │
+│  │  │  └──────────────┘                                         │  │    │ │
+│  │  └─────────────────────────────────────────────────────────────┘  │    │ │
+│  │                                                                     │    │ │
 │  └──────────────────────────────────────────────────────────────────────────┘ │
 │                                                                                │
 └────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 **说明**：
-- 第一层 A（模板类型）→ 第一层 B（ObjectType）：是「驱动关系」，类型定义规定实例应包含哪些属性
-- 第一层 B → 第二层：是「实例化关系」，ObjectType 定义是 schema，实例是 schema 的一行
+- v1.4 简化：去掉了模板类型层（ProductClassType/PartClassType），ObjectType 直接对应业务对象
+- 第一层 → 第二层：是「实例化关系」，ObjectType 定义是 schema，实例是 schema 的一行
 - LinkType 跨越第一层与第二层：LinkType 的两端是 ObjectType，LinkType 的实例是 Object Instance 之间的边
-- 复杂产品配置器的特殊之处：`OFFERS_PART` LinkType 的 linkProperties 承载了部件裁剪语义（enabled/disabled/defaultSelected/minQty/maxQty/fixed）
+- 复杂产品配置器的特殊之处：`OFFERS_PART` LinkType 的 linkProperties 承载了部件裁剪语义
 
 ---
 
 ## 二、数据与映射构建方案
 
-### 2.1 第一层元数据的建模
+### 2.1 第一层元数据的建模（v1.4 简化版）
 
-> **本节说明**：第一层包含复杂产品配置器的类型定义：
-> - **ProductClassType**（产品类类型）：定义产品族的元数据
-> - **PartClassType**（部件类类型）：定义可配置子模块的类型
-> - **SpecDefinition**（规格定义）：产品的物理特性或性能指标定义
-> - **Parameter**（参数）：可由用户输入/修改的配置需求定义
-> - **ProductInstanceType**（可售产品实例类型）：可售产品定义
+**v1.4 变更**：去掉 ProductClassType 和 PartClassType，直接定义业务对象类型。
 
-#### 2.1.1 产品类类型定义 (OT_PRODUCT_CLASS_TYPE)
-
-```json
-{
-  "object_type": "ProductClassType",
-  "type_id": "OT_PRODUCT_CLASS_TYPE",
-  "description": "产品类类型，产品族或产品平台类型的定义。承载平台化和标准化。",
-  "properties": {
-    "type_code": {
-      "type": "STRING",
-      "is_primary_key": true,
-      "description": "类型唯一标识，如 SERVER_X86"
-    },
-    "name": {
-      "type": "STRING",
-      "is_required": true,
-      "description": "类型名称，如 X86服务器平台"
-    },
-    "domain": {
-      "type": "STRING",
-      "description": "领域，如 IT硬件、工业设备、PLC"
-    },
-    "modeling_policy": {
-      "type": "ENUM",
-      "values": ["PLATFORM_STANDARDIZATION", "BRAND_LINE", "CUSTOMIZATION"],
-      "description": "建模策略：平台标准化 / 品牌线 / 定制化"
-    },
-    "description": {
-      "type": "TEXT",
-      "description": "类型描述"
-    }
-  }
-}
-```
-
-> **设计要点**：ProductClassType 定义"服务器类产品类"这一类型元数据（code、domain、modeling_policy），是类型的模板，不含版本。类比：ProductClassType 是"人类的基因定义"。
-
-#### 2.1.2 部件类类型定义 (OT_PART_CLASS_TYPE)
-
-```json
-{
-  "object_type": "PartClassType",
-  "type_id": "OT_PART_CLASS_TYPE",
-  "description": "部件类类型，可配置子模块的抽象，如 CPU、硬盘、显示器。",
-  "properties": {
-    "type_code": {
-      "type": "STRING",
-      "is_primary_key": true,
-      "description": "类型唯一标识，如 cpu、drive、memory"
-    },
-    "name": {
-      "type": "STRING",
-      "is_required": true,
-      "description": "类型名称，如 CPU、硬盘、内存"
-    },
-    "part_kind": {
-      "type": "ENUM",
-      "values": ["COMPONENT", "STORAGE", "SERVICE", "ACCESSORY"],
-      "description": "部件种类：组件 / 存储 / 服务 / 配件"
-    },
-    "selection_policy": {
-      "type": "ENUM",
-      "values": ["REQUIRED", "OPTIONAL"],
-      "description": "选择策略：REQUIRED（必选）/ OPTIONAL（可选）"
-    },
-    "min_cardinality": {
-      "type": "INTEGER",
-      "default": 0,
-      "description": "最小数量"
-    },
-    "max_cardinality": {
-      "type": "INTEGER",
-      "description": "最大数量"
-    },
-    "multi_instance": {
-      "type": "BOOLEAN",
-      "default": false,
-      "description": "是否支持多实例"
-    }
-  }
-}
-```
-
-#### 2.1.3 规格定义类型 (OT_SPEC_DEFINITION)
+#### 2.1.1 规格定义类型 (OT_SPEC_DEFINITION)
 
 ```json
 {
@@ -284,10 +186,14 @@
       "is_required": true,
       "description": "规格名称，如 外形规格、核心数、容量"
     },
-    "defined_on": {
+    "defined_on_type": {
+      "type": "ENUM",
+      "values": ["PRODUCT_CLASS", "PART_CLASS"],
+      "description": "定义在哪类对象上（v1.4 变更：从 TYPE 改为 CLASS）"
+    },
+    "defined_on_code": {
       "type": "STRING",
-      "references": "OT_PRODUCT_CLASS_TYPE / OT_PART_CLASS_TYPE",
-      "description": "定义在哪个类型上（产品类或部件类）"
+      "description": "定义在哪个具体对象上，如 SERVER_X86 或 cpu"
     },
     "data_type": {
       "type": "ENUM",
@@ -311,15 +217,13 @@
 }
 ```
 
-> **与电商方案的区别**：复杂产品配置器的 SpecDefinition 直接定义在 ProductClassType 或 PartClassType 上，不通过 Template 中转。规格是"产品或部件本身已有的物理特性"，不可由用户修改。
-
-#### 2.1.4 参数定义类型 (OT_PARAMETER)
+#### 2.1.2 参数定义类型 (OT_PARAMETER)
 
 ```json
 {
   "object_type": "ParameterType",
   "type_id": "OT_PARAMETER",
-  "description": "参数定义，可由用户输入/修改的配置需求定义。定义在 PartClassType 上。",
+  "description": "参数定义，可由用户输入/修改的配置需求定义。定义在 ProductClass 或 PartClass 上。",
   "properties": {
     "param_code": {
       "type": "STRING",
@@ -331,10 +235,14 @@
       "is_required": true,
       "description": "参数名称，如 硬盘总容量需求、CPU总内存需求"
     },
-    "defined_on": {
+    "defined_on_type": {
+      "type": "ENUM",
+      "values": ["PRODUCT_CLASS", "PART_CLASS"],
+      "description": "定义在哪类对象上（v1.4 变更：从 TYPE 改为 CLASS）"
+    },
+    "defined_on_code": {
       "type": "STRING",
-      "references": "OT_PART_CLASS_TYPE",
-      "description": "定义在哪个部件类类型上"
+      "description": "定义在哪个具体对象上，如 cpu 或 drive"
     },
     "data_type": {
       "type": "ENUM",
@@ -371,16 +279,18 @@
 ```
 
 > **规格与参数的核心区别**：
-> - **规格（SpecDefinition）**：产品或部件本身已有的物理特性或性能指标，不可由用户修改。Part 有对应的 SpecValue。
+> - **规格（SpecDefinition）**：产品或部件本身已有的物理特性或性能指标，不可由用户修改。Part 或 ProductClass 有对应的 SpecValue。
 > - **参数（Parameter）**：可由用户输入的配置需求，Part 无对应 Parameter 值，参数值在配置阶段由用户输入。
 
-#### 2.1.5 产品类定义 (OT_PRODUCT_CLASS)
+#### 2.1.3 产品类定义 (OT_PRODUCT_CLASS) - v1.4 增强
+
+**v1.4 变更**：ProductClass 直接持有 domain/modeling_policy/description 属性（原来在 ProductClassType 上）。
 
 ```json
 {
   "object_type": "ProductClassType",
   "type_id": "OT_PRODUCT_CLASS",
-  "description": "产品类，产品族或平台的可复用骨架（本身带版本，可发布多次）。",
+  "description": "产品类，产品族或平台的可复用骨架（本身带版本，可发布多次）。v1.4 直接持有领域和建模策略属性。",
   "properties": {
     "id": {
       "type": "STRING",
@@ -401,6 +311,19 @@
       "type": "STRING",
       "is_required": true,
       "description": "版本号，如 1.0.0"
+    },
+    "domain": {
+      "type": "STRING",
+      "description": "领域，如 IT硬件、工业设备、PLC（v1.4 新增）"
+    },
+    "modeling_policy": {
+      "type": "ENUM",
+      "values": ["PLATFORM_STANDARDIZATION", "BRAND_LINE", "CUSTOMIZATION"],
+      "description": "建模策略：平台标准化 / 品牌线 / 定制化（v1.4 新增）"
+    },
+    "description": {
+      "type": "TEXT",
+      "description": "产品类描述（v1.4 新增）"
     },
     "status": {
       "type": "ENUM",
@@ -424,6 +347,18 @@
       "cardinality": "ONE_TO_MANY",
       "description": "产品类包含部件分类"
     },
+    "HAS_SPEC": {
+      "link_id": "HAS_SPEC",
+      "target": "OT_SPEC_DEFINITION",
+      "cardinality": "ONE_TO_MANY",
+      "description": "产品类定义规格"
+    },
+    "DEFINES_PARAMETER": {
+      "link_id": "DEFINES_PARAMETER",
+      "target": "OT_PARAMETER",
+      "cardinality": "ONE_TO_MANY",
+      "description": "产品类定义参数（v1.4 新增链路）"
+    },
     "SPEC_VALUE": {
       "link_id": "SPEC_VALUE",
       "target": "OT_SPEC_VALUE",
@@ -434,13 +369,15 @@
 }
 ```
 
-#### 2.1.6 部件分类定义 (OT_PART_CLASS)
+#### 2.1.4 部件分类定义 (OT_PART_CLASS) - v1.4 增强
+
+**v1.4 变更**：PartClass 直接持有 selection_policy/min_qty/max_qty/multi_instance 属性（原来在 PartClassType 上）。
 
 ```json
 {
   "object_type": "PartClassType",
   "type_id": "OT_PART_CLASS",
-  "description": "部件分类，可配置子模块的分类边界。",
+  "description": "部件分类，可配置子模块的分类边界。v1.4 直接持有选择策略属性。",
   "properties": {
     "id": {
       "type": "STRING",
@@ -465,47 +402,47 @@
     "selection_policy": {
       "type": "ENUM",
       "values": ["REQUIRED", "OPTIONAL"],
-      "description": "选择策略"
+      "description": "选择策略（v1.4 从 Type 层下沉）"
     },
     "min_qty": {
       "type": "INTEGER",
       "default": 0,
-      "description": "最小数量"
+      "description": "最小数量（v1.4 从 Type 层下沉）"
     },
     "max_qty": {
       "type": "INTEGER",
-      "description": "最大数量"
+      "description": "最大数量（v1.4 从 Type 层下沉）"
     },
     "multi_instance": {
       "type": "BOOLEAN",
       "default": false,
-      "description": "是否支持多实例"
+      "description": "是否支持多实例（v1.4 从 Type 层下沉）"
     }
   },
   "generated_links": {
-    "CANDIDATE_PART": {
-      "link_id": "CANDIDATE_PART",
-      "target": "OT_PART",
-      "cardinality": "ONE_TO_MANY",
-      "description": "部件分类下有候选部件"
-    },
     "HAS_SPEC": {
       "link_id": "HAS_SPEC",
       "target": "OT_SPEC_DEFINITION",
       "cardinality": "ONE_TO_MANY",
-      "description": "部件分类有规格定义"
+      "description": "部件分类定义规格"
     },
     "DEFINES_PARAMETER": {
       "link_id": "DEFINES_PARAMETER",
       "target": "OT_PARAMETER",
       "cardinality": "ONE_TO_MANY",
       "description": "部件分类定义参数"
+    },
+    "CANDIDATE_PART": {
+      "link_id": "CANDIDATE_PART",
+      "target": "OT_PART",
+      "cardinality": "ONE_TO_MANY",
+      "description": "部件分类下有候选部件"
     }
   }
 }
 ```
 
-#### 2.1.7 可售产品实例定义 (OT_PRODUCT_INSTANCE)
+#### 2.1.5 可售产品实例定义 (OT_PRODUCT_INSTANCE)
 
 ```json
 {
@@ -591,7 +528,7 @@
 > }
 > ```
 
-#### 2.1.8 规格覆盖定义 (OT_SPEC_OVERRIDE)
+#### 2.1.6 规格覆盖定义 (OT_SPEC_OVERRIDE)
 
 ```json
 {
@@ -625,7 +562,7 @@
 }
 ```
 
-#### 2.1.9 部件定义 (OT_PART)
+#### 2.1.7 部件定义 (OT_PART)
 
 ```json
 {
@@ -674,7 +611,7 @@
 }
 ```
 
-#### 2.1.10 规格值定义 (OT_SPEC_VALUE)
+#### 2.1.8 规格值定义 (OT_SPEC_VALUE)
 
 ```json
 {
@@ -689,7 +626,7 @@
     "owner_type": {
       "type": "ENUM",
       "values": ["PRODUCT_CLASS", "PART"],
-      "description": "持有者类型"
+      "description": "持有者类型（v1.4 变更：ProductClass 可持有 SpecValue）"
     },
     "owner_id": {
       "type": "STRING",
@@ -711,7 +648,7 @@
 }
 ```
 
-#### 2.1.11 配置方案定义 (OT_CONFIGURATION)
+#### 2.1.9 配置方案定义 (OT_CONFIGURATION)
 
 ```json
 {
@@ -760,7 +697,7 @@
 }
 ```
 
-#### 2.1.12 已选部件定义 (OT_CONFIGURED_PART)
+#### 2.1.10 已选部件定义 (OT_CONFIGURED_PART)
 
 ```json
 {
@@ -804,7 +741,7 @@
 }
 ```
 
-#### 2.1.13 已选参数值定义 (OT_CONFIGURED_VALUE)
+#### 2.1.11 已选参数值定义 (OT_CONFIGURED_VALUE)
 
 ```json
 {
@@ -849,19 +786,24 @@
 
 ### 2.2 第二层实例数据的建模
 
-#### 2.2.1 产品类实例 (ProductClass Instance)
+#### 2.2.1 产品类实例 (ProductClass Instance) - v1.4 增强
+
+**v1.4 变更**：ProductClass 自身可持有 SpecValue（如 FormFactor、PowerSupply）。
 
 ```json
 {
   "object_instance": "ProductClass Instance",
   "instance_id": "PC-SERVER_X86-1.0.0",
   "type_id": "OT_PRODUCT_CLASS",
-  "type_definition_ref": "§2.1.5",
+  "type_definition_ref": "§2.1.3",
   "properties": {
     "id": "PC-SERVER_X86-1.0.0",
     "code": "SERVER_X86",
     "name": "X86服务器平台",
     "version": "1.0.0",
+    "domain": "IT硬件",
+    "modeling_policy": "PLATFORM_STANDARDIZATION",
+    "description": "面向研发和后端复用的通用服务器平台",
     "status": "PUBLISHED",
     "effective_from": "2026-07-01T00:00:00Z"
   },
@@ -879,14 +821,16 @@
 }
 ```
 
-#### 2.2.2 部件分类实例 (PartClass Instance)
+#### 2.2.2 部件分类实例 (PartClass Instance) - v1.4 增强
+
+**v1.4 变更**：selection_policy/min_qty/max_qty/multi_instance 直接在 PartClass 上（不再从 Type 层继承）。
 
 ```json
 {
   "object_instance": "PartClass Instance",
   "instance_id": "PCL-cpu",
   "type_id": "OT_PART_CLASS",
-  "type_definition_ref": "§2.1.6",
+  "type_definition_ref": "§2.1.4",
   "properties": {
     "id": "PCL-cpu",
     "code": "cpu",
@@ -923,7 +867,7 @@
   "object_instance": "Part Instance",
   "instance_id": "P-cpu2",
   "type_id": "OT_PART",
-  "type_definition_ref": "§2.1.9",
+  "type_definition_ref": "§2.1.7",
   "properties": {
     "id": "P-cpu2",
     "code": "cpu2",
@@ -944,7 +888,7 @@
 
 #### 2.2.4 规格与参数实例
 
-**规格定义实例 (SpecDefinition Instance)**：
+**规格定义实例 (SpecDefinition Instance)** - v1.4 变更：
 
 ```json
 {
@@ -954,7 +898,8 @@
   "properties": {
     "spec_code": "CoreNum",
     "name": "核心数",
-    "defined_on": "OT_PART_CLASS_TYPE/cpu",
+    "defined_on_type": "PART_CLASS",
+    "defined_on_code": "cpu",
     "data_type": "INTEGER",
     "unit": "core",
     "value_domain": ["2", "4", "8", "18"],
@@ -963,7 +908,27 @@
 }
 ```
 
-**参数定义实例 (Parameter Instance)**：
+**产品类规格定义实例** - v1.4 新增：
+
+```json
+{
+  "object_instance": "SpecDefinition Instance",
+  "instance_id": "SD-FormFactor",
+  "type_id": "OT_SPEC_DEFINITION",
+  "properties": {
+    "spec_code": "FormFactor",
+    "name": "外形规格",
+    "defined_on_type": "PRODUCT_CLASS",
+    "defined_on_code": "SERVER_X86",
+    "data_type": "STRING",
+    "unit": "U",
+    "value_domain": ["1U", "2U", "4U"],
+    "required": true
+  }
+}
+```
+
+**参数定义实例 (Parameter Instance)** - v1.4 变更：
 
 ```json
 {
@@ -973,7 +938,8 @@
   "properties": {
     "param_code": "Sum_Capacity",
     "name": "硬盘总容量需求",
-    "defined_on": "OT_PART_CLASS_TYPE/drive",
+    "defined_on_type": "PART_CLASS",
+    "defined_on_code": "drive",
     "data_type": "INTEGER",
     "unit": "TB",
     "assign_type": "INPUT",
@@ -991,7 +957,7 @@
   "object_instance": "ProductInstance Instance",
   "instance_id": "PI-S1110-1.0.0",
   "type_id": "OT_PRODUCT_INSTANCE",
-  "type_definition_ref": "§2.1.7",
+  "type_definition_ref": "§2.1.5",
   "properties": {
     "id": "PI-S1110-1.0.0",
     "code": "S1110",
@@ -1028,7 +994,7 @@
   "object_instance": "ProductInstance Instance",
   "instance_id": "PI-S22-1.0.0",
   "type_id": "OT_PRODUCT_INSTANCE",
-  "type_definition_ref": "§2.1.7",
+  "type_definition_ref": "§2.1.5",
   "properties": {
     "id": "PI-S22-1.0.0",
     "code": "S22",
@@ -1070,7 +1036,7 @@
   "object_instance": "Configuration Instance",
   "instance_id": "CFG-20260727-0001",
   "type_id": "OT_CONFIGURATION",
-  "type_definition_ref": "§2.1.11",
+  "type_definition_ref": "§2.1.9",
   "properties": {
     "id": "CFG-20260727-0001",
     "product_instance_id": "PI-S1110-1.0.0",
@@ -1128,31 +1094,28 @@
 
 #### 2.3.1 元数据到实例的映射表
 
-|| 映射关系 | 源 | 目标 | 映射类型 | 说明 |
+| 映射关系 | 源 | 目标 | 映射类型 | 说明 |
 |---------|-----|------|---------|------|
-| ProductClassType → ProductClass | 产品类类型 | 产品类实例 | 1:N | 类型定义驱动实例创建 |
-| PartClassType → PartClass | 部件类类型 | 部件分类实例 | 1:N | 类型定义驱动实例创建 |
 | ProductClass → PartClass | 产品类实例 | 部件分类实例 | 1:N | COMPOSED_OF link |
-| PartClass → Part | 部件分类实例 | 部件实例 | 1:N | CANDIDATE_PART link |
+| ProductClass → SpecDefinition | 产品类实例 | 规格定义实例 | 1:N | HAS_SPEC link（v1.4 新增） |
+| ProductClass → Parameter | 产品类实例 | 参数定义实例 | 1:N | DEFINES_PARAMETER link（v1.4 新增） |
 | PartClass → SpecDefinition | 部件分类实例 | 规格定义实例 | 1:N | HAS_SPEC link |
-| Part → SpecValue | 部件实例 | 规格值实例 | 1:N | SPEC_VALUE link |
 | PartClass → Parameter | 部件分类实例 | 参数定义实例 | 1:N | DEFINES_PARAMETER link |
+| PartClass → Part | 部件分类实例 | 部件实例 | 1:N | CANDIDATE_PART link |
+| Part → SpecValue | 部件实例 | 规格值实例 | 1:N | SPEC_VALUE link |
+| ProductClass → SpecValue | 产品类实例 | 规格值实例 | 1:N | SPEC_VALUE link（v1.4 新增） |
 | ProductInstance → ProductClass | 产品实例 | 产品类 | N:1 | REALIZES link |
 | ProductInstance → Part | 产品实例 | 部件 | M:N | OFFERS_PART link（含裁剪属性） |
 | ProductInstance → SpecOverride | 产品实例 | 规格覆盖 | 1:N | OVERRIDES_SPEC link |
 | Configuration → ConfiguredPart | 配置方案 | 已选部件 | 1:N | SELECTS_PART link |
 | Configuration → ConfiguredValue | 配置方案 | 已选参数值 | 1:N | HAS_CONFIGURED_VALUE link |
 
-#### 2.3.2 继承关系映射
+#### 2.3.2 继承关系映射（v1.4 简化版）
 
-复杂产品配置器的继承关系体现在版本管理上：
+复杂产品配置器的继承关系体现在版本管理上（v1.4 去掉了 Type 层）：
 
 ```
-ProductClassType (SERVER_X86)          ← 元数据层：类型定义
-        │
-        │ instantiate (创建实例)
-        ▼
-ProductClass (SERVER_X86 @1.0.0)       ← 实例层：已发布版本
+ProductClass (SERVER_X86 @1.0.0)       ← 实例层：已发布版本（直接持有 domain/modeling_policy）
         │
         │ realize (产品实例化)
         ▼
@@ -1163,48 +1126,49 @@ ProductInstance (S1110 @1.0.0)         ← 实例层：可售产品
 Configuration (CFG-20260727-0001)      ← 运行时层：配置方案
 ```
 
-**三层概念架构的 Palantir 映射**：
+**两层概念架构的 Palantir 映射**（v1.4 简化）：
 
 | 业务层 | Palantir 层 | 核心对象 |
 |-------|------------|---------|
-| **L1 业务元模型** | Meta Layer (第一层) | ProductClassType、PartClassType、SpecDefinition、Parameter |
-| **L2 业务对象实例** | Instance Layer (第二层) | ProductClass（含 version）、PartClass、Part（含 SpecValue）、ProductInstance（含 offersPart 裁剪） |
-| **L3 配置运行实例** | Runtime Layer | Configuration、ConfiguredPart、ConfiguredValue |
+| **L1 业务建模** | Meta Layer (第一层) | ProductClass、PartClass、SpecDefinition、Parameter |
+| **L2 产品实例化** | Instance Layer (第二层) | ProductClass（含 version）、PartClass、Part（含 SpecValue）、ProductInstance（含 offersPart 裁剪） |
+| **L3 配置运行** | Runtime Layer | Configuration、ConfiguredPart、ConfiguredValue |
 
 ---
 
 ## 三、角色协同设计
 
-### 3.1 角色模型与职责划分
+### 3.1 角色模型与职责划分（v1.4 调整）
 
-|| 角色 | Palantir 对应 | 职责范围 | 操作权限 |
+**v1.4 变更**：去掉了平台架构师管理 Type 的职责，ProductClass 直接承载领域和建模策略。
+
+| 角色 | Palantir 对应 | 职责范围 | 操作权限 |
 |------|--------------|---------|---------|
-| **平台架构师** | Platform Architect | 定义 ProductClassType、PartClassType、SpecDefinition 全局字典 | 全局写 |
-| **产品数据架构师** | Domain Architect | 创建和管理 ProductClass（含版本）、PartClass、Part、SpecValue | 产品域写 |
-| **产品数据工程师** | Product Data Engineer | 创建 ProductInstance、通过 offersPart 裁剪部件候选集 | 产品实例写 |
+| **产品数据架构师** | Domain Architect | 定义 ProductClass（含 domain/modeling_policy）、PartClass、SpecDefinition、Parameter 全局字典 | 全局写 |
+| **产品数据工程师** | Product Data Engineer | 创建 ProductClass（含版本）、PartClass、Part、SpecValue、ProductInstance、通过 offersPart 裁剪部件候选集 | 产品域写 |
 | **销售/客户** | Business User | 选择 ProductInstance、输入 Parameter 值、执行配置 | 配置写 |
 | **Agent 系统** | Automated Agent | 数据聚合、规则推理、配置求解 | 场景化权限 |
 
 ### 3.2 基于角色的数据视图设计
 
-#### 3.2.1 平台架构师视角
+#### 3.2.1 产品数据架构师视角
 
 ```json
 {
-  "role": "PLATFORM_ARCHITECT",
+  "role": "PRODUCT_DATA_ARCHITECT",
   "data_view": {
     "visible_layers": ["META"],
-    "visible_object_types": ["OT_PRODUCT_CLASS_TYPE", "OT_PART_CLASS_TYPE", "OT_SPEC_DEFINITION", "OT_PARAMETER"],
+    "visible_object_types": ["OT_PRODUCT_CLASS", "OT_PART_CLASS", "OT_SPEC_DEFINITION", "OT_PARAMETER"],
     "can_modify": {
-      "product_class_types": true,
-      "part_class_types": true,
+      "product_classes": true,
+      "part_classes": true,
       "spec_definitions": true,
       "parameters": true
     }
   },
   "workspace": {
     "tasks": [
-      "定义新的产品类类型（如工业设备、PLC）",
+      "定义新的产品类（如工业设备、PLC）",
       "维护规格定义全局字典",
       "维护参数定义全局字典",
       "制定建模策略（平台标准化/品牌线/定制化）"
@@ -1213,11 +1177,11 @@ Configuration (CFG-20260727-0001)      ← 运行时层：配置方案
 }
 ```
 
-#### 3.2.2 产品数据架构师视角
+#### 3.2.2 产品数据工程师视角
 
 ```json
 {
-  "role": "PRODUCT_DATA_ARCHITECT",
+  "role": "PRODUCT_DATA_ENGINEER",
   "data_view": {
     "visible_layers": ["META", "INSTANCE"],
     "visible_object_types": ["OT_PRODUCT_CLASS", "OT_PART_CLASS", "OT_PART", "OT_SPEC_VALUE"],
@@ -1226,7 +1190,10 @@ Configuration (CFG-20260727-0001)      ← 运行时层：配置方案
       "product_classes": true,
       "part_classes": true,
       "parts": true,
-      "spec_values": true
+      "spec_values": true,
+      "product_instances": true,
+      "offers_part_links": true,
+      "spec_overrides": true
     }
   },
   "workspace": {
@@ -1235,17 +1202,18 @@ Configuration (CFG-20260727-0001)      ← 运行时层：配置方案
       "创建产品类版本（SERVER_X86 @1.0.0）",
       "定义部件分类及数量边界",
       "录入部件及规格值",
+      "录入产品类规格值（FormFactor/PowerSupply）",
       "发布产品类"
     ]
   }
 }
 ```
 
-#### 3.2.3 产品数据工程师视角
+#### 3.2.3 产品数据工程师视角（产品实例化）
 
 ```json
 {
-  "role": "PRODUCT_DATA_ENGINEER",
+  "role": "PRODUCT_DATA_ENGINEER_INSTANCE",
   "data_view": {
     "visible_layers": ["INSTANCE"],
     "visible_object_types": ["OT_PRODUCT_INSTANCE", "OT_PART", "OT_SPEC_OVERRIDE"],
@@ -1300,56 +1268,54 @@ Configuration (CFG-20260727-0001)      ← 运行时层：配置方案
 │                      复杂产品配置角色协同流程                                      │
 ├────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                │
-│  【阶段一：产品类设计】                                                          │
-│  ┌──────────────────────────────────────────────────────────────────────────┐ │
-│  │  责任人：产品数据架构师                                                    │ │
-│  │                                                                          │ │
-│  │  1. 创建 ProductClass (SERVER_X86 @1.0.0)                               │ │
-│  │     ↓                                                                    │ │
-│  │  2. 定义 PartClass (cpu/drive/memory)                                   │ │
-│  │     ↓                                                                    │ │
-│  │  3. 定义 SpecDefinition (CoreNum/Memory/Speed/Capacity)                  │ │
-│  │     ↓                                                                    │ │
-│  │  4. 定义 Parameter (Sum_Capacity/Sum_Memory)                             │ │
-│  │     ↓                                                                    │ │
-│  │  5. 录入 Part 及 SpecValue (cpu1~cpu4, sd1~sd3, md1~md3)                │ │
-│  │     ↓                                                                    │ │
-│  │  6. 发布 ProductClass                                                    │ │
-│  └──────────────────────────────────────────────────────────────────────────┘ │
+│  【阶段一：产品类设计 - 责任人：产品数据架构师】                                 │
+│  ┌──────────────────────────────────────────────────────────────────────────┐   │
+│  │  1. 创建 ProductClass (SERVER_X86 @1.0.0) + domain/modeling_policy  │   │
+│  │     ↓                                                                    │   │
+│  │  2. 定义 PartClass (cpu/drive/memory) + selection_policy/min_qty/max_qty│   │
+│  │     ↓                                                                    │   │
+│  │  3. 定义 SpecDefinition (CoreNum/Memory/Speed/Capacity)                  │   │
+│  │     - 定义在 PRODUCT_CLASS: FormFactor, PowerSupply                      │   │
+│  │     - 定义在 PART_CLASS: CoreNum, Memory, Speed, Capacity               │   │
+│  │     ↓                                                                    │   │
+│  │  4. 定义 Parameter (Sum_Capacity/Sum_Memory)                           │   │
+│  │     ↓                                                                    │   │
+│  │  5. 录入 Part 及 SpecValue (cpu1~cpu4, sd1~sd3, md1~md3)             │   │
+│  │     ↓                                                                    │   │
+│  │  6. 录入 ProductClass SpecValue (FormFactor=2U, PowerSupply=DUAL)      │   │
+│  │     ↓                                                                    │   │
+│  │  7. 发布 ProductClass                                                    │   │
+│  └──────────────────────────────────────────────────────────────────────────┘   │
 │                                    │                                            │
 │                                    ▼                                            │
-│  【阶段二：产品实例化】                                                          │
-│  ┌──────────────────────────────────────────────────────────────────────────┐ │
-│  │  责任人：产品数据工程师                                                   │ │
-│  │                                                                          │ │
-│  │  1. 创建 ProductInstance (S1110 @1.0.0 / S22 @1.0.0)                     │ │
-│  │     ↓                                                                    │ │
-│  │  2. 配置 offersPart 裁剪                                                 │ │
-│  │     - S1110 禁用 cpu3/cpu4/sd2/sd3/md3                                  │ │
-│  │     - S22 禁用 cpu1/sd1/md1                                             │ │
-│  │     ↓                                                                    │ │
-│  │  3. 配置 SpecOverride (S22 强制 FormFactor=4U)                           │ │
-│  │     ↓                                                                    │ │
-│  │  4. 发布 ProductInstance                                                 │ │
-│  └──────────────────────────────────────────────────────────────────────────┘ │
+│  【阶段二：产品实例化 - 责任人：产品数据工程师】                                 │
+│  ┌──────────────────────────────────────────────────────────────────────────┐   │
+│  │  1. 创建 ProductInstance (S1110 @1.0.0 / S22 @1.0.0)                 │   │
+│  │     ↓                                                                    │   │
+│  │  2. 配置 offersPart 裁剪                                                 │   │
+│  │     - S1110 禁用 cpu3/cpu4/sd2/sd3/md3                                  │   │
+│  │     - S22 禁用 cpu1/sd1/md1                                             │   │
+│  │     ↓                                                                    │   │
+│  │  3. 配置 SpecOverride (S22 强制 FormFactor=4U)                           │   │
+│  │     ↓                                                                    │   │
+│  │  4. 发布 ProductInstance                                                 │   │
+│  └──────────────────────────────────────────────────────────────────────────┘   │
 │                                    │                                            │
 │                                    ▼                                            │
-│  【阶段三：客户配置】                                                            │
-│  ┌──────────────────────────────────────────────────────────────────────────┐ │
-│  │  责任人：销售/客户                                                        │ │
-│  │                                                                          │ │
-│  │  1. 选择 ProductInstance (S1110)                                         │ │
-│  │     ↓                                                                    │ │
-│  │  2. 输入 Parameter 值                                                    │ │
-│  │     - drive.Sum_Capacity >= 5 where Speed=5400                          │ │
-│  │     - cpu.Sum_Memory >= 512 where CoreNum=4                             │ │
-│  │     ↓                                                                    │ │
-│  │  3. 配置引擎求解                                                         │ │
-│  │     - cpu2 x2 (满足 4核内存 >= 512G)                                     │ │
-│  │     - md1 x5 (满足 5T 容量)                                             │ │
-│  │     ↓                                                                    │ │
-│  │  4. 输出 BOM/报价/交付规格                                               │ │
-│  └──────────────────────────────────────────────────────────────────────────┘ │
+│  【阶段三：客户配置 - 责任人：销售/客户】                                       │
+│  ┌──────────────────────────────────────────────────────────────────────────┐   │
+│  │  1. 选择 ProductInstance (S1110)                                       │   │
+│  │     ↓                                                                    │   │
+│  │  2. 输入 Parameter 值                                                    │   │
+│  │     - drive.Sum_Capacity >= 5 where Speed=5400                          │   │
+│  │     - cpu.Sum_Memory >= 512 where CoreNum=4                             │   │
+│  │     ↓                                                                    │   │
+│  │  3. 配置引擎求解                                                         │   │
+│  │     - cpu2 x2 (满足 4核内存 >= 512G)                                     │   │
+│  │     - md1 x5 (满足 5T 容量)                                             │   │
+│  │     ↓                                                                    │   │
+│  │  4. 输出 BOM/报价/交付规格                                               │   │
+│  └──────────────────────────────────────────────────────────────────────────┘   │
 │                                                                                │
 └────────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -1444,65 +1410,80 @@ Configuration → model_snapshot = "SERVER_X86:1.0.0 / S1110:1.0.0"
 
 ## 五、与电商方案的对比
 
-|| 维度 | Palantir 电商方案 | Palantir 复杂产品配置器方案 |
-|------|------|------------------|--------------------------|
+| 维度 | Palantir 电商方案 | Palantir 复杂产品配置器方案（v1.4） |
+|------|------|--------------------------|
 | **核心业务** | SKU 组合生成、价格、库存 | 部件配置、约束求解、BOM 生成 |
-| **模板类型** | OT_SPU_TEMPLATE / OT_SKU_TEMPLATE | OT_PRODUCT_CLASS_TYPE / OT_PART_CLASS_TYPE |
-| **属性定义** | OT_ATTRIBUTE（全局字典）+ allowed_value_refs | OT_SPEC_DEFINITION（定义在类型上）+ SpecValue（持有值） |
+| **类型定义** | OT_SPU_TEMPLATE / OT_SKU_TEMPLATE | 直接业务对象（无模板类型层） |
+| **属性定义** | OT_ATTRIBUTE（全局字典）+ allowed_value_refs | SpecDefinition（定义在 CLASS 上）+ SpecValue（持有值） |
 | **用户输入** | SKU 选颜色/容量 | Parameter（Sum_Capacity、Sum_Memory） |
-| **实例类型** | OT_SPU / OT_SKU | OT_PRODUCT_CLASS（含 version）/ OT_PART |
-| **产品实例** | SPU 本身（无专门的实例类型） | OT_PRODUCT_INSTANCE（含 offersPart 裁剪） |
-| **配置结果** | 选中的 SKU + 价格 + 库存 | OT_CONFIGURATION + OT_CONFIGURED_PART + BOM |
+| **实例类型** | OT_SPU / OT_SKU | ProductClass（含 version）/ Part（含 SpecValue） |
+| **产品实例** | SPU 本身（无专门的实例类型） | ProductInstance（含 offersPart 裁剪） |
+| **配置结果** | 选中的 SKU + 价格 + 库存 | Configuration + ConfiguredPart + BOM |
 | **LinkType 特色** | SOLD_BY（沉淀为 MerchantSKU）、GENERATES | OFFERS_PART（裁剪语义）、COMPOSED_OF（递归组成） |
+| **SpecValue 持有者** | SKU | ProductClass + Part（v1.4 新增 ProductClass 持有） |
 
 ---
 
 ## 六、附录
 
-### 6.1 LinkType 总览
+### 6.1 LinkType 总览（v1.4）
 
-|| # | LinkType Id | A-side | B-side | Link Properties | 说明 |
+| # | LinkType Id | A-side | B-side | Link Properties | 说明 |
 |---|------------|--------|--------|-----------------|------|
-| 1 | `COMPOSED_OF` | OT_PRODUCT_CLASS | OT_PART_CLASS | selection_policy, min/max_cardinality, multi_instance | 产品类包含部件分类 |
-| 2 | `CANDIDATE_PART` | OT_PART_CLASS | OT_PART | — | 部件分类下有候选部件 |
-| 3 | `HAS_SPEC` | OT_PRODUCT_CLASS / OT_PART_CLASS | OT_SPEC_DEFINITION | scope | 定义固有规格 |
-| 4 | `SPEC_VALUE` | OT_PRODUCT_CLASS / OT_PART | OT_SPEC_VALUE | — | 持有规格值 |
-| 5 | `DEFINES_PARAMETER` | OT_PART_CLASS | OT_PARAMETER | assign_type | 定义可配置参数 |
-| 6 | `REALIZES` | OT_PRODUCT_INSTANCE | OT_PRODUCT_CLASS | — | 产品实例实现产品类 |
-| 7 | `OFFERS_PART` | OT_PRODUCT_INSTANCE | OT_PART | enabled, disabled, defaultSelected, minQty, maxQty, fixed | 裁剪部件候选集 |
-| 8 | `OVERRIDES_SPEC` | OT_PRODUCT_INSTANCE | OT_SPEC_OVERRIDE | override_value, reason | 覆盖基线规格 |
-| 9 | `SELECTS_PART` | OT_CONFIGURATION | OT_CONFIGURED_PART | quantity, selected, reason | 选择部件 |
-| 10 | `HAS_CONFIGURED_VALUE` | OT_CONFIGURATION | OT_CONFIGURED_VALUE | value, unit, source | 持有参数值 |
+| 1 | `COMPOSED_OF` | ProductClass | PartClass | selection_policy, min_qty, max_qty, multi_instance | 产品类包含部件分类 |
+| 2 | `HAS_SPEC` | ProductClass / PartClass | SpecDefinition | scope | 定义固有规格（v1.4 支持 PRODUCT_CLASS） |
+| 3 | `DEFINES_PARAMETER` | ProductClass / PartClass | Parameter | assign_type | 定义可配置参数（v1.4 支持 PRODUCT_CLASS） |
+| 4 | `CANDIDATE_PART` | PartClass | Part | — | 部件分类下有候选部件 |
+| 5 | `SPEC_VALUE` | ProductClass / Part | SpecValue | — | 持有规格值（v1.4 支持 PRODUCT_CLASS） |
+| 6 | `REALIZES` | ProductInstance | ProductClass | — | 产品实例实现产品类 |
+| 7 | `OFFERS_PART` | ProductInstance | Part | enabled, disabled, defaultSelected, minQty, maxQty, fixed | 裁剪部件候选集 |
+| 8 | `OVERRIDES_SPEC` | ProductInstance | SpecOverride | override_value, reason | 覆盖基线规格 |
+| 9 | `SELECTS_PART` | Configuration | ConfiguredPart | quantity, selected, reason | 选择部件 |
+| 10 | `HAS_CONFIGURED_VALUE` | Configuration | ConfiguredValue | value, unit, source | 持有参数值 |
 
-### 6.2 ObjectType 总览
+### 6.2 ObjectType 总览（v1.4 简化版）
 
-|| ObjectType Id | 说明 | 层级 |
-|---------------|------|------|
-| `OT_PRODUCT_CLASS_TYPE` | 产品类类型 | Meta Layer |
-| `OT_PART_CLASS_TYPE` | 部件类类型 | Meta Layer |
-| `OT_SPEC_DEFINITION` | 规格定义 | Meta Layer |
-| `OT_PARAMETER` | 参数定义 | Meta Layer |
-| `OT_PRODUCT_CLASS` | 产品类（含版本） | Instance Layer |
-| `OT_PART_CLASS` | 部件分类 | Instance Layer |
-| `OT_PART` | 部件 | Instance Layer |
-| `OT_SPEC_VALUE` | 规格值 | Instance Layer |
-| `OT_PRODUCT_INSTANCE` | 可售产品实例 | Instance Layer |
-| `OT_SPEC_OVERRIDE` | 规格覆盖 | Instance Layer |
-| `OT_CONFIGURATION` | 配置方案 | Runtime Layer |
-| `OT_CONFIGURED_PART` | 已选部件 | Runtime Layer |
-| `OT_CONFIGURED_VALUE` | 已选参数值 | Runtime Layer |
+| ObjectType Id | 说明 | 层级 | v1.4 变更 |
+|---------------|------|------|-----------|
+| `OT_SPEC_DEFINITION` | 规格定义 | Meta Layer | definedOnType 改为 CLASS |
+| `OT_PARAMETER` | 参数定义 | Meta Layer | definedOnType 改为 CLASS |
+| `OT_PRODUCT_CLASS` | 产品类（含 version 和领域属性） | Meta/Instance Layer | 新增 domain/modelingPolicy/description |
+| `OT_PART_CLASS` | 部件分类（含选择策略） | Meta/Instance Layer | selectionPolicy 下沉到此类 |
+| `OT_PART` | 部件 | Instance Layer | — |
+| `OT_SPEC_VALUE` | 规格值 | Instance Layer | ownerType 支持 PRODUCT_CLASS |
+| `OT_PRODUCT_INSTANCE` | 可售产品实例 | Instance Layer | — |
+| `OT_SPEC_OVERRIDE` | 规格覆盖 | Instance Layer | — |
+| `OT_CONFIGURATION` | 配置方案 | Runtime Layer | — |
+| `OT_CONFIGURED_PART` | 已选部件 | Runtime Layer | — |
+| `OT_CONFIGURED_VALUE` | 已选参数值 | Runtime Layer | — |
 
-### 6.3 规格 vs 参数速查
+> **v1.4 变更**：去掉了 `OT_PRODUCT_CLASS_TYPE` 和 `OT_PART_CLASS_TYPE`。
 
-|| 问题 | 答案 |
+### 6.3 规格 vs 参数速查（v1.4 更新）
+
+| 问题 | 答案 |
 |------|------|
-| 服务器外形（2U/4U）是规格还是参数？ | 产品类规格，因为外形是 ProductClass SERVER_X86 固有的物理属性 |
+| 服务器外形（2U/4U）是规格还是参数？ | 产品类规格，因为外形是 ProductClass SERVER_X86 固有的物理属性（v1.4 ProductClass 可持有 SpecValue） |
 | 硬盘容量是规格还是参数？ | 部件规格，因为容量是 Part sd1 固有的（3TB） |
 | 客户需要"至少 5TB 容量"是什么？ | 参数，因为这是用户可配置的输入需求 |
 | CPU 核心数是规格还是参数？ | 部件规格，因为核心数是 CPU 固有的（2/4/8/18） |
 | 客户要求"4 核 CPU 总内存 >= 512GB"是什么？ | 参数，因为这是用户可配置的筛选条件 |
 | Parameter 有 SpecValue 吗？ | 没有，Parameter 值在 Configuration 中由用户输入 |
 | SpecValue 只挂在 Part 上吗？ | 不，ProductClass 也可以挂自己的 SpecValue（产品层规格如 FormFactor） |
+| SpecDefinition 的 definedOn 可以是哪些？ | PRODUCT_CLASS 或 PART_CLASS（v1.4 变更） |
+| PartClass 需要从 Type 层继承属性吗？ | 不，selection_policy/min_qty/max_qty/multi_instance 直接在 PartClass 上（v1.4） |
+
+### 6.4 v1.4 变更摘要
+
+| 变更维度 | v1.0 | v1.4 |
+|---------|-------|------|
+| 元模型层 | ProductClassType + PartClassType（显式） | **去掉**，直接业务建模 |
+| SpecDefinition definedOn | TYPE | **CLASS**（PRODUCT_CLASS / PART_CLASS） |
+| Parameter definedOn | TYPE | **CLASS**（PRODUCT_CLASS / PART_CLASS） |
+| ProductClass 规格 | 无 | **有**（如 FormFactor=2U, PowerSupply=DUAL） |
+| PartClass 选择策略 | 从 PartClassType 继承 | **直接持有** |
+| ObjectType 数 | 13 个 | **11 个**（去掉 2 个 Type） |
+| LinkType 数 | 10 个 | **10 个**（不变，但 HAS_SPEC/DEFINES_PARAMETER 支持两端） |
 
 ---
 

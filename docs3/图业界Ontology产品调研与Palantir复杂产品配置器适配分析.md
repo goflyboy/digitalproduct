@@ -1,24 +1,27 @@
 # 图业界 Ontology 类产品调研与 Palantir 复杂产品配置器适配分析
 
-> **文档版本**: v1.0
+> **文档版本**: v1.1
 > **创建时间**: 2026-07-28
+> **更新说明**: v1.1 适配数据模型 v1.4——去掉 ProductClassType/PartClassType，从三层业务模型简化为两层
 > **核心主题**: 商用/开源 Ontology 类产品调研 + Palantir 复杂产品配置器建模方案的适配对比
 > **关联文档**:
-> - [Palantir范式复杂产品配置器语义建模方案.md](./Palantir范式复杂产品配置器语义建模方案.md)（v1.0）
-> - [复杂产品配置器的数据模型详解.md](./复杂产品配置器的数据模型详解.md)（v1.1）
-> - [图业界Ontology产品调研与Palantir电商适配分析.md](../docs/图业界Ontology产品调研与Palantir电商适配分析.md)（v1.3）
+> - [Palantir范式复杂产品配置器语义建模方案.md](./Palantir范式复杂产品配置器语义建模方案.md)（v1.1）
+> - [复杂产品配置器的数据模型详解.md](./复杂产品配置器的数据模型.md)（v1.4）
+> - [Microsoft Fabric IQ 复杂产品配置器语义建模验证操作指南.md](./Microsoft%20Fabric%20IQ%20复杂产品配置器语义建模验证操作指南.md)（v1.1）
 
 ---
 
 ## 一、核心结论
 
-针对「三层业务模型（L1元模型/L2业务对象/L3配置运行）+ LinkType一等公民 + 配置约束求解 + Agent消费」的 Palantir 范式复杂产品配置器建模方案，**主适配排序为：Stardog > Microsoft Fabric IQ > Neo4j Aura**。
+针对「两层业务模型（业务建模层 + 产品实例化层）+ LinkType一等公民 + 配置约束求解 + Agent消费」的 Palantir 范式复杂产品配置器建模方案（v1.4），**主适配排序为：Stardog > Microsoft Fabric IQ > Neo4j Aura**。
+
+**v1.4 简化说明**：去掉了 ProductClassType/PartClassType 元模型层，从三层（L1元模型/L2业务对象/L3配置运行）简化为两层（L1业务建模/L2产品实例化/L3配置运行仍在）。
 
 如果业务包含「工业设备 / PLC 配置器 / IoT 装备耗材」等边界品类，**TDengine + IDMP 作为「子本体挂载」是强候选**。
 
 如果业务对**国产化部署**或**完全沿用 Palantir 路线**有强诉求，**AbutionGraph 是"路线对位型"候选**。
 
-|| 排名 | 产品 | 适配评分 | 一句话定位 |
+| 排名 | 产品 | 适配评分 | 一句话定位 |
 |------|------|---------|-----------|
 | 1 | **Stardog** | ⭐⭐⭐⭐⭐ | 与 Palantir 哲学最接近的 RDF/OWL 知识图谱，LinkType 天然一等公民，配置约束 SHACL 校验 |
 | 2 | **Microsoft Fabric IQ** | ⭐⭐⭐⭐ | 2026 GA 的 Ontology+Activator 全家桶，最像 Foundry 的"复制品"，Activator 适合规则引擎 |
@@ -30,21 +33,23 @@
 
 ## 二、Palantir 范式复杂产品配置器方案的核心能力诉求
 
+**v1.4 变更说明**：去掉了 ProductClassType/PartClassType 元模型层，ObjectType 从 13 个简化为 11 个。
+
 约束方案落地的关键能力（按重要性排序）：
 
-|| # | 能力诉求 | 在方案中的体现 | 难度 |
-|---|---------|---------------|------|
-| **A1** | **ObjectType 一等公民**（实体类型可注册、版本化） | OT_PRODUCT_CLASS / OT_PART_CLASS / OT_PART 等 13 个类型 | 中 |
-| **A2** | **LinkType 一等公民 + 边属性** | `OFFERS_PART` 带 `enabled/disabled/minQty/maxQty/fixed` 裁剪属性；`COMPOSED_OF` 带 `selection_policy/min_cardinality/max_cardinality` | **高** |
-| **A3** | **三层业务模型**（L1元模型/L2业务对象/L3配置运行） | ProductClass → PartClass → Part → ProductInstance → Configuration | 高 |
-| **A4** | **Backing Datasource 解耦** | 部件主数据、规则引擎、定价域分离 | 中 |
-| **A5** | **SpecDefinition + SpecValue 规格体系** | 产品/部件的固有规格定义与持有值分离 | 中 |
-| **A6** | **Parameter 参数体系** | 用户可配置的需求输入（Sum_Capacity、Sum_Memory） | 中 |
-| **A7** | **offersPart 裁剪语义** | ProductInstance 到 Part 的裁剪边，enabled/defaultSelected/minQty/maxQty/fixed | **高** |
-| **A8** | **SpecOverride 覆盖语义** | ProductInstance 覆盖基线规格（S22 强制 FormFactor=4U） | 中 |
-| **A9** | **Configuration + ConfiguredPart 配置求解** | 配置方案 → 约束求解 → BOM/报价/交付规格 | 高 |
-| **A10** | **细粒度权限与角色视图** | 平台架构师/产品数据架构师/产品数据工程师/销售/客户 | 中 |
-| **A11** | **Agent / GraphRAG 消费** | 配置助手、价格查询、规则推理 | 中 |
+| # | 能力诉求 | 在方案中的体现 | v1.4 变更 | 难度 |
+|---|---------|---------------|---------|------|
+| **A1** | **ObjectType 一等公民**（实体类型可注册、版本化） | OT_PRODUCT_CLASS / OT_PART_CLASS / OT_PART 等 **11 个类型** | 从 13 简化为 11（去掉 Type 层） | 中 |
+| **A2** | **LinkType 一等公民 + 边属性** | `OFFERS_PART` 带 `enabled/disabled/minQty/maxQty/fixed` 裁剪属性；`COMPOSED_OF` 带 `selection_policy/min_qty/max_qty/multi_instance` | **不变** | **高** |
+| **A3** | **两层业务模型**（L1业务建模/L2产品实例化/L3配置运行） | ProductClass → PartClass → Part → ProductInstance → Configuration | 从"三层元模型"简化为"两层业务模型" | 高 |
+| **A4** | **Backing Datasource 解耦** | 部件主数据、规则引擎、定价域分离 | **不变** | 中 |
+| **A5** | **SpecDefinition + SpecValue 规格体系** | 产品/部件的固有规格定义与持有值分离；ProductClass 可持有 SpecValue | v1.4 新增 ProductClass 持有 SpecValue | 中 |
+| **A6** | **Parameter 参数体系** | 用户可配置的需求输入（Sum_Capacity、Sum_Memory）；定义在 ProductClass 或 PartClass 上 | v1.4 definedOn 从 TYPE 改为 CLASS | 中 |
+| **A7** | **offersPart 裁剪语义** | ProductInstance 到 Part 的裁剪边，enabled/defaultSelected/minQty/maxQty/fixed | **不变** | **高** |
+| **A8** | **SpecOverride 覆盖语义** | ProductInstance 覆盖基线规格（S22 强制 FormFactor=4U） | **不变** | 中 |
+| **A9** | **Configuration + ConfiguredPart 配置求解** | 配置方案 → 约束求解 → BOM/报价/交付规格 | **不变** | 高 |
+| **A10** | **细粒度权限与角色视图** | 产品数据架构师/产品数据工程师/销售/客户 | 去掉"平台架构师"角色（不再管理 Type 层） | 中 |
+| **A11** | **Agent / GraphRAG 消费** | 配置助手、价格查询、规则推理 | **不变** | 中 |
 
 > 复杂产品配置器方案的特色能力：offersPart 裁剪语义（LinkType 边属性）、SpecOverride 覆盖语义、SpecDefinition 与 Parameter 的区分、Configuration 约束求解。这些能力对 Ontology 产品的 LinkType 边属性和约束校验能力提出了更高要求。
 
@@ -58,7 +63,7 @@
 
 **关键技术特征**：
 
-|| 维度 | 实现 |
+| 维度 | 实现 |
 |------|------|
 | 数据模型 | RDF 三元组；关系是 `owl:ObjectProperty`（一等公民） |
 | 边属性 | 用 named graph + reification 落地，对应 `OFFERS_PART` 的 `enabled/disabled/minQty/maxQty/fixed` |
@@ -81,7 +86,7 @@
 
 **关键技术特征**：
 
-|| 维度 | 实现 |
+| 维度 | 实现 |
 |------|------|
 | Entity Type | 与 Palantir ObjectType 几乎一一对应 |
 | Relationship | 可挂属性（distance、confidence、effectiveAt）+ 基数约束 |
@@ -101,7 +106,7 @@
 
 **关键技术特征**：
 
-|| 维度 | 实现 |
+| 维度 | 实现 |
 |------|------|
 | 数据模型 | 属性图（Property Graph） |
 | 边属性 | `(:ProductInstance)-[:OFFERS_PART {enabled: true, minQty: 1, maxQty: 2}]->(:Part)` 原生支持 |
@@ -127,7 +132,7 @@
 
 **关键技术特征**：
 
-|| 维度 | 实现 |
+| 维度 | 实现 |
 |------|------|
 | 数据模型 | **树 + 网络两层结构**（与 Palantir Ontology 哲学高度同构） |
 | 工业本体三件套 | **元素（Element）** + **属性（Attribute）** + **事件（Event）** |
@@ -162,18 +167,18 @@
 
 **T/P/F/Agg/Action 五位一体建模**（直接对位 Palantir 概念）：
 
-|| AbutionGraph 概念 | Palantir 对位 | 复杂产品配置器对应 |
+| AbutionGraph 概念 | Palantir 对位 | 复杂产品配置器对应 |
 |-----------------|--------------|-----------------|
-| **T（Type）** | ObjectType | OT_PRODUCT_CLASS / OT_PART_CLASS 等 13 个类型 |
+| **T（Type）** | ObjectType | OT_PRODUCT_CLASS / OT_PART_CLASS 等 **11 个类型**（v1.4 去掉 Type 层） |
 | **P（Predicate）** | PropertyType / LinkType | PropertyType + LinkType 边属性（offersPart/minQty/maxQty） |
 | **F（Function）** | Function | 派生属性、计算字段（Sum_Capacity 汇总） |
 | **Agg（Aggregate）** | Function / Metric | 统计聚合、指标计算（BOM 汇总价格） |
 | **Action** | Action Type | 配置约束触发、规格覆盖生效 |
-| **R（Role）** | Markings / 权限 | 平台架构师/产品数据架构师/产品数据工程师/销售角色 |
+| **R（Role）** | Markings / 权限 | 产品数据架构师/产品数据工程师/销售角色 |
 
 **关键技术特征**：
 
-|| 维度 | 实现 |
+| 维度 | 实现 |
 |------|------|
 | 数据模型 | **RDF 图 + 属性图 + 时序图 + 向量图** 四种融合 |
 | Schema | **弱 schema**：保证建模规范同时允许万亿级点边场景下的动态属性增删 |
@@ -206,20 +211,22 @@
 
 ## 四、Top 5 同台对比
 
+**v1.4 变更说明**：A1 ObjectType 从 13 个简化为 11 个（去掉 ProductClassType/PartClassType）。
+
 评分说明：⭐⭐⭐⭐⭐ 完全支持｜⭐⭐⭐⭐ 强支持｜⭐⭐⭐ 部分支持｜⭐⭐ 弱支持｜⭐ 不支持
 
-|| 能力诉求 | Stardog | Microsoft Fabric IQ | Neo4j Aura | TDengine IDMP | AbutionGraph |
+| 能力诉求 | Stardog | Microsoft Fabric IQ | Neo4j Aura | TDengine IDMP | AbutionGraph |
 |---------|---------|--------------------|-----------|---------------|--------------|
-| **A1 ObjectType 一等公民** | ⭐⭐⭐⭐⭐ OWL Class | ⭐⭐⭐⭐⭐ Entity Type | ⭐⭐⭐ Label 是"半 schema" | ⭐⭐⭐⭐⭐ Element 模板原生 | ⭐⭐⭐⭐⭐ Type + Dimension 原生 |
+| **A1 ObjectType 一等公民**（v1.4: 11个） | ⭐⭐⭐⭐⭐ OWL Class | ⭐⭐⭐⭐⭐ Entity Type | ⭐⭐⭐ Label 是"半 schema" | ⭐⭐⭐⭐⭐ Element 模板原生 | ⭐⭐⭐⭐⭐ Type + Dimension 原生 |
 | **A2 LinkType + 边属性** | ⭐⭐⭐⭐⭐ ObjectProperty + reification | ⭐⭐⭐⭐⭐ Relationship 可挂属性 | ⭐⭐⭐⭐⭐ 属性图原生一等公民 | ⭐⭐⭐ Element Reference 无 schema 化 | ⭐⭐⭐⭐⭐ Edge 属性原生 + 边聚合独占 |
-| **A3 三层业务模型** | ⭐⭐⭐⭐ OWL + SHACL 分层 | ⭐⭐⭐⭐ Semantic Model 引导生成 | ⭐⭐⭐ 自建"模板"层 | ⭐⭐⭐⭐ 树+网分层 | ⭐⭐⭐⭐ 弱 schema + 灵活分层 |
+| **A3 两层业务模型**（v1.4 简化） | ⭐⭐⭐⭐ OWL + SHACL 分层 | ⭐⭐⭐⭐ Semantic Model 引导生成 | ⭐⭐⭐ 自建"模板"层 | ⭐⭐⭐⭐ 树+网分层 | ⭐⭐⭐⭐ 弱 schema + 灵活分层 |
 | **A4 SpecDefinition + SpecValue** | ⭐⭐⭐⭐⭐ OWL DatatypeProperty | ⭐⭐⭐⭐ Property + Entity | ⭐⭐⭐ 属性图原生 | ⭐⭐⭐⭐ Attribute 原生 | ⭐⭐⭐⭐ Property 原生 |
-| **A5 Parameter 参数体系** | ⭐⭐⭐⭐ SPARQL 查询变量 | ⭐⭐⭐⭐ Query Parameter | ⭐⭐⭐ Cypher 参数 | ⭐⭐⭐⭐ Attribute 扩展 | ⭐⭐⭐⭐ Function 参数 |
+| **A5 Parameter 参数体系**（v1.4: CLASS） | ⭐⭐⭐⭐ SPARQL 查询变量 | ⭐⭐⭐⭐ Query Parameter | ⭐⭐⭐ Cypher 参数 | ⭐⭐⭐⭐ Attribute 扩展 | ⭐⭐⭐⭐ Function 参数 |
 | **A6 offersPart 裁剪语义** | ⭐⭐⭐⭐⭐ SHACL + Virtual Graph | ⭐⭐⭐⭐ Semantic Model 约束 | ⭐⭐⭐⭐⭐ 属性图边属性原生 | ⭐⭐⭐ Element Reference 弱 | ⭐⭐⭐⭐⭐ Edge 属性原生 |
 | **A7 SpecOverride 覆盖语义** | ⭐⭐⭐⭐ SPARQL Update | ⭐⭐⭐⭐⭐ Activator 触发 | ⭐⭐⭐ Cypher 写事务 | ⭐⭐⭐ Event 触发 | ⭐⭐⭐⭐⭐ ActionFunction 原生 |
 | **A8 Configuration 配置求解** | ⭐⭐⭐⭐ SPARQL + 外层求解器 | ⭐⭐⭐⭐⭐ Activator 规则引擎 | ⭐⭐⭐ 外层 Cypher 查询 | ⭐⭐⭐⭐ Event + MCP | ⭐⭐⭐⭐ Function + Action |
 | **A9 Backing Datasource 解耦** | ⭐⭐⭐⭐⭐ Virtual Graph，**不搬数据** | ⭐⭐⭐ 必须搬 OneLake | ⭐⭐⭐ 必须 ETL | ⭐⭐⭐⭐ TSDB + 关系库桥接 | ⭐⭐⭐ TSDB/Hadoop/S3/Kafka 桥接 |
-| **A10 细粒度权限与角色视图** | ⭐⭐⭐⭐ RBAC + Named Graph | ⭐⭐⭐⭐⭐ Fabric Workspace 权限集成 | ⭐⭐⭐⭐⭐ RBAC + sub-graph | ⭐⭐⭐⭐ RBAC + Token | ⭐⭐⭐⭐⭐ **行级子图隔离**（强项）|
+| **A10 细粒度权限与角色视图**（v1.4: 去掉Type角色） | ⭐⭐⭐⭐ RBAC + Named Graph | ⭐⭐⭐⭐⭐ Fabric Workspace 权限集成 | ⭐⭐⭐⭐⭐ RBAC + sub-graph | ⭐⭐⭐⭐ RBAC + Token | ⭐⭐⭐⭐⭐ **行级子图隔离**（强项）|
 | **A11 Agent / GraphRAG** | ⭐⭐⭐⭐ Voicebox + MCP | ⭐⭐⭐⭐⭐ Operations + Data Agent GA | ⭐⭐⭐⭐⭐ Aura Agent 一键 MCP | ⭐⭐⭐⭐⭐ 内置 MCP + AI Chat + TDgpt | ⭐⭐⭐⭐⭐ OntoFlow MCP + Tool/Skill/Memory |
 | **W3C 标准原生** | ⭐⭐⭐⭐⭐ RDF/SPARQL/OWL/SHACL | ⭐⭐ DAX/SQL | ⭐⭐ Cypher | ⭐⭐ 靠 Ontop 桥接 | ⭐⭐ **主动放弃** OWL/RDF |
 | **复杂产品配置器场景适用度** | ⭐⭐⭐⭐⭐ 约束校验 + 联邦 + 推理 | ⭐⭐⭐⭐ 规则引擎 + Agent | ⭐⭐⭐⭐ 已写 Cypher，迁移成本最低 | ⭐⭐⭐ 原生工业场景 | ⭐⭐⭐⭐ 通用本体，工业/装备都能套 |
@@ -231,7 +238,7 @@
 
 ## 五、不推荐作为 Ontology 引擎的方案
 
-|| 产品 | 不推荐原因 |
+| 产品 | 不推荐原因 |
 |------|----------|
 | **Amazon Neptune** | 没有一等公民 Ontology item；Query Language 杂；边属性支持弱 |
 | **TigerGraph** | GSQL 强但生态小，无 SHACL 等价物；配置约束校验能力弱 |
@@ -251,7 +258,7 @@
 1. **offersPart 边属性** + **SHACL 校验** + **MCP Agent 调用** 三件套
 2. **SpecOverride 覆盖语义**（S22 强制 FormFactor=4U）
 3. **Configuration 配置求解**（Sum_Capacity >= 5 约束）
-4. **三层业务模型**（L1元模型/L2业务对象/L3配置运行）的 Graph 表达
+4. **两层业务模型**（L1业务建模/L2产品实例化/L3配置运行）的 Graph 表达（v1.4 简化）
 
 **边界场景 PoC**：如果业务含"工业设备 / PLC 配置器 / IoT 装备耗材"品类，加做 **TDengine IDMP 子本体** PoC：
 
@@ -262,7 +269,7 @@
 
 ### 6.2 配置约束（Action Type v2）实施路径
 
-|| 选型 | 配置约束实现 |
+| 选型 | 配置约束实现 |
 |------|------------|
 | Stardog | SPARQL Update + SHACL 校验触发 |
 | Fabric IQ | 直接接 Activator 规则引擎 |
@@ -302,9 +309,9 @@ MCP 是当下标配，五家都支持：
 ┌────────────────────────────────────────────────┐
 │  工业侧子本体（TDengine IDMP）                  │
 │  - Element: PLC模块 / 传感器 / 执行器            │
-│  - Attribute: 温度 / 压力 / 转速                │
-│  - Event: 配置告警 / 维护事件                    │
-│  - MCP server 暴露给配置 Agent                   │
+│  - Attribute: 温度 / 压力 / 转速              │
+│  - Event: 配置告警 / 维护事件                   │
+│  - MCP server 暴露给配置 Agent                 │
 └────────────────────────────────────────────────┘
 ```
 
@@ -315,15 +322,15 @@ MCP 是当下标配，五家都支持：
 
 ### 6.6 国产化 / 信创要求下的主方案建议
 
-如果业务**必须国产化部署**（信创、政府、国企客户）或**明确要求沿 Palantir 路线**：
+如果业务**必须国产化部署**（信创，政府、国企客户）或**明确要求沿 Palantir 路线**：
 
 ```
 ┌────────────────────────────────────────────────────────┐
 │  国产主方案：AbutionGraph + OntoFlow                    │
 │  - T/P/F/Agg/Action 直接对位 Palantir Ontology 概念    │
 │  - 行级子图隔离 + Action 触发 = 角色视图 + 配置约束     │
-│  - OntoFlow MCP 一键发布，对接 Claude / Cursor         │
-│  - 边缘计算 + 存算分离，部署成本低                     │
+│  - OntoFlow MCP 一键发布，对接 Claude / Cursor          │
+│  - 边缘计算 + 存算分离，部署成本低                    │
 └────────────────────────────────────────────────────────┘
 ```
 
@@ -334,7 +341,7 @@ MCP 是当下标配，五家都支持：
 
 ### 6.7 决策矩阵（最终版）
 
-|| 你的核心诉求 | 首选 | 次选 | 备选 |
+| 你的核心诉求 | 首选 | 次选 | 备选 |
 |------------|------|------|------|
 | 严肃复刻 Palantir + W3C 标准 | **Stardog** | Fabric IQ | AbutionGraph |
 | 已在 Microsoft 云栈 | **Fabric IQ** | Stardog | Neo4j Aura |
@@ -353,7 +360,7 @@ MCP 是当下标配，五家都支持：
 
 `OFFERS_PART` 是复杂产品配置器的核心 LinkType，其边属性（enabled/disabled/minQty/maxQty/fixed）对 Ontology 产品提出特殊要求：
 
-|| 边属性 | 语义 | Stardog 表达 | Neo4j 表达 | AbutionGraph 表达 |
+| 边属性 | 语义 | Stardog 表达 | Neo4j 表达 | AbutionGraph 表达 |
 |-------|------|-------------|-----------|------------------|
 | `enabled` | 是否启用该 Part | SHACL `minCount` | 边属性 `enabled` | Edge 属性 `enabled` |
 | `disabled` | 是否禁用该 Part | SHACL `maxCount=0` | 边属性 `disabled` | Edge 属性 `disabled` |
@@ -362,19 +369,32 @@ MCP 是当下标配，五家都支持：
 | `fixed` | 是否固定不可改 | SHACL 约束 | 边属性 `fixed` | Edge 属性 `fixed` |
 | `defaultSelected` | 是否默认选中 | SPARQL 查询 | 边属性 `defaultSelected` | Edge 属性 `defaultSelected` |
 
-### 7.2 SpecDefinition 与 Parameter 的区分
+### 7.2 SpecDefinition 与 Parameter 的区分（v1.4 更新）
+
+**v1.4 变更**：definedOn 从 TYPE 改为 CLASS（PRODUCT_CLASS / PART_CLASS）。
 
 复杂产品配置器要求 Ontology 产品支持**规格（Spec）**与**参数（Parameter）**的语义区分：
 
-|| 维度 | 规格（SpecDefinition） | 参数（Parameter） |
+| 维度 | 规格（SpecDefinition） | 参数（Parameter） |
 |------|----------------------|-----------------|
-| 定义位置 | ProductClassType / PartClassType | PartClassType |
+| 定义位置（v1.4） | **PRODUCT_CLASS / PART_CLASS**（从 TYPE 简化） | **PRODUCT_CLASS / PART_CLASS**（从 TYPE 简化） |
 | 持有值 | SpecValue（挂在 ProductClass 或 Part 上） | 无对应值，在 Configuration 中由用户输入 |
 | 语义 | 产品/部件固有的物理特性 | 用户可配置的需求输入 |
 | Stardog 表达 | OWL DatatypeProperty + 实例 | SPARQL 查询变量 |
 | Neo4j 表达 | Node 属性 | Cypher 参数 |
 
-### 7.3 Configuration 配置求解的 Graph 表达
+### 7.3 ProductClass 规格值（v1.4 新增）
+
+**v1.4 变更**：ProductClass 可持有 SpecValue（如 FormFactor=2U、PowerSupply=DUAL），这是产品层固有的物理属性。
+
+| 场景 | 示例 | 说明 |
+|------|------|------|
+| 产品类规格 | SERVER_X86.FormFactor=2U | 外形规格是服务器平台固有的 |
+| 产品类规格 | SERVER_X86.PowerSupply=DUAL | 电源类型是服务器平台固有的 |
+| 部件规格 | cpu1.CoreNum=2 | 核心数是 CPU 部件固有的 |
+| 部件规格 | sd1.Capacity=3 | 容量是硬盘部件固有的 |
+
+### 7.4 Configuration 配置求解的 Graph 表达
 
 Configuration → ConfiguredPart → BOM/报价/交付规格的链路在 Graph 中的表达：
 
@@ -429,9 +449,10 @@ Configuration (CFG-001)
 
 ## 九、修订记录
 
-|| 版本 | 日期 | 主要变更 |
+| 版本 | 日期 | 主要变更 |
 |------|------|----------|
 | V1.0 | 2026-07-28 | 初始版本：参考电商方案结构，适配复杂产品配置器场景（offersPart裁剪、SpecOverride覆盖、Parameter参数体系、Configuration配置求解） |
+| V1.1 | 2026-07-29 | 适配数据模型 v1.4：去掉 ProductClassType/PartClassType；ObjectType 从 13 简化为 11；definedOn 从 TYPE 改为 CLASS；ProductClass 可持有 SpecValue；更新能力诉求表和对比表格；更新角色设计（去掉平台架构师） |
 
 ---
 
