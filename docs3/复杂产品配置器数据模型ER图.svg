@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 2100" font-family="'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 2000" font-family="'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif">
   <style>
     .layer-bg { fill: #f8f9fa; stroke: #dee2e6; stroke-width: 1; }
     .layer-label { font-size: 20px; font-weight: bold; fill: #495057; }
@@ -12,10 +12,10 @@
     .relation-label { font-size: 10px; fill: #495057; }
     .card-phase1 { fill: #1976d2; }
     .card-phase2 { fill: #388e3c; }
-    .card-phase3 { fill: #f57c00; }
     .legend-box { fill: #ffffff; stroke: #ced4da; stroke-width: 1; }
     .legend-title { font-size: 12px; font-weight: bold; fill: #212529; }
-    .spec-link { stroke: #9c27b0; stroke-width: 2; stroke-dasharray: 5,3; }
+    .spec-link { stroke: #9c27b0; stroke-width: 2; }
+    .spec-link-light { stroke: #d177cf; stroke-width: 1.5; stroke-dasharray: 5,3; }
     .override-link { stroke: #e91e63; stroke-width: 2; }
     .ref-link { stroke: #1565c0; stroke-width: 2; stroke-dasharray: 8,3; }
     .inherit-link { stroke: #388e3c; stroke-width: 2; }
@@ -34,305 +34,277 @@
     <marker id="arrow-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
       <polygon points="0 0, 10 3.5, 0 7" fill="#e91e63"/>
     </marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#1565c0"/>
+    </marker>
+    <marker id="arrow-light-purple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#d177cf"/>
+    </marker>
   </defs>
 
   <!-- ===================== ????????? ===================== -->
-  <rect x="20" y="20" width="1360" height="680" class="layer-bg" rx="8"/>
-  <rect x="20" y="20" width="1360" height="40" class="card-phase1" rx="8"/>
-  <text x="40" y="48" class="layer-label" fill="white">????????????????? / ????????</text>
+  <rect x="20" y="20" width="1460" height="820" class="layer-bg" rx="8"/>
+  <rect x="20" y="20" width="1460" height="40" class="card-phase1" rx="8"/>
+  <text x="40" y="48" class="layer-label" fill="white">?????????????????</text>
 
   <!-- ProductClass -->
-  <rect x="40" y="80" width="260" height="180" class="entity" rx="6"/>
-  <rect x="40" y="80" width="260" height="30" class="card-phase1" rx="6"/>
-  <text x="170" y="100" text-anchor="middle" class="entity-title" fill="white">ProductClass</text>
-  <text x="55" y="125" class="entity-type">??????????</text>
-  <line x1="40" y1="130" x2="300" y2="130" stroke="#dee2e6"/>
-  <text x="55" y="150" class="attr attr-key">id / code</text>
-  <text x="55" y="168" class="attr">name</text>
-  <text x="55" y="186" class="attr attr-key">version</text>
-  <text x="55" y="204" class="attr">status / effective_from/to</text>
-  <text x="55" y="222" class="attr attr-key">SpecValue 1:N</text>
-  <text x="55" y="240" class="attr attr-key">Specification 1:N</text>
-  <text x="55" y="258" class="attr attr-key">Parameter 1:N</text>
+  <rect x="40" y="90" width="280" height="180" class="entity" rx="6"/>
+  <rect x="40" y="90" width="280" height="30" class="card-phase1" rx="6"/>
+  <text x="180" y="110" text-anchor="middle" class="entity-title" fill="white">ProductClass</text>
+  <text x="55" y="135" class="entity-type">??????????</text>
+  <line x1="40" y1="140" x2="320" y2="140" stroke="#dee2e6"/>
+  <text x="55" y="160" class="attr attr-key">id / code</text>
+  <text x="55" y="178" class="attr">name</text>
+  <text x="55" y="196" class="attr attr-key">version</text>
+  <text x="55" y="214" class="attr">status / effective_from/to</text>
+  <text x="55" y="232" class="attr attr-key">hasSpecValue 1:N</text>
+  <text x="55" y="250" class="attr attr-key">hasSpec 1:N</text>
 
   <!-- PartClass -->
-  <rect x="380" y="80" width="260" height="180" class="entity" rx="6"/>
-  <rect x="380" y="80" width="260" height="30" class="card-phase1" rx="6"/>
-  <text x="510" y="100" text-anchor="middle" class="entity-title" fill="white">PartClass</text>
-  <text x="395" y="125" class="entity-type">?????cpu / drive / memory?</text>
-  <line x1="380" y1="130" x2="640" y2="130" stroke="#dee2e6"/>
-  <text x="395" y="150" class="attr attr-key">id / code</text>
-  <text x="395" y="168" class="attr attr-key">product_class_id</text>
-  <text x="395" y="186" class="attr">name / part_kind</text>
-  <text x="395" y="204" class="attr">selection_policy</text>
-  <text x="395" y="222" class="attr">min_qty / max_qty</text>
-  <text x="395" y="240" class="attr attr-key">Part 1:N</text>
+  <rect x="420" y="90" width="280" height="180" class="entity" rx="6"/>
+  <rect x="420" y="90" width="280" height="30" class="card-phase1" rx="6"/>
+  <text x="560" y="110" text-anchor="middle" class="entity-title" fill="white">PartClass</text>
+  <text x="435" y="135" class="entity-type">?????cpu / drive / memory?</text>
+  <line x1="420" y1="140" x2="700" y2="140" stroke="#dee2e6"/>
+  <text x="435" y="160" class="attr attr-key">id / code</text>
+  <text x="435" y="178" class="attr attr-key">product_class_id</text>
+  <text x="435" y="196" class="attr">name / part_kind</text>
+  <text x="435" y="214" class="attr">selection_policy</text>
+  <text x="435" y="232" class="attr">min_qty / max_qty</text>
+  <text x="435" y="250" class="attr attr-key">Part 1:N</text>
 
   <!-- Part -->
-  <rect x="380" y="300" width="260" height="180" class="entity" rx="6"/>
-  <rect x="380" y="300" width="260" height="30" class="card-phase1" rx="6"/>
-  <text x="510" y="320" text-anchor="middle" class="entity-title" fill="white">Part</text>
-  <text x="395" y="345" class="entity-type">????????cpu1/cpu2/sd1/md1...?</text>
-  <line x1="380" y1="350" x2="640" y2="350" stroke="#dee2e6"/>
-  <text x="395" y="370" class="attr attr-key">id / code</text>
-  <text x="395" y="388" class="attr attr-key">part_class_id</text>
-  <text x="395" y="406" class="attr">name / status</text>
-  <text x="395" y="424" class="attr">price</text>
-  <text x="395" y="442" class="attr attr-key">SpecValue 1:N</text>
-  <text x="395" y="460" class="attr attr-key">N:1 ? PartClass</text>
+  <rect x="420" y="350" width="280" height="180" class="entity" rx="6"/>
+  <rect x="420" y="350" width="280" height="30" class="card-phase1" rx="6"/>
+  <text x="560" y="370" text-anchor="middle" class="entity-title" fill="white">Part</text>
+  <text x="435" y="395" class="entity-type">????????cpu1/cpu2/sd1/md1...?</text>
+  <line x1="420" y1="400" x2="700" y2="400" stroke="#dee2e6"/>
+  <text x="435" y="420" class="attr attr-key">id / code</text>
+  <text x="435" y="438" class="attr attr-key">part_class_id</text>
+  <text x="435" y="456" class="attr">name / status</text>
+  <text x="435" y="474" class="attr">price</text>
+  <text x="435" y="492" class="attr attr-key">has SpecValue 1:N</text>
+  <text x="435" y="510" class="attr attr-key">N:1 ? PartClass</text>
+
+  <!-- PartClass 2 (drive) ?? -->
+  <rect x="800" y="350" width="280" height="180" class="entity" rx="6"/>
+  <rect x="800" y="350" width="280" height="30" class="card-phase1" rx="6"/>
+  <text x="940" y="370" text-anchor="middle" class="entity-title" fill="white">PartClass (drive)</text>
+  <text x="815" y="395" class="entity-type">?????drive?</text>
+  <line x1="800" y1="400" x2="1080" y2="400" stroke="#dee2e6"/>
+  <text x="815" y="420" class="attr attr-key">part_class_id</text>
+  <text x="815" y="438" class="attr">code: drive</text>
 
   <!-- Specification -->
-  <rect x="720" y="80" width="280" height="200" class="entity" rx="6"/>
-  <rect x="720" y="80" width="280" height="30" class="card-phase1" rx="6"/>
-  <text x="860" y="100" text-anchor="middle" class="entity-title" fill="white">Specification</text>
-  <text x="735" y="125" class="entity-type">?????CoreNum / Capacity / FormFactor?</text>
-  <line x1="720" y1="130" x2="1000" y2="130" stroke="#dee2e6"/>
-  <text x="735" y="150" class="attr attr-key">code</text>
-  <text x="735" y="168" class="attr">name</text>
-  <text x="735" y="186" class="attr">data_type</text>
-  <text x="735" y="204" class="attr">unit</text>
-  <text x="735" y="222" class="attr">value_domain</text>
-  <text x="735" y="240" class="attr">required</text>
-  <text x="735" y="258" class="attr attr-key">definedOn</text>
+  <rect x="1130" y="90" width="320" height="200" class="entity" rx="6"/>
+  <rect x="1130" y="90" width="320" height="30" fill="#9c27b0" rx="6"/>
+  <text x="1290" y="110" text-anchor="middle" class="entity-title" fill="white">Specification</text>
+  <text x="1145" y="135" class="entity-type">?????CoreNum / Capacity / FormFactor?</text>
+  <line x1="1130" y1="140" x2="1450" y2="140" stroke="#dee2e6"/>
+  <text x="1145" y="160" class="attr attr-key">code</text>
+  <text x="1145" y="178" class="attr">name</text>
+  <text x="1145" y="196" class="attr">data_type</text>
+  <text x="1145" y="214" class="attr">unit</text>
+  <text x="1145" y="232" class="attr">value_domain</text>
+  <text x="1145" y="250" class="attr">required</text>
+  <text x="1145" y="268" class="attr attr-key">definedOn ? ProductClass / PartClass</text>
 
   <!-- Parameter -->
-  <rect x="720" y="310" width="280" height="170" class="entity" rx="6"/>
-  <rect x="720" y="310" width="280" height="30" class="card-phase1" rx="6"/>
-  <text x="860" y="330" text-anchor="middle" class="entity-title" fill="white">Parameter</text>
-  <text x="735" y="355" class="entity-type">?????Sum_Capacity / Sum_Memory?</text>
-  <line x1="720" y1="360" x2="1000" y2="360" stroke="#dee2e6"/>
-  <text x="735" y="380" class="attr attr-key">code</text>
-  <text x="735" y="398" class="attr">name / data_type</text>
-  <text x="735" y="416" class="attr">unit</text>
-  <text x="735" y="434" class="attr">min / max / default_value</text>
-  <text x="735" y="452" class="attr attr-key">definedOn</text>
+  <rect x="1130" y="350" width="320" height="170" class="entity" rx="6"/>
+  <rect x="1130" y="350" width="320" height="30" class="card-phase1" rx="6"/>
+  <text x="1290" y="370" text-anchor="middle" class="entity-title" fill="white">Parameter</text>
+  <text x="1145" y="395" class="entity-type">?????Sum_Capacity / Sum_Memory?</text>
+  <line x1="1130" y1="400" x2="1450" y2="400" stroke="#dee2e6"/>
+  <text x="1145" y="420" class="attr attr-key">code</text>
+  <text x="1145" y="438" class="attr">name / data_type</text>
+  <text x="1145" y="456" class="attr">unit</text>
+  <text x="1145" y="474" class="attr">min / max / default_value</text>
+  <text x="1145" y="492" class="attr attr-key">definedOn ? ProductClass / PartClass</text>
 
-  <!-- SpecValue -->
-  <rect x="720" y="500" width="280" height="160" class="entity" rx="6"/>
-  <rect x="720" y="500" width="280" height="30" fill="#9c27b0" rx="6"/>
-  <text x="860" y="520" text-anchor="middle" class="entity-title" fill="white">SpecValue</text>
-  <text x="735" y="545" class="entity-type">?????? ProductClass ? Part ??</text>
-  <line x1="720" y1="550" x2="1000" y2="550" stroke="#dee2e6"/>
-  <text x="735" y="570" class="attr attr-key">id</text>
-  <text x="735" y="588" class="attr attr-key">owner_type / owner_id</text>
-  <text x="735" y="606" class="attr attr-key">spec_code / value</text>
-  <text x="735" y="624" class="attr">unit</text>
+  <!-- SpecValue (Single source - shared by ProductClass + Part + SpecOverride) -->
+  <rect x="600" y="600" width="320" height="200" class="entity" rx="6"/>
+  <rect x="600" y="600" width="320" height="30" fill="#9c27b0" rx="6"/>
+  <text x="760" y="620" text-anchor="middle" class="entity-title" fill="white">SpecValue</text>
+  <text x="615" y="645" class="entity-type">?????? ProductClass?Part ???? SpecOverride ???</text>
+  <line x1="600" y1="650" x2="920" y2="650" stroke="#dee2e6"/>
+  <text x="615" y="670" class="attr attr-key">id</text>
+  <text x="615" y="688" class="attr attr-key">owner_type / owner_id</text>
+  <text x="615" y="706" class="attr attr-key">spec_code / value</text>
+  <text x="615" y="724" class="attr">unit</text>
+  <text x="615" y="742" class="attr attr-key">definedBy ? Specification</text>
+  <text x="615" y="760" class="attr attr-key">??? SpecOverride ??</text>
+  <text x="615" y="778" class="attr">???(owner, spec_code) ? value</text>
 
-  <!-- L1 ??? -->
-  <!-- ProductClass ? PartClass (contains) -->
-  <path d="M300 170 L380 170" class="relation-line" marker-end="url(#arrow)"/>
-  <text x="320" y="162" class="relation-label">contains 1:N</text>
+  <!-- ??? -->
+  <!-- ? ProductClass -> PartClass (contains 1:N) -->
+  <path d="M320 180 L420 180" class="relation-line" marker-end="url(#arrow)"/>
+  <text x="330" y="172" class="relation-label">? contains 1:N</text>
 
-  <!-- PartClass ? Part (candidate) -->
-  <path d="M510 260 L510 300" class="relation-line" marker-end="url(#arrow)"/>
-  <text x="520" y="280" class="relation-label">candidate 1:N</text>
+  <!-- ? ProductClass -> SpecValue (has 1:N) -->
+  <path d="M180 270 Q180 600 600 660" class="spec-link" marker-end="url(#arrow-purple)"/>
+  <text x="50" y="450" class="relation-label" fill="#9c27b0" font-size="11">? has 1:N???????</text>
 
-  <!-- ProductClass ? SpecValue (has) -->
-  <path d="M260 200 Q490 200 720 560" class="spec-link" marker-end="url(#arrow-purple)"/>
-  <text x="490" y="380" class="relation-label" fill="#9c27b0" font-size="9">hasSpecValue 1:N</text>
+  <!-- ? PartClass -> Part (candidate 1:N) -->
+  <path d="M560 270 L560 350" class="relation-line" marker-end="url(#arrow)"/>
+  <text x="570" y="330" class="relation-label">? candidate 1:N</text>
 
-  <!-- Part ? SpecValue (has) -->
-  <path d="M640 390 L720 560" class="spec-link" marker-end="url(#arrow-purple)"/>
-  <text x="660" y="490" class="relation-label" fill="#9c27b0" font-size="9">has 1:N</text>
+  <!-- ? ProductClass -> Specification (hasSpec 1:N) -->
+  <path d="M320 240 Q700 240 1130 180" class="spec-link" marker-end="url(#arrow-purple)"/>
+  <text x="700" y="200" class="relation-label" fill="#9c27b0" font-size="11">? hasSpec 1:N</text>
+
+  <!-- ? PartClass -> Specification (definedOn reverse) -->
+  <path d="M700 240 Q910 240 1130 220" class="spec-link-light" marker-end="url(#arrow-light-purple)"/>
+  <text x="900" y="232" class="relation-label" fill="#9c27b0" font-size="9">? definedOn</text>
+
+  <!-- ? PartClass -> Parameter (definedOn) -->
+  <path d="M700 430 Q920 430 1130 430" class="relation-line" marker-end="url(#arrow)"/>
+  <text x="910" y="422" class="relation-label">definedOn</text>
+
+  <!-- ? Part -> SpecValue (has 1:N) - ???? -->
+  <path d="M560 530 Q560 580 600 660" class="spec-link" marker-end="url(#arrow-purple)"/>
+  <text x="350" y="600" class="relation-label" fill="#9c27b0" font-size="11">? has 1:N??????</text>
+
+  <!-- ? Specification -> SpecValue (definedBy) - ???? -->
+  <path d="M1290 290 Q1290 600 920 660" class="spec-link-light" marker-end="url(#arrow-light-purple)"/>
+  <text x="1110" y="500" class="relation-label" fill="#9c27b0" font-size="11">? definedBy 1:N</text>
 
   <!-- ???? -->
-  <rect x="1040" y="80" width="320" height="600" class="legend-box" rx="6"/>
-  <text x="1060" y="105" class="legend-title">v1.4 ??????</text>
-  <text x="1060" y="130" fill="#6c757d" font-size="11">??? Type ??</text>
-  <text x="1060" y="155" fill="#495057" font-size="11">? ProductClassType</text>
-  <text x="1060" y="175" fill="#495057" font-size="11">? PartClassType</text>
-  <text x="1060" y="195" fill="#495057" font-size="11">? ProductInstanceType</text>
-  <line x1="1060" y1="210" x2="1340" y2="210" stroke="#dee2e6"/>
-  <text x="1060" y="235" fill="#6c757d" font-size="11">????????</text>
-  <text x="1060" y="260" fill="#1976d2" font-size="11">? ProductClass?????</text>
-  <text x="1060" y="285" fill="#1976d2" font-size="11">? PartClass??????</text>
-  <text x="1060" y="310" fill="#1976d2" font-size="11">? Part????</text>
-  <text x="1060" y="335" fill="#9c27b0" font-size="11">? Specification??????</text>
-  <text x="1060" y="360" fill="#495057" font-size="11">? Parameter??????</text>
-  <text x="1060" y="385" fill="#9c27b0" font-size="11">? SpecValue?????</text>
-  <text x="1060" y="410" fill="#388e3c" font-size="11">? ProductInstance??????</text>
-  <text x="1060" y="435" fill="#e91e63" font-size="11">? SpecOverride??????</text>
-  <line x1="1060" y1="455" x2="1340" y2="455" stroke="#dee2e6"/>
-  <text x="1060" y="480" fill="#6c757d" font-size="11">??????</text>
-  <text x="1060" y="505" fill="#388e3c" font-size="10">ProductInstance ? ProductClass</text>
-  <text x="1060" y="525" fill="#495057" font-size="10">  ???/???????</text>
-  <text x="1060" y="550" fill="#495057" font-size="10">ProductInstance offersPart Part</text>
-  <text x="1060" y="575" fill="#e91e63" font-size="10">ProductInstance overrides SpecOverride</text>
-  <text x="1060" y="600" fill="#9c27b0" font-size="10">SpecOverride overrides SpecValue</text>
-  <text x="1060" y="630" fill="#495057" font-size="10">Part has SpecValue</text>
-  <text x="1060" y="655" fill="#495057" font-size="10">ProductClass has SpecValue</text>
+  <rect x="1000" y="600" width="450" height="220" class="legend-box" rx="6"/>
+  <text x="1020" y="625" class="legend-title">???????</text>
+  <line x1="1020" y1="640" x2="1060" y2="640" stroke="#868e96" stroke-width="2"/>
+  <text x="1075" y="645" class="attr">?? ?????contains/candidate?</text>
+  <line x1="1020" y1="665" x2="1060" y2="665" stroke="#9c27b0" stroke-width="2"/>
+  <text x="1075" y="670" class="attr" fill="#9c27b0">???? ??????has/definedOn/definedBy?</text>
+  <line x1="1020" y1="690" x2="1060" y2="690" stroke="#d177cf" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="1075" y="695" class="attr" fill="#9c27b0">? definedOn?Specification ? PartClass?</text>
+  <line x1="1020" y1="715" x2="1060" y2="715" stroke="#868e96" stroke-width="2"/>
+  <text x="1075" y="720" class="attr">Parameter definedOn ? ProductClass / PartClass</text>
+  <text x="1020" y="750" fill="#6c757d" font-size="10">v1.4 ?????</text>
+  <text x="1020" y="768" fill="#495057" font-size="10">- Part --has--&gt; SpecValue ????</text>
+  <text x="1020" y="786" fill="#495057" font-size="10">- Specification --definedBy--&gt; SpecValue</text>
+  <text x="1020" y="804" fill="#495057" font-size="10">- SpecValue ???????????</text>
 
   <!-- ===================== ????????? ===================== -->
-  <rect x="20" y="720" width="1360" height="480" class="layer-bg" rx="8"/>
-  <rect x="20" y="720" width="1360" height="40" class="card-phase2" rx="8"/>
-  <text x="40" y="748" class="layer-label" fill="white">??????????????????</text>
+  <rect x="20" y="870" width="1460" height="500" class="layer-bg" rx="8"/>
+  <rect x="20" y="870" width="1460" height="40" class="card-phase2" rx="8"/>
+  <text x="40" y="898" class="layer-label" fill="white">??????????????????</text>
 
   <!-- ProductInstance -->
-  <rect x="40" y="780" width="260" height="200" class="entity" rx="6"/>
-  <rect x="40" y="780" width="260" height="30" fill="#388e3c" rx="6"/>
-  <text x="170" y="800" text-anchor="middle" class="entity-title" fill="white">ProductInstance</text>
-  <text x="55" y="825" class="entity-type">???????S1110 / S22?</text>
-  <line x1="40" y1="830" x2="300" y2="830" stroke="#dee2e6"/>
-  <text x="55" y="850" class="attr attr-key">id / code</text>
-  <text x="55" y="868" class="attr">name / market</text>
-  <text x="55" y="886" class="attr attr-key">version</text>
-  <text x="55" y="904" class="attr">status</text>
-  <text x="55" y="922" class="attr attr-key">? ProductClass</text>
-  <text x="55" y="940" class="attr attr-key">offersPart ? Part</text>
-  <text x="55" y="958" class="attr attr-key">overrides ? SpecOverride</text>
+  <rect x="40" y="930" width="280" height="210" class="entity" rx="6"/>
+  <rect x="40" y="930" width="280" height="30" fill="#388e3c" rx="6"/>
+  <text x="180" y="950" text-anchor="middle" class="entity-title" fill="white">ProductInstance</text>
+  <text x="55" y="975" class="entity-type">???????S1110 / S22?</text>
+  <line x1="40" y1="980" x2="320" y2="980" stroke="#dee2e6"/>
+  <text x="55" y="1000" class="attr attr-key">id / code</text>
+  <text x="55" y="1018" class="attr">name / market</text>
+  <text x="55" y="1036" class="attr attr-key">version</text>
+  <text x="55" y="1054" class="attr">status</text>
+  <text x="55" y="1072" class="attr attr-key">? ProductClass??????</text>
+  <text x="55" y="1090" class="attr attr-key">offersPart ? Part</text>
+  <text x="55" y="1108" class="attr attr-key">overrides ? SpecOverride</text>
+  <text x="55" y="1126" class="attr attr-key">? Module?v1.4 ???</text>
 
   <!-- SpecOverride -->
-  <rect x="380" y="780" width="260" height="160" class="entity" rx="6"/>
-  <rect x="380" y="780" width="260" height="30" fill="#e91e63" rx="6"/>
-  <text x="510" y="800" text-anchor="middle" class="entity-title" fill="white">SpecOverride</text>
-  <text x="395" y="825" class="entity-type">??????????????</text>
-  <line x1="380" y1="830" x2="640" y2="830" stroke="#dee2e6"/>
-  <text x="395" y="850" class="attr attr-key">id</text>
-  <text x="395" y="868" class="attr attr-key">product_instance_id</text>
-  <text x="395" y="886" class="attr">spec_code</text>
-  <text x="395" y="904" class="attr attr-key">override_value</text>
-  <text x="395" y="922" class="attr">reason</text>
+  <rect x="420" y="930" width="280" height="170" class="entity" rx="6"/>
+  <rect x="420" y="930" width="280" height="30" fill="#e91e63" rx="6"/>
+  <text x="560" y="950" text-anchor="middle" class="entity-title" fill="white">SpecOverride</text>
+  <text x="435" y="975" class="entity-type">??????????????</text>
+  <line x1="420" y1="980" x2="700" y2="980" stroke="#dee2e6"/>
+  <text x="435" y="1000" class="attr attr-key">id</text>
+  <text x="435" y="1018" class="attr attr-key">product_instance_id</text>
+  <text x="435" y="1036" class="attr attr-key">spec_code</text>
+  <text x="435" y="1054" class="attr attr-key">override_value</text>
+  <text x="435" y="1072" class="attr">reason</text>
+  <text x="435" y="1090" class="attr attr-key">overrides ? SpecValue</text>
 
   <!-- Part (???) -->
-  <rect x="720" y="780" width="260" height="160" class="entity" rx="6" stroke="#388e3c" stroke-width="2"/>
-  <rect x="720" y="780" width="260" height="30" fill="#e8f5e9" rx="6"/>
-  <text x="850" y="800" text-anchor="middle" class="entity-title" fill="#1b5e20">Part?????????</text>
-  <text x="735" y="825" class="entity-type">??????????</text>
-  <line x1="720" y1="830" x2="980" y2="830" stroke="#388e3c"/>
-  <text x="735" y="850" class="attr">S1110: cpu1/cpu2/md1/md2/sd1</text>
-  <text x="735" y="868" class="attr">S22: cpu2/cpu3/cpu4/sd2/sd3/md2/md3</text>
-  <text x="735" y="886" class="attr">?? offersPart ????</text>
+  <rect x="800" y="930" width="280" height="170" class="entity" rx="6" stroke="#388e3c" stroke-width="2"/>
+  <rect x="800" y="930" width="280" height="30" fill="#e8f5e9" rx="6"/>
+  <text x="940" y="950" text-anchor="middle" class="entity-title" fill="#1b5e20">Part?????????</text>
+  <text x="815" y="975" class="entity-type">??????????</text>
+  <line x1="800" y1="980" x2="1080" y2="980" stroke="#388e3c"/>
+  <text x="815" y="1000" class="attr">S1110: cpu1/cpu2/md1/md2/sd1</text>
+  <text x="815" y="1018" class="attr">S22: cpu2/cpu3/cpu4/sd2/sd3/md2/md3</text>
+  <text x="815" y="1036" class="attr">?? offersPart ????</text>
+
+  <!-- SpecValue????????? -->
+  <rect x="1100" y="930" width="350" height="170" class="entity" rx="6"/>
+  <rect x="1100" y="930" width="350" height="30" fill="#9c27b0" rx="6"/>
+  <text x="1275" y="950" text-anchor="middle" class="entity-title" fill="white">SpecValue??????</text>
+  <text x="1115" y="975" class="entity-type">??? ProductClass ??????</text>
+  <line x1="1100" y1="980" x2="1450" y2="980" stroke="#dee2e6"/>
+  <text x="1115" y="1000" class="attr attr-key">ProductClass.SERVER_X86</text>
+  <text x="1115" y="1018" class="attr">  FormFactor = 2U????</text>
+  <text x="1115" y="1036" class="attr">  PowerSupply = DUAL</text>
+  <text x="1115" y="1054" class="attr">PartClass.cpu</text>
+  <text x="1115" y="1072" class="attr">  cpu1.CoreNum = 2</text>
+  <text x="1115" y="1090" class="attr attr-key">? SpecOverride ??</text>
 
   <!-- ??? -->
   <!-- ProductInstance ? ProductClass (??) -->
-  <path d="M170 780 L170 700 Q170 680 300 680 Q400 680 400 640 Q500 640 500 580" class="ref-link" marker-end="url(#arrow-purple)"/>
-  <text x="330" y="640" class="relation-label" fill="#1565c0" font-size="11">? ProductClass</text>
-  <text x="330" y="655" class="relation-label" fill="#1565c0" font-size="9">????????</text>
+  <path d="M180 850 Q180 750 320 750 Q380 750 380 270" class="ref-link" marker-end="url(#arrow-blue)"/>
+  <text x="60" y="780" class="relation-label" fill="#1565c0" font-size="11">? ProductClass????????</text>
 
-  <!-- ProductInstance ? SpecOverride -->
-  <path d="M300 830 L380 830" class="override-link" marker-end="url(#arrow-red)"/>
-  <text x="320" y="820" class="relation-label" fill="#e91e63">overrides 1:N</text>
+  <!-- ProductInstance ? SpecOverride (overrides) -->
+  <path d="M320 985 L420 985" class="override-link" marker-end="url(#arrow-red)"/>
+  <text x="330" y="975" class="relation-label" fill="#e91e63">overrides 1:N</text>
 
   <!-- ProductInstance ? Part (offersPart) -->
-  <path d="M300 860 L720 860" class="relation-line" marker-end="url(#arrow-green)"/>
-  <text x="480" y="850" class="relation-label" fill="#388e3c">offersPart N:M</text>
+  <path d="M320 1010 L800 990" class="relation-line" marker-end="url(#arrow-green)"/>
+  <text x="500" y="985" class="relation-label" fill="#388e3c">? offersPart N:M????</text>
+
+  <!-- SpecOverride ? SpecValue (??) -->
+  <path d="M700 1010 L1100 1010" class="override-link" marker-end="url(#arrow-red)"/>
+  <text x="870" y="1000" class="relation-label" fill="#e91e63">? overrides??????</text>
 
   <!-- ?????? -->
-  <rect x="1040" y="780" width="320" height="400" class="legend-box" rx="6"/>
-  <text x="1060" y="805" class="legend-title">???????</text>
-  <text x="1060" y="830" fill="#6c757d" font-size="11">S1110????????</text>
-  <text x="1060" y="855" fill="#495057" font-size="10">? SERVER_X86????????</text>
-  <text x="1060" y="875" fill="#495057" font-size="10">?? cpu3/cpu4/sd2/sd3/md3</text>
-  <text x="1060" y="895" fill="#495057" font-size="10">?? cpu1 x1, md1 x1</text>
-  <line x1="1060" y1="915" x2="1340" y2="915" stroke="#dee2e6"/>
-  <text x="1060" y="940" fill="#6c757d" font-size="11">S22????????</text>
-  <text x="1060" y="965" fill="#495057" font-size="10">? SERVER_X86????????</text>
-  <text x="1060" y="985" fill="#e91e63" font-size="10">?? FormFactor=4U???=2U?</text>
-  <text x="1060" y="1005" fill="#495057" font-size="10">?? cpu1/sd1/md1</text>
-  <text x="1060" y="1025" fill="#495057" font-size="10">?? cpu3 x1, sd2 x1</text>
-  <text x="1060" y="1055" fill="#6c757d" font-size="11">???????</text>
-  <text x="1060" y="1080" fill="#495057" font-size="10">ProductInstance ??? ProductClass ?</text>
-  <text x="1060" y="1100" fill="#495057" font-size="10">???????"??"???</text>
-  <text x="1060" y="1120" fill="#495057" font-size="10">Part ????? ProductClass?</text>
-  <text x="1060" y="1140" fill="#495057" font-size="10">offersPart ????/?????</text>
+  <rect x="40" y="1180" width="1440" height="180" class="legend-box" rx="6"/>
+  <text x="60" y="1205" class="legend-title">??????SpecOverride ????</text>
+  <text x="60" y="1230" fill="#6c757d" font-size="11">S22????????</text>
+  <text x="60" y="1252" fill="#495057" font-size="11">  ? SERVER_X86????????</text>
+  <text x="60" y="1272" fill="#e91e63" font-size="11">  ? SpecOverride: SpecOverride( id=1, spec_code=FormFactor, override_value=4U, reason="???? 4U" )</text>
+  <text x="60" y="1292" fill="#e91e63" font-size="11">  ? ???? SpecValue( SERVER_X86.FormFactor=2U ) ? 4U</text>
+  <text x="60" y="1312" fill="#495057" font-size="11">  ? ?? cpu1/sd1/md1??? cpu3 x1, sd2 x1</text>
 
-  <!-- ===================== ????????? ===================== -->
-  <rect x="20" y="1220" width="1360" height="440" class="layer-bg" rx="8"/>
-  <rect x="20" y="1220" width="1360" height="40" class="card-phase3" rx="8"/>
-  <text x="40" y="1248" class="layer-label" fill="white">?????????????? / ?? / ???</text>
+  <text x="700" y="1230" fill="#6c757d" font-size="11">S1110????????</text>
+  <text x="700" y="1252" fill="#495057" font-size="11">  ? SERVER_X86?????????????</text>
+  <text x="700" y="1272" fill="#388e3c" font-size="11">  ? offersPart: ?? cpu3/cpu4/sd2/sd3/md3</text>
+  <text x="700" y="1292" fill="#495057" font-size="11">  ? ?? PartClass ??? Specification/Parameter</text>
+  <text x="700" y="1312" fill="#388e3c" font-size="11">  ? ?????cpu1 x1, md1 x1, sd1 x0</text>
 
-  <!-- Configuration -->
-  <rect x="100" y="1280" width="300" height="200" class="entity" rx="6"/>
-  <rect x="100" y="1280" width="300" height="30" fill="#f57c00" rx="6"/>
-  <text x="250" y="1300" text-anchor="middle" class="entity-title" fill="white">Configuration</text>
-  <text x="115" y="1325" class="entity-type">??????????????</text>
-  <line x1="100" y1="1330" x2="400" y2="1330" stroke="#dee2e6"/>
-  <text x="115" y="1350" class="attr attr-key">id</text>
-  <text x="115" y="1368" class="attr attr-key">product_instance_id</text>
-  <text x="115" y="1386" class="attr">model_snapshot</text>
-  <text x="115" y="1404" class="attr">status</text>
-  <text x="115" y="1422" class="attr">customer_context</text>
-  <text x="115" y="1440" class="attr attr-key">N:1 ? ProductInstance</text>
+  <!-- ===================== ???????????????? ===================== -->
+  <rect x="20" y="1390" width="1460" height="280" class="layer-bg" rx="8"/>
+  <rect x="20" y="1390" width="1460" height="40" fill="#6c757d" rx="8"/>
+  <text x="40" y="1418" class="layer-label" fill="white">?????????????????</text>
 
-  <!-- ConfiguredPart -->
-  <rect x="500" y="1280" width="300" height="200" class="entity" rx="6"/>
-  <rect x="500" y="1280" width="300" height="30" fill="#f57c00" rx="6"/>
-  <text x="650" y="1300" text-anchor="middle" class="entity-title" fill="white">ConfiguredPart</text>
-  <text x="515" y="1325" class="entity-type">?????Part ?????</text>
-  <line x1="500" y1="1330" x2="800" y2="1330" stroke="#dee2e6"/>
-  <text x="515" y="1350" class="attr attr-key">configuration_id</text>
-  <text x="515" y="1368" class="attr attr-key">part_id / part_code</text>
-  <text x="515" y="1386" class="attr">instance_no / quantity</text>
-  <text x="515" y="1404" class="attr">selected / hidden</text>
-  <text x="515" y="1422" class="attr">reason</text>
-  <text x="515" y="1440" class="attr attr-key">N:1 ? Part</text>
+  <rect x="40" y="1450" width="1420" height="200" class="legend-box" rx="6"/>
+  <text x="60" y="1480" class="legend-title">?????????????</text>
 
-  <!-- ConfiguredValue -->
-  <rect x="100" y="1510" width="300" height="150" class="entity" rx="6"/>
-  <rect x="100" y="1510" width="300" height="30" fill="#f57c00" rx="6"/>
-  <text x="250" y="1530" text-anchor="middle" class="entity-title" fill="white">ConfiguredValue</text>
-  <text x="115" y="1555" class="entity-type">??????????? Parameter ??</text>
-  <line x1="100" y1="1560" x2="400" y2="1560" stroke="#dee2e6"/>
-  <text x="115" y="1580" class="attr attr-key">configuration_id</text>
-  <text x="115" y="1598" class="attr">parameter_code / part_class</text>
-  <text x="115" y="1616" class="attr">value / filter / source</text>
+  <line x1="60" y1="1500" x2="60" y2="1500" stroke="#dee2e6"/>
+  <text x="60" y="1505" fill="#1976d2" font-size="12">??????</text>
+  <text x="80" y="1525" fill="#495057" font-size="11">? ProductClass???? + version?</text>
+  <text x="80" y="1545" fill="#495057" font-size="11">? PartClass + Part + SpecValue + Specification + Parameter</text>
+  <text x="80" y="1565" fill="#495057" font-size="11">? ProductInstance?? version + offersPart ?? + overrides ???</text>
+  <text x="80" y="1585" fill="#495057" font-size="11">? ???????SpecOverride ? SpecValue</text>
 
-  <!-- ConfigurationArtifact -->
-  <rect x="500" y="1510" width="300" height="150" class="entity" rx="6"/>
-  <rect x="500" y="1510" width="300" height="30" fill="#f57c00" rx="6"/>
-  <text x="650" y="1530" text-anchor="middle" class="entity-title" fill="white">ConfigurationArtifact</text>
-  <text x="515" y="1555" class="entity-type">?????BOM / ?? / ?????</text>
-  <line x1="500" y1="1560" x2="800" y2="1560" stroke="#dee2e6"/>
-  <text x="515" y="1580" class="attr">bom (????)</text>
-  <text x="515" y="1598" class="attr">price (??)</text>
-  <text x="515" y="1616" class="attr">delivery_spec (????)</text>
+  <text x="60" y="1615" fill="#6c757d" font-size="12">??????????????????</text>
+  <text x="80" y="1635" fill="#6c757d" font-size="11">? Configuration / ConfiguredPart / ConfiguredValue???/????????</text>
+  <text x="80" y="1655" fill="#6c757d" font-size="11">? BOM / ?? / ??????????</text>
 
-  <!-- L3 ??? -->
-  <path d="M400 1380 L500 1380" class="relation-line" marker-end="url(#arrow)"/>
-  <text x="430" y="1370" class="relation-label">selects 1:N</text>
+  <text x="60" y="1685" fill="#1565c0" font-size="12">??/???????? 4 ?????</text>
+  <text x="80" y="1705" fill="#495057" font-size="11">? ProductClass ??compile??> PartCategory??????</text>
+  <text x="80" y="1725" fill="#495057" font-size="11">? ProductInstance ??compile??> Module???????</text>
+  <text x="80" y="1745" fill="#495057" font-size="11">? ModuleInst / ConfiguredPart ? cruleengine ?????????</text>
 
-  <path d="M250 1480 L250 1510" class="relation-line" marker-end="url(#arrow)"/>
-  <text x="210" y="1495" class="relation-label">input 1:N</text>
+  <!-- ????? -->
+  <path d="M750 840 L750 870" stroke="#495057" stroke-width="2" stroke-dasharray="8,4"/>
+  <text x="760" y="860" fill="#495057" font-size="11">instantiate?????</text>
 
-  <path d="M650 1480 L650 1510" class="relation-line" marker-end="url(#arrow)"/>
-  <text x="660" y="1495" class="relation-label">produces</text>
+  <!-- ?????????????????? -->
+  <rect x="40" y="1700" width="1410" height="180" class="legend-box" rx="6" opacity="0.0"/>
 
-  <!-- ===================== ????? ===================== -->
-  <path d="M700 700 L700 720" stroke="#495057" stroke-width="2" stroke-dasharray="8,4"/>
-  <text x="710" y="715" fill="#495057" font-size="11">instantiate</text>
-
-  <path d="M700 1200 L700 1220" stroke="#495057" stroke-width="2" stroke-dasharray="8,4"/>
-  <text x="710" y="1215" fill="#495057" font-size="11">configure</text>
-
-  <!-- ===================== ?? ===================== -->
-  <rect x="920" y="1280" width="440" height="380" class="legend-box" rx="6"/>
-  <text x="940" y="1305" class="legend-title">?????????</text>
-  <line x1="940" y1="1320" x2="980" y2="1320" stroke="#343a40" stroke-width="2"/>
-  <text x="990" y="1325" class="attr">???????/??/???</text>
-  <line x1="940" y1="1345" x2="980" y2="1345" stroke="#1565c0" stroke-width="2" stroke-dasharray="8,3"/>
-  <text x="990" y="1350" class="attr" fill="#1565c0">?? ProductClass</text>
-  <line x1="940" y1="1370" x2="980" y2="1370" stroke="#9c27b0" stroke-width="2" stroke-dasharray="5,3"/>
-  <text x="990" y="1375" class="attr" fill="#9c27b0">SpecValue ??</text>
-  <line x1="940" y1="1395" x2="980" y2="1395" stroke="#e91e63" stroke-width="2"/>
-  <text x="990" y="1400" class="attr" fill="#e91e63">SpecOverride ????</text>
-  <line x1="940" y1="1420" x2="980" y2="1420" stroke="#388e3c" stroke-width="2"/>
-  <text x="990" y="1425" class="attr" fill="#388e3c">offersPart ???</text>
-  <line x1="940" y1="1445" x2="1340" y2="1445" stroke="#dee2e6"/>
-  <rect x="940" y="1460" width="30" height="20" fill="#1976d2" rx="3"/>
-  <text x="980" y="1475" class="attr">?????</text>
-  <rect x="940" y="1490" width="30" height="20" fill="#388e3c" rx="3"/>
-  <text x="980" y="1505" class="attr">??????</text>
-  <rect x="940" y="1520" width="30" height="20" fill="#f57c00" rx="3"/>
-  <text x="980" y="1535" class="attr">?????</text>
-  <rect x="940" y="1550" width="30" height="20" fill="#9c27b0" rx="3"/>
-  <text x="980" y="1565" class="attr">??? SpecValue</text>
-  <rect x="940" y="1580" width="30" height="20" fill="#e91e63" rx="3"/>
-  <text x="980" y="1595" class="attr">???? SpecOverride</text>
-  <rect x="940" y="1610" width="30" height="20" fill="#e8f5e9" stroke="#388e3c" rx="3"/>
-  <text x="980" y="1625" class="attr">???????? Part</text>
-
-  <!-- ===================== ?? ===================== -->
-  <text x="700" y="2040" text-anchor="middle" font-size="12" fill="#6c757d">
-    ??????????? ER ? | ? 1.5 | v1.4
+  <!-- ?? -->
+  <text x="750" y="1900" text-anchor="middle" font-size="12" fill="#6c757d">
+    ??????????? ER ? | ? 1.5 | v1.4???????? | ????????
   </text>
 </svg>
