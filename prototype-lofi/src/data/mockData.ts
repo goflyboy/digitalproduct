@@ -1,0 +1,780 @@
+// ============================================================
+// 数字产品系统 - 模拟数据（路由器产品完整数据）
+// 基于 docs/数字产品数据模型.md
+// ============================================================
+
+import type { GraphNode, GraphEdge, ModuleAttribute, TemplateDefinition, User } from '../types';
+
+// ============================================================
+// 当前用户
+// ============================================================
+export const currentUser: User = {
+  id: 'user-001',
+  name: '张工程师',
+  role: 'PRODUCT_ENGINEER',
+};
+
+// ============================================================
+// 图节点数据
+// ============================================================
+export const graphNodes: GraphNode[] = [
+  // 产品类（ProductClass）
+  {
+    id: 'router-platform-001',
+    code: 'ROUTER_PLATFORM',
+    name: '路由器产品平台',
+    structType: 'PRODUCT_CLASS',
+    status: 'PUBLISHED',
+    version: '1.0.0',
+    description: '企业级路由器产品平台',
+    x: 400,
+    y: 80,
+  },
+
+  // 部件分类（PartClass）
+  {
+    id: 'router-cpu-001',
+    code: 'router_cpu',
+    name: '路由器CPU',
+    structType: 'PART_CLASS',
+    status: 'PUBLISHED',
+    version: '1.0.0',
+    description: '路由器CPU部件分类',
+    x: 180,
+    y: 240,
+  },
+  {
+    id: 'router-port-001',
+    code: 'router_port',
+    name: '路由器端口',
+    structType: 'PART_CLASS',
+    status: 'PUBLISHED',
+    version: '1.0.0',
+    description: '路由器端口部件分类',
+    x: 400,
+    y: 240,
+  },
+  {
+    id: 'router-memory-001',
+    code: 'router_memory',
+    name: '路由器内存',
+    structType: 'PART_CLASS',
+    status: 'PUBLISHED',
+    version: '1.0.0',
+    description: '路由器内存部件分类',
+    x: 620,
+    y: 240,
+  },
+  {
+    id: 'router-license-001',
+    code: 'router_license',
+    name: '软件许可',
+    structType: 'PART_CLASS',
+    status: 'PUBLISHED',
+    version: '1.0.0',
+    description: '路由器软件许可部件分类',
+    x: 180,
+    y: 380,
+  },
+
+  // 产品实例（ProductInstance）
+  {
+    id: 'router-01-001',
+    code: 'ROUTER_01',
+    name: '企业级路由器01型（低端）',
+    structType: 'PRODUCT_INSTANCE',
+    status: 'PUBLISHED',
+    version: '1.0.0',
+    positioning: '低端企业级',
+    market: 'CN',
+    extensions: {
+      marketing: {
+        sellingPoints: ['高可靠', '易运维', '低成本'],
+        brochureId: 'ASSET-RTR01-CN',
+      },
+      delivery: {
+        leadTimeDays: 7,
+        packagingClass: 'ROUTER_STANDARD',
+      },
+      finance: {
+        marginTarget: 0.20,
+      },
+    },
+    x: 100,
+    y: 500,
+  },
+  {
+    id: 'router-02-001',
+    code: 'ROUTER_02',
+    name: '企业级路由器02型（中端）',
+    structType: 'PRODUCT_INSTANCE',
+    status: 'PUBLISHED',
+    version: '1.0.0',
+    positioning: '中端企业级',
+    market: 'CN',
+    extensions: {
+      marketing: {
+        sellingPoints: ['高性能', '高可靠'],
+        brochureId: 'ASSET-RTR02-CN',
+      },
+      delivery: {
+        leadTimeDays: 14,
+        packagingClass: 'ROUTER_STANDARD',
+      },
+      finance: {
+        marginTarget: 0.25,
+      },
+    },
+    x: 400,
+    y: 500,
+  },
+  {
+    id: 'router-03-001',
+    code: 'ROUTER_03',
+    name: '企业级路由器03型（高端）',
+    structType: 'PRODUCT_INSTANCE',
+    status: 'PUBLISHED',
+    version: '1.0.0',
+    positioning: '高端企业级',
+    market: 'CN/Global',
+    extensions: {
+      marketing: {
+        sellingPoints: ['高性能', '高可靠', '全万兆', '支持MPLS', '支持安全特性'],
+        brochureId: 'ASSET-RTR03-GLOBAL',
+      },
+      delivery: {
+        leadTimeDays: 21,
+        packagingClass: 'ROUTER_ENTERPRISE',
+      },
+      finance: {
+        marginTarget: 0.30,
+      },
+    },
+    x: 700,
+    y: 500,
+  },
+
+  // 部件（Part）- CPU
+  {
+    id: 'rtr-cpu-01-001',
+    code: 'RTR_CPU_01',
+    name: '双核CPU',
+    structType: 'PART',
+    status: 'ACTIVE',
+    x: 80,
+    y: 340,
+  },
+  {
+    id: 'rtr-cpu-02-001',
+    code: 'RTR_CPU_02',
+    name: '四核CPU',
+    structType: 'PART',
+    status: 'ACTIVE',
+    x: 160,
+    y: 340,
+  },
+  {
+    id: 'rtr-cpu-03-001',
+    code: 'RTR_CPU_03',
+    name: '八核CPU',
+    structType: 'PART',
+    status: 'ACTIVE',
+    x: 240,
+    y: 340,
+  },
+  {
+    id: 'rtr-cpu-04-001',
+    code: 'RTR_CPU_04',
+    name: '十六核CPU',
+    structType: 'PART',
+    status: 'ACTIVE',
+    x: 320,
+    y: 340,
+  },
+
+  // 部件（Part）- 端口
+  {
+    id: 'rtr-port-ge24-001',
+    code: 'RTR_PORT_GE_24',
+    name: '24口千兆',
+    structType: 'PART',
+    status: 'ACTIVE',
+    x: 340,
+    y: 340,
+  },
+  {
+    id: 'rtr-port-ge48-001',
+    code: 'RTR_PORT_GE_48',
+    name: '48口千兆',
+    structType: 'PART',
+    status: 'ACTIVE',
+    x: 400,
+    y: 340,
+  },
+  {
+    id: 'rtr-port-10ge-4-001',
+    code: 'RTR_PORT_10GE_4',
+    name: '4口万兆',
+    structType: 'PART',
+    status: 'ACTIVE',
+    x: 460,
+    y: 340,
+  },
+
+  // 部件（Part）- 内存
+  {
+    id: 'rtr-mem-2g-001',
+    code: 'RTR_MEM_2G',
+    name: '2GB内存',
+    structType: 'PART',
+    status: 'ACTIVE',
+    x: 560,
+    y: 340,
+  },
+  {
+    id: 'rtr-mem-4g-001',
+    code: 'RTR_MEM_4G',
+    name: '4GB内存',
+    structType: 'PART',
+    status: 'ACTIVE',
+    x: 620,
+    y: 340,
+  },
+  {
+    id: 'rtr-mem-8g-001',
+    code: 'RTR_MEM_8G',
+    name: '8GB内存',
+    structType: 'PART',
+    status: 'ACTIVE',
+    x: 680,
+    y: 340,
+  },
+  {
+    id: 'rtr-mem-16g-001',
+    code: 'RTR_MEM_16G',
+    name: '16GB内存',
+    structType: 'PART',
+    status: 'ACTIVE',
+    x: 740,
+    y: 340,
+  },
+
+  // 部件（Part）- 许可
+  {
+    id: 'rtr-lic-std-base-001',
+    code: 'RTR_LIC_STD_BASE',
+    name: '标准基础许可',
+    structType: 'PART',
+    status: 'ACTIVE',
+    x: 80,
+    y: 460,
+  },
+  {
+    id: 'rtr-lic-std-vpn-001',
+    code: 'RTR_LIC_STD_VPN',
+    name: '标准VPN许可',
+    structType: 'PART',
+    status: 'ACTIVE',
+    x: 160,
+    y: 460,
+  },
+  {
+    id: 'rtr-lic-adv-qos-001',
+    code: 'RTR_LIC_ADV_QOS',
+    name: '高级QoS许可',
+    structType: 'PART',
+    status: 'ACTIVE',
+    x: 240,
+    y: 460,
+  },
+  {
+    id: 'rtr-lic-ent-full-001',
+    code: 'RTR_LIC_ENT_FULL',
+    name: '企业完整许可',
+    structType: 'PART',
+    status: 'ACTIVE',
+    x: 320,
+    y: 460,
+  },
+];
+
+// ============================================================
+// 图边数据
+// ============================================================
+export const graphEdges: GraphEdge[] = [
+  // ProductClass → PartClass (CONTAINS)
+  {
+    id: 'rel-platform-cpu',
+    code: 'PC_Contains_PC',
+    name: '产品类包含部件分类',
+    relationType: 'CONTAINS',
+    sourceId: 'router-platform-001',
+    targetId: 'router-cpu-001',
+    minCardinality: 1,
+    maxCardinality: 2,
+    selectionPolicy: 'REQUIRED',
+  },
+  {
+    id: 'rel-platform-port',
+    code: 'PC_Contains_PC',
+    name: '产品类包含部件分类',
+    relationType: 'CONTAINS',
+    sourceId: 'router-platform-001',
+    targetId: 'router-port-001',
+    minCardinality: 1,
+    maxCardinality: 48,
+    selectionPolicy: 'REQUIRED',
+  },
+  {
+    id: 'rel-platform-mem',
+    code: 'PC_Contains_PC',
+    name: '产品类包含部件分类',
+    relationType: 'CONTAINS',
+    sourceId: 'router-platform-001',
+    targetId: 'router-memory-001',
+    minCardinality: 1,
+    maxCardinality: 4,
+    selectionPolicy: 'REQUIRED',
+  },
+  {
+    id: 'rel-platform-lic',
+    code: 'PC_Contains_PC',
+    name: '产品类包含部件分类',
+    relationType: 'CONTAINS',
+    sourceId: 'router-platform-001',
+    targetId: 'router-license-001',
+    minCardinality: 0,
+    maxCardinality: 10,
+    selectionPolicy: 'OPTIONAL',
+  },
+
+  // PartClass → Part (CONTAINS)
+  {
+    id: 'rel-cpu-contains-parts',
+    code: 'PC_Contains_PC',
+    name: '部件分类包含部件',
+    relationType: 'CONTAINS',
+    sourceId: 'router-cpu-001',
+    targetId: 'rtr-cpu-01-001',
+  },
+  {
+    id: 'rel-cpu-contains-parts-2',
+    code: 'PC_Contains_PC',
+    name: '部件分类包含部件',
+    relationType: 'CONTAINS',
+    sourceId: 'router-cpu-001',
+    targetId: 'rtr-cpu-02-001',
+  },
+  {
+    id: 'rel-cpu-contains-parts-3',
+    code: 'PC_Contains_PC',
+    name: '部件分类包含部件',
+    relationType: 'CONTAINS',
+    sourceId: 'router-cpu-001',
+    targetId: 'rtr-cpu-03-001',
+  },
+  {
+    id: 'rel-cpu-contains-parts-4',
+    code: 'PC_Contains_PC',
+    name: '部件分类包含部件',
+    relationType: 'CONTAINS',
+    sourceId: 'router-cpu-001',
+    targetId: 'rtr-cpu-04-001',
+  },
+  {
+    id: 'rel-port-contains-parts',
+    code: 'PC_Contains_PC',
+    name: '部件分类包含部件',
+    relationType: 'CONTAINS',
+    sourceId: 'router-port-001',
+    targetId: 'rtr-port-ge24-001',
+  },
+  {
+    id: 'rel-port-contains-parts-2',
+    code: 'PC_Contains_PC',
+    name: '部件分类包含部件',
+    relationType: 'CONTAINS',
+    sourceId: 'router-port-001',
+    targetId: 'rtr-port-ge48-001',
+  },
+  {
+    id: 'rel-port-contains-parts-3',
+    code: 'PC_Contains_PC',
+    name: '部件分类包含部件',
+    relationType: 'CONTAINS',
+    sourceId: 'router-port-001',
+    targetId: 'rtr-port-10ge-4-001',
+  },
+  {
+    id: 'rel-mem-contains-parts',
+    code: 'PC_Contains_PC',
+    name: '部件分类包含部件',
+    relationType: 'CONTAINS',
+    sourceId: 'router-memory-001',
+    targetId: 'rtr-mem-2g-001',
+  },
+  {
+    id: 'rel-mem-contains-parts-2',
+    code: 'PC_Contains_PC',
+    name: '部件分类包含部件',
+    relationType: 'CONTAINS',
+    sourceId: 'router-memory-001',
+    targetId: 'rtr-mem-4g-001',
+  },
+  {
+    id: 'rel-mem-contains-parts-3',
+    code: 'PC_Contains_PC',
+    name: '部件分类包含部件',
+    relationType: 'CONTAINS',
+    sourceId: 'router-memory-001',
+    targetId: 'rtr-mem-8g-001',
+  },
+  {
+    id: 'rel-mem-contains-parts-4',
+    code: 'PC_Contains_PC',
+    name: '部件分类包含部件',
+    relationType: 'CONTAINS',
+    sourceId: 'router-memory-001',
+    targetId: 'rtr-mem-16g-001',
+  },
+  {
+    id: 'rel-lic-contains-parts',
+    code: 'PC_Contains_PC',
+    name: '部件分类包含部件',
+    relationType: 'CONTAINS',
+    sourceId: 'router-license-001',
+    targetId: 'rtr-lic-std-base-001',
+  },
+  {
+    id: 'rel-lic-contains-parts-2',
+    code: 'PC_Contains_PC',
+    name: '部件分类包含部件',
+    relationType: 'CONTAINS',
+    sourceId: 'router-license-001',
+    targetId: 'rtr-lic-std-vpn-001',
+  },
+  {
+    id: 'rel-lic-contains-parts-3',
+    code: 'PC_Contains_PC',
+    name: '部件分类包含部件',
+    relationType: 'CONTAINS',
+    sourceId: 'router-license-001',
+    targetId: 'rtr-lic-adv-qos-001',
+  },
+  {
+    id: 'rel-lic-contains-parts-4',
+    code: 'PC_Contains_PC',
+    name: '部件分类包含部件',
+    relationType: 'CONTAINS',
+    sourceId: 'router-license-001',
+    targetId: 'rtr-lic-ent-full-001',
+  },
+
+  // ProductClass → ProductInstance (INSTANTIATES)
+  {
+    id: 'rel-router-01-instantiates',
+    code: 'PC_Instantiates_PI',
+    name: '产品类实例化销售产品',
+    relationType: 'INSTANTIATES',
+    sourceId: 'router-platform-001',
+    targetId: 'router-01-001',
+    enabledParts: [
+      { partCode: 'RTR_CPU_01', partName: '双核CPU', enabled: true, defaultSelected: true, minQty: 1, maxQty: 1, reason: '低端型号标配双核CPU' },
+      { partCode: 'RTR_PORT_GE_24', partName: '24口千兆', enabled: true, defaultSelected: true, minQty: 1, maxQty: 2, reason: '标配24口' },
+      { partCode: 'RTR_MEM_2G', partName: '2GB内存', enabled: true, defaultSelected: true, minQty: 1, maxQty: 1, reason: '低端标配2G' },
+      { partCode: 'RTR_LIC_STD_BASE', partName: '标准基础许可', enabled: true, defaultSelected: true, minQty: 1, maxQty: 1, reason: '标配基础许可' },
+    ],
+    disabledParts: [
+      { partCode: 'RTR_CPU_02', partName: '四核CPU', enabled: false, reason: '低端型号不提供四核CPU' },
+      { partCode: 'RTR_CPU_03', partName: '八核CPU', enabled: false, reason: '低端型号不提供八核CPU' },
+      { partCode: 'RTR_CPU_04', partName: '十六核CPU', enabled: false, reason: '低端型号不提供十六核CPU' },
+      { partCode: 'RTR_PORT_GE_48', partName: '48口千兆', enabled: false, reason: '低端型号不需要高密度端口' },
+      { partCode: 'RTR_PORT_10GE_4', partName: '4口万兆', enabled: false, reason: '低端型号不提供万兆' },
+      { partCode: 'RTR_MEM_4G', partName: '4GB内存', enabled: false, reason: '低端型号标配2G' },
+      { partCode: 'RTR_MEM_8G', partName: '8GB内存', enabled: false, reason: '低端型号不提供更大内存' },
+      { partCode: 'RTR_MEM_16G', partName: '16GB内存', enabled: false, reason: '低端型号不提供更大内存' },
+      { partCode: 'RTR_LIC_STD_VPN', partName: '标准VPN许可', enabled: false, reason: '低端型号不标配VPN' },
+      { partCode: 'RTR_LIC_ADV_QOS', partName: '高级QoS许可', enabled: false, reason: '低端型号不提供高级许可' },
+      { partCode: 'RTR_LIC_ENT_FULL', partName: '企业完整许可', enabled: false, reason: '低端型号不提供企业许可' },
+    ],
+  },
+  {
+    id: 'rel-router-02-instantiates',
+    code: 'PC_Instantiates_PI',
+    name: '产品类实例化销售产品',
+    relationType: 'INSTANTIATES',
+    sourceId: 'router-platform-001',
+    targetId: 'router-02-001',
+    enabledParts: [
+      { partCode: 'RTR_CPU_02', partName: '四核CPU', enabled: true, defaultSelected: true, minQty: 1, maxQty: 1 },
+      { partCode: 'RTR_CPU_03', partName: '八核CPU', enabled: true, defaultSelected: false, minQty: 0, maxQty: 1 },
+      { partCode: 'RTR_PORT_GE_24', partName: '24口千兆', enabled: true, defaultSelected: true, minQty: 1, maxQty: 4 },
+      { partCode: 'RTR_PORT_GE_48', partName: '48口千兆', enabled: true, defaultSelected: false, minQty: 0, maxQty: 2 },
+      { partCode: 'RTR_PORT_10GE_4', partName: '4口万兆', enabled: true, defaultSelected: false, minQty: 0, maxQty: 2 },
+      { partCode: 'RTR_MEM_4G', partName: '4GB内存', enabled: true, defaultSelected: true, minQty: 1, maxQty: 2 },
+      { partCode: 'RTR_MEM_8G', partName: '8GB内存', enabled: true, defaultSelected: false, minQty: 0, maxQty: 2 },
+      { partCode: 'RTR_LIC_STD_VPN', partName: '标准VPN许可', enabled: true, defaultSelected: true, minQty: 1, maxQty: 1 },
+      { partCode: 'RTR_LIC_ADV_QOS', partName: '高级QoS许可', enabled: true, defaultSelected: false, minQty: 0, maxQty: 1 },
+    ],
+    disabledParts: [
+      { partCode: 'RTR_CPU_01', partName: '双核CPU', enabled: false, reason: '中端型号不提供低端CPU' },
+      { partCode: 'RTR_CPU_04', partName: '十六核CPU', enabled: false, reason: '中端型号不提供十六核CPU' },
+      { partCode: 'RTR_MEM_2G', partName: '2GB内存', enabled: false, reason: '中端型号最低4G' },
+      { partCode: 'RTR_MEM_16G', partName: '16GB内存', enabled: false, reason: '中端型号最高8G' },
+      { partCode: 'RTR_LIC_STD_BASE', partName: '标准基础许可', enabled: false, reason: '中端标配VPN许可' },
+      { partCode: 'RTR_LIC_ENT_FULL', partName: '企业完整许可', enabled: false, reason: '中端型号不提供企业许可' },
+    ],
+  },
+  {
+    id: 'rel-router-03-instantiates',
+    code: 'PC_Instantiates_PI',
+    name: '产品类实例化销售产品',
+    relationType: 'INSTANTIATES',
+    sourceId: 'router-platform-001',
+    targetId: 'router-03-001',
+    enabledParts: [
+      { partCode: 'RTR_CPU_03', partName: '八核CPU', enabled: true, defaultSelected: true, minQty: 1, maxQty: 2 },
+      { partCode: 'RTR_CPU_04', partName: '十六核CPU', enabled: true, defaultSelected: false, minQty: 0, maxQty: 2 },
+      { partCode: 'RTR_PORT_GE_48', partName: '48口千兆', enabled: true, defaultSelected: false, minQty: 0, maxQty: 4 },
+      { partCode: 'RTR_PORT_10GE_4', partName: '4口万兆', enabled: true, defaultSelected: true, minQty: 1, maxQty: 4 },
+      { partCode: 'RTR_MEM_8G', partName: '8GB内存', enabled: true, defaultSelected: true, minQty: 1, maxQty: 4 },
+      { partCode: 'RTR_MEM_16G', partName: '16GB内存', enabled: true, defaultSelected: false, minQty: 0, maxQty: 4 },
+      { partCode: 'RTR_LIC_ADV_QOS', partName: '高级QoS许可', enabled: true, defaultSelected: true, minQty: 1, maxQty: 1 },
+      { partCode: 'RTR_LIC_ENT_FULL', partName: '企业完整许可', enabled: true, defaultSelected: false, minQty: 0, maxQty: 1 },
+    ],
+    disabledParts: [
+      { partCode: 'RTR_CPU_01', partName: '双核CPU', enabled: false, reason: '高端型号不提供低端CPU' },
+      { partCode: 'RTR_CPU_02', partName: '四核CPU', enabled: false, reason: '高端型号不提供中端CPU' },
+      { partCode: 'RTR_PORT_GE_24', partName: '24口千兆', enabled: false, reason: '高端型号标配高密度端口' },
+      { partCode: 'RTR_MEM_2G', partName: '2GB内存', enabled: false, reason: '高端型号最低8G' },
+      { partCode: 'RTR_MEM_4G', partName: '4GB内存', enabled: false, reason: '高端型号最低8G' },
+      { partCode: 'RTR_LIC_STD_BASE', partName: '标准基础许可', enabled: false, reason: '高端型号标配高级许可' },
+      { partCode: 'RTR_LIC_STD_VPN', partName: '标准VPN许可', enabled: false, reason: '高端型号标配高级许可' },
+    ],
+    specOverrides: {
+      'SPEC_FORM_FACTOR': {
+        overrideValue: '2U',
+        reason: '高端型号强制2U外形',
+      },
+    },
+  },
+];
+
+// ============================================================
+// 属性数据
+// ============================================================
+export const moduleAttributes: ModuleAttribute[] = [
+  // SPEC 维度
+  {
+    id: 'spec-core-num-001',
+    code: 'SPEC_CORE_NUM',
+    name: '核心数',
+    attrType: 'SPEC',
+    status: 'ACTIVE',
+    schema: { type: 'INTEGER', unit: 'core' },
+  },
+  {
+    id: 'spec-max-bandwidth-001',
+    code: 'SPEC_MAX_BANDWIDTH',
+    name: '最大带宽',
+    attrType: 'SPEC',
+    status: 'ACTIVE',
+    schema: { type: 'ENUM', unit: 'Gbps', values: ['10', '40', '100', '400'] },
+  },
+  {
+    id: 'spec-port-type-001',
+    code: 'SPEC_PORT_TYPE',
+    name: '端口类型',
+    attrType: 'SPEC',
+    status: 'ACTIVE',
+    schema: { type: 'ENUM', values: ['GE', '10GE', '40GE'] },
+  },
+  {
+    id: 'spec-port-count-001',
+    code: 'SPEC_PORT_COUNT',
+    name: '端口数量',
+    attrType: 'SPEC',
+    status: 'ACTIVE',
+    schema: { type: 'INTEGER', unit: 'ports' },
+  },
+  {
+    id: 'spec-memory-size-001',
+    code: 'SPEC_MEMORY_SIZE',
+    name: '内存容量',
+    attrType: 'SPEC',
+    status: 'ACTIVE',
+    schema: { type: 'ENUM', unit: 'GB', values: ['2', '4', '8', '16'] },
+  },
+  {
+    id: 'spec-license-type-001',
+    code: 'SPEC_LICENSE_TYPE',
+    name: '许可类型',
+    attrType: 'SPEC',
+    status: 'ACTIVE',
+    schema: { type: 'ENUM', values: ['STD', 'ADV', 'ENT'] },
+  },
+
+  // PARAM 维度
+  {
+    id: 'param-total-bandwidth-001',
+    code: 'PARAM_TOTAL_BANDWIDTH',
+    name: '总带宽需求',
+    attrType: 'PARAM',
+    status: 'ACTIVE',
+    schema: { type: 'INTEGER', unit: 'Gbps', assignType: 'INPUT' },
+  },
+  {
+    id: 'param-total-memory-001',
+    code: 'PARAM_TOTAL_MEMORY',
+    name: '总内存需求',
+    attrType: 'PARAM',
+    status: 'ACTIVE',
+    schema: { type: 'INTEGER', unit: 'GB', assignType: 'INPUT' },
+  },
+
+  // MARKETING 维度
+  {
+    id: 'mkt-selling-points-001',
+    code: 'MKT_SELLING_POINTS',
+    name: '卖点',
+    attrType: 'MARKETING',
+    status: 'ACTIVE',
+    schema: { type: 'STRING_ARRAY' },
+  },
+  {
+    id: 'mkt-brochure-id-001',
+    code: 'MKT_BROCHURE_ID',
+    name: '手册ID',
+    attrType: 'MARKETING',
+    status: 'ACTIVE',
+    schema: { type: 'STRING' },
+  },
+
+  // DELIVERY 维度
+  {
+    id: 'dlv-lead-time-001',
+    code: 'DLV_LEAD_TIME',
+    name: '交付工期',
+    attrType: 'DELIVERY',
+    status: 'ACTIVE',
+    schema: { type: 'INTEGER', unit: 'days' },
+  },
+
+  // FINANCE 维度
+  {
+    id: 'fin-cost-base-001',
+    code: 'FIN_COST_BASE',
+    name: '成本基价',
+    attrType: 'FINANCE',
+    status: 'ACTIVE',
+    schema: { type: 'DECIMAL', unit: 'CNY' },
+  },
+  {
+    id: 'fin-margin-target-001',
+    code: 'FIN_MARGIN_TARGET',
+    name: '利润率目标',
+    attrType: 'FINANCE',
+    status: 'ACTIVE',
+    schema: { type: 'DECIMAL' },
+  },
+];
+
+// ============================================================
+// 模板数据
+// ============================================================
+export const templateDefinitions: TemplateDefinition[] = [
+  {
+    id: 'meta-product-class',
+    code: 'ProductClass_Template',
+    name: '产品类模板',
+    type: 'MODULE_STRUCT',
+    structType: 'PRODUCT_CLASS',
+    description: '定义产品类的基本结构模板',
+    version: '1.0.0',
+    status: 'PUBLISHED',
+  },
+  {
+    id: 'meta-product-instance',
+    code: 'ProductInstance_Template',
+    name: '产品实例模板',
+    type: 'MODULE_STRUCT',
+    structType: 'PRODUCT_INSTANCE',
+    description: '定义产品实例的基本结构模板',
+    version: '1.0.0',
+    status: 'PUBLISHED',
+  },
+  {
+    id: 'meta-part-class',
+    code: 'PartClass_Template',
+    name: '部件分类模板',
+    type: 'MODULE_STRUCT',
+    structType: 'PART_CLASS',
+    description: '定义部件分类的基本结构模板',
+    version: '1.0.0',
+    status: 'PUBLISHED',
+  },
+  {
+    id: 'meta-part',
+    code: 'Part_Template',
+    name: '部件模板',
+    type: 'MODULE_STRUCT',
+    structType: 'PART',
+    description: '定义部件的基本结构模板',
+    version: '1.0.0',
+    status: 'PUBLISHED',
+  },
+  {
+    id: 'meta-spec-attribute',
+    code: 'SPEC_Template',
+    name: '规格属性模板',
+    type: 'MODULE_ATTRIBUTE',
+    attrType: 'SPEC',
+    description: '定义规格维度属性的标准形式',
+    version: '1.0.0',
+    status: 'PUBLISHED',
+  },
+  {
+    id: 'meta-param-attribute',
+    code: 'PARAM_Template',
+    name: '参数属性模板',
+    type: 'MODULE_ATTRIBUTE',
+    attrType: 'PARAM',
+    description: '定义参数维度属性的标准形式',
+    version: '1.0.0',
+    status: 'PUBLISHED',
+  },
+  {
+    id: 'meta-contains-relation',
+    code: 'PC_Contains_PC',
+    name: '包含关系模板',
+    type: 'RELATION',
+    description: '定义产品类与部件分类之间的包含关系模板',
+    version: '1.0.0',
+    status: 'PUBLISHED',
+  },
+  {
+    id: 'meta-instantiates-relation',
+    code: 'PC_Instantiates_PI',
+    name: '实例化关系模板',
+    type: 'RELATION',
+    description: '定义产品类其实例化销售产品之间的关系模板',
+    version: '1.0.0',
+    status: 'PUBLISHED',
+  },
+];
+
+// ============================================================
+// 统计数据
+// ============================================================
+export const graphStats = {
+  totalNodes: graphNodes.length,
+  productClass: graphNodes.filter(n => n.structType === 'PRODUCT_CLASS').length,
+  productInstance: graphNodes.filter(n => n.structType === 'PRODUCT_INSTANCE').length,
+  partClass: graphNodes.filter(n => n.structType === 'PART_CLASS').length,
+  part: graphNodes.filter(n => n.structType === 'PART').length,
+  totalEdges: graphEdges.length,
+  containsEdges: graphEdges.filter(e => e.relationType === 'CONTAINS').length,
+  instantiatesEdges: graphEdges.filter(e => e.relationType === 'INSTANTIATES').length,
+  publishedNodes: graphNodes.filter(n => n.status === 'PUBLISHED' || n.status === 'ACTIVE').length,
+  draftNodes: graphNodes.filter(n => n.status === 'DRAFT').length,
+};

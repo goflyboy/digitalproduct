@@ -34,3 +34,798 @@ _**Agent (claude-fable-5)**_
 
 
 我会先核实当前可用的免费 Skill 与 MCP，重点筛选适合“低保真原型、页面生成、交互验证、设计文档联动”的方案，并优先推荐官方或高可信开源项目。
+
+_**Agent (claude-fable-5)**_
+
+<tool-use data-tool-type="unknown" data-tool-name="web_search"><details>
+<summary>Tool use: **web_search**</summary>
+
+Parameters:
+
+```json
+{
+  "searchTerm": "site:skills.sh frontend design UI UX wireframe prototyping skills 2026"
+}
+```
+Result:
+
+```json
+{
+  "isFinal": true,
+  "references": [
+    {
+      "chunk": "Links:\n1. [frontend-ui-ux-design](https://skills.sh/dauquangthanh/hanoi-rainbow/frontend-ui-ux-design)\n2. [UI/UX Best Practices Frontend Design](https://www.skills.sh/pproenca/dot-skills/ui-design)\n3. [modern-frontend-design](https://www.skills.sh/deveshpunjabi/modern-frontend-skill/modern-frontend-design)\n4. [design-frontend](https://www.skills.sh/ravnhq/ai-toolkit/design-frontend)\n5. [UI Wireframe \u0026 Mockup Generator](https://www.skills.sh/markdown-viewer/skills/wireframe)\n\nSynthesis:\nModern frontend design in 2026 prioritizes accessibility, performance, and systematic consistency over generic styling [1][2]. High-quality interfaces are built using design tokens—specifically OKLCH color spaces, spacing scales, and typography presets—before implementing components [3][4]. The current standard emphasizes mobile-first layouts, container queries, and native CSS features like scroll-driven animations and view transitions to ensure responsiveness and fluid interaction [3][4]. Use wireframing tools with drawio fences for early layout planning [5], and leverage interactive HTML mockups or standardized component seeds for production-ready frontend implementation [6][7][8].\n\nHighlights:\n\u003cresult id=\"1\"\u003e\n\u003ctitle\u003efrontend-ui-ux-design\u003c/title\u003e\n\u003curl\u003ehttps://skills.sh/dauquangthanh/hanoi-rainbow/frontend-ui-ux-design\u003c/url\u003e\n\u003ccontent\u003e# frontend-ui-ux-design\n\nInstallation\n\nCommandPrompt\n\n`$ npx skills add https://github.com/dauquangthanh/hanoi-rainbow --skill frontend-ui-ux-design`\n\nSKILL.md\n\n# Frontend UI/UX Design\n\n## Overview\n\nThis skill enables creation of production-ready frontend UI/UX designs from research through implementation. Follow a structured design process that balances user needs, business goals, technical constraints, and accessibility requirements.\n\n## Design Workflow\n\n## 1. Understand Requirements\n\nGather C
+… (output truncated)
+```
+User decision: **accepted**
+
+Status: **completed**
+
+</details></tool-use>
+
+_**Agent (claude-fable-5)**_
+
+<tool-use data-tool-type="unknown" data-tool-name="web_search"><details>
+<summary>Tool use: **web_search**</summary>
+
+Parameters:
+
+```json
+{
+  "searchTerm": "Cursor MCP official documentation 2026 Model Context Protocol"
+}
+```
+Result:
+
+```json
+{
+  "isFinal": true,
+  "references": [
+    {
+      "chunk": "Links:\n1. [mcp.md](https://cursor.com/docs/mcp)\n2. [mcp.md](https://cursor.com/help/customization/mcp)\n3. [Cursor mcp.json: Complete Configuration Guide](https://www.mcpforge.tech/blog/cursor-mcp-json)\n4. [Cursor MCP v2.1 Setup: Full Tool Discovery and Server Cards Configuration | RockB](https://baeseokjae.github.io/posts/cursor-mcp-v2-1-setup-guide-2026/)\n5. [How to Distribute a Team MCP Server Config Across Cursor Cloud Agents and the IDE - Start Debugging](https://startdebugging.net/2026/07/distribute-team-mcp-config-across-cursor-cloud-agents-and-ide/)\n\nSynthesis:\nThe Model Context Protocol (MCP) allows Cursor to connect to external tools, databases, and APIs [1][2]. You can install servers via the Cursor Marketplace in the Customize sidebar or by configuring `mcp.json` [1][2].\n\nTo configure servers manually, create `~/.cursor/mcp.json` (global) or `.cursor/mcp.json` (project-specific) [3][4]. Project-level settings take precedence [4].\n\nExample `mcp.json` structure:\n{\n \"mcpServers\": {\n \"my-server\": {\n \"command\": \"npx\",\n \"args\": [\"-y\", \"server-package\"],\n \"env\": { \"API_KEY\": \"${env:MY_SECRET}\" }\n }\n }\n} [5][3]\n\nRestart Cursor after configuration [4]. Tools appear in the chat panel's Available Tools [2].\n\nHighlights:\n\u003cresult id=\"1\"\u003e\n\u003ctitle\u003emcp.md\u003c/title\u003e\n\u003curl\u003ehttps://cursor.com/docs/mcp\u003c/url\u003e\n\u003ccontent\u003e# Model Context Protocol (MCP)\n...\n[Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) enables Cursor to connect to external tools and data sources. Install and manage MCP servers from the [Customize](https://cursor.com/docs/customize-cursor.md) page or configure them in `mcp.json`.\n...\nMCP servers expose capabilities through the protocol, connecting Cursor to external tools or data sources.\n...\nCursor supports these MCP protocol capabilities and extensions:\n...\n| 
+… (output truncated)
+```
+User decision: **accepted**
+
+Status: **completed**
+
+</details></tool-use>
+
+_**Agent (claude-fable-5)**_
+
+<tool-use data-tool-type="unknown" data-tool-name="web_search"><details>
+<summary>Tool use: **web_search**</summary>
+
+Parameters:
+
+```json
+{
+  "searchTerm": "free open source MCP wireframe UI design Cursor Pencil Figma 2026"
+}
+```
+Result:
+
+```json
+{
+  "isFinal": true,
+  "references": [
+    {
+      "chunk": "Links:\n1. [open-pencil/open-pencil](https://github.com/open-pencil/open-pencil)\n2. [Shivam990q/open-figma-mcp](https://github.com/Shivam990q/open-figma-mcp)\n3. [AsifKabirAntu/figsor](https://github.com/asifkabirantu/figsor)\n4. [NDilanka/wireframe-to-hifi](https://github.com/NDilanka/wireframe-to-hifi)\n5. [tathagat22/plumb-mcp](https://github.com/tathagat22/plumb-mcp)\n\nSynthesis:\nFor free, open-source Model Context Protocol (MCP) design workflows in 2026, the primary option is OpenPencil.\n\nOpenPencil is an open-source, AI-native design editor that serves as a functional alternative to Figma. It provides a built-in MCP server that enables AI agents—such as Cursor, Claude Code, and Windsurf—to read, create, and modify design documents directly using over 75 design tools. It supports native.fig file imports and utilizes a headless Vue SDK for custom workflows. \n\nFor developers specifically needing to connect existing Figma files to AI agents without paid Dev Mode seats, OpenFigma is a capable, free MCP server that offers design token export, multi-framework code generation, and canvas-write capabilities. \n\nIf you are using Cursor and want to connect it to an MCP server, add the following configuration to your settings:\n\n{\n \"mcpServers\": {\n \"open-pencil\": {\n \"command\": \"openpencil-mcp\"\n }\n }\n}\n\nYou can install the OpenPencil MCP server globally via npm using npm install -g @open-pencil/mcp. Unlike closed-source alternatives, OpenPencil is MIT-licensed, allowing you to self-host and audit the entire application.\n\nHighlights:\n\u003cresult id=\"1\"\u003e\n\u003ctitle\u003eopen-pencil/open-pencil\u003c/title\u003e\n\u003curl\u003ehttps://github.com/open-pencil/open-pencil\u003c/url\u003e\n\u003ccontent\u003eAI-native design editor. Open-source Figma alternative.\n...\nOpen-source design editor. Opens `.fig` and `.pen` design files, includes built-in AI, and ships as a programmable
+… (output truncated)
+```
+User decision: **accepted**
+
+Status: **completed**
+
+</details></tool-use>
+
+_**Agent (claude-fable-5)**_
+
+<tool-use data-tool-type="unknown" data-tool-name="web_search"><details>
+<summary>Tool use: **web_search**</summary>
+
+Parameters:
+
+```json
+{
+  "searchTerm": "Microsoft Playwright MCP GitHub official 2026"
+}
+```
+Result:
+
+```json
+{
+  "isFinal": true,
+  "references": [
+    {
+      "chunk": "Links:\n1. [microsoft/playwright-mcp](https://github.com/microsoft/playwright-mcp?tab=readme-ov-file)\n2. [microsoft/playwright-mcp](https://github.com/microsoft/playwright-mcp)\n3. [README.md](https://raw.githubusercontent.com/microsoft/playwright-mcp/main/README.md)\n4. [docs/src/getting-started-mcp.md](https://github.com/microsoft/playwright/blob/4d289016/docs/src/getting-started-mcp.md)\n5. [Playwright MCP Security Best Practices for Files, Origins, and Secrets | QASkills.sh](https://qaskills.sh/blog/playwright-mcp-security-best-practices-2026)\n\nSynthesis:\nThe official Microsoft Playwright Model Context Protocol (MCP) server is located at microsoft/playwright-mcp on GitHub [1][2]. It provides a bridge for LLMs to perform browser automation by utilizing Playwright's accessibility tree, allowing agents to interact with web pages without requiring vision models or screenshots [1][3].\n\nTo use it with an MCP-compatible client, add the following to your configuration [1][4]:\n\n{\n \"mcpServers\": {\n \"playwright\": {\n \"command\": \"npx\",\n \"args\": [\n \"@playwright/mcp@latest\"\n ]\n }\n }\n}\n\nThe server is not a security boundary; you should follow official security best practices, such as running in isolated containers, restricting file access, and limiting browser origins [5][6].\n\nHighlights:\n\u003cresult id=\"1\"\u003e\n\u003ctitle\u003emicrosoft/playwright-mcp\u003c/title\u003e\n\u003curl\u003ehttps://github.com/microsoft/playwright-mcp?tab=readme-ov-file\u003c/url\u003e\n\u003ccontent\u003e# microsoft/playwright-mcp\n...\nPlaywright MCP server\n...\n- Stars: 35664\n- Forks: 2978\n- Watchers: 35664\n- Open issues: 12\n- License: Apache License 2.0\n- Homepage: https://www.npmjs.com/package/@playwright/mcp\n- Default branch: main\n- Created: 2025-03-21T17:48:36Z\n...\n## Playwright MCP\n...\nA Model Context Protocol (MCP) server that provides browser automation capabilities using [Playwr
+… (output truncated)
+```
+User decision: **accepted**
+
+Status: **completed**
+
+</details></tool-use>
+
+_**Agent (claude-fable-5)**_
+
+<tool-use data-tool-type="unknown" data-tool-name="web_search"><details>
+<summary>Tool use: **web_search**</summary>
+
+Parameters:
+
+```json
+{
+  "searchTerm": "Context7 MCP official free Cursor 2026"
+}
+```
+Result:
+
+```json
+{
+  "isFinal": true,
+  "references": [
+    {
+      "chunk": "Links:\n1. [Context7 MCP by Upstash | Code Docs for LLMs](https://www.augmentcode.com/mcp/context7)\n2. [context7-mcp](https://upstash.com/blog/context7-mcp)\n3. [Context7 MCP Server: Complete Setup Guide (2026) — MCP.Directory](https://mcp.directory/blog/context7-mcp-complete-guide-2026)\n4. [Context7 - Agent Hub](https://agent-hub.dev/mcps/context7/)\n5. [GitHub - upstash/context7 at e5ccf1998d5583a9fca75b07d5df6beeb7529c5e · GitHub](https://github.com/upstash/context7/tree/e5ccf1998d5583a9fca75b07d5df6beeb7529c5e)\n\nSynthesis:\nContext7 is an open-source MCP server that provides AI coding assistants with up-to-date, version-specific documentation and code examples to prevent LLM hallucinations [1][2][3]. It is free to use with a generous basic tier; an optional API key from context7.com is available for higher rate limits [1][3][4].\n\nTo install it in Cursor, go to Cursor Settings, then MCP, and add the server to your ~/.cursor/mcp.json file [5][6][7]. \n\nExample using the recommended remote connection:\n{\n \"mcpServers\": {\n \"context7\": {\n \"url\": \"https://mcp.context7.com/mcp\"\n }\n }\n} [3][8]\n\nHighlights:\n\u003cresult id=\"1\"\u003e\n\u003ctitle\u003eContext7 MCP by Upstash | Code Docs for LLMs\u003c/title\u003e\n\u003curl\u003ehttps://www.augmentcode.com/mcp/context7\u003c/url\u003e\n\u003ccontent\u003eDescription: Context7 MCP Server – serves fresh, version-specific code documentation to Model-Context-Protocol (MCP) clients such as Cursor, Claude Code or Opencode.\n...\n- Node.js 18 or newer (recommended)\n\n- npx\n\n- An MCP-compatible client (Cursor, Claude Desktop, Claude Code, Opencode, etc.)\n\n- API key from context7.com/dashboard (recommended for higher rate limits, not required)\n...\nGo to Settings \u003e Cursor Settings \u003e MCP \u003e Add new global MCP server, or edit ~/.cursor/mcp.json:\n...\n_API_\n...\ncommand claude mcp add --scope user context7 -- npx -y @upstash/c
+… (output truncated)
+```
+User decision: **accepted**
+
+Status: **completed**
+
+</details></tool-use>
+
+_**Agent (claude-fable-5)**_
+
+<tool-use data-tool-type="unknown" data-tool-name="web_search"><details>
+<summary>Tool use: **web_search**</summary>
+
+Parameters:
+
+```json
+{
+  "searchTerm": "Figma MCP server official pricing free plan Cursor 2026"
+}
+```
+Result:
+
+```json
+{
+  "isFinal": true,
+  "references": [
+    {
+      "chunk": "Links:\n1. [Set up the remote server (recommended) | Developer Docs](https://developers.figma.com/docs/figma-mcp-server/remote-server-installation/)\n2. [Guide to the Figma MCP server – Figma Learn - Help Center](https://help.figma.com/hc/en-us/articles/32132100833559-Guide-to-the-Figma-MCP-server)\n3. [Figma MCP server FAQs – Figma Learn - Help Center](https://help.figma.com/hc/en-us/articles/39252411778583-Figma-MCP-server-FAQs)\n4. [Rate limits \u0026 access | Developer Docs](https://developers.figma.com/docs/figma-mcp-server/rate-limits-access/)\n5. [figma/mcp-server-guide](https://github.com/figma/dev-mode-mcp-server-guide)\n\nSynthesis:\nThe Figma MCP server is currently available for free during its beta period, though Figma notes it will eventually become a usage-based paid feature [1][2][3]. While the service is free, your usage is subject to rate limits based on your Figma plan and seat type [4][5]. Starter plans and non-full seats are limited to 6 tool calls per month, while Dev or Full seats on paid plans receive higher daily and per-minute limits [4][5]. You can integrate it with Cursor via the Figma plugin or manual configuration, provided you use an official supported client [4][1][6].\n\nHighlights:\n\u003cresult id=\"1\"\u003e\n\u003ctitle\u003eSet up the remote server (recommended) | Developer Docs\u003c/title\u003e\n\u003curl\u003ehttps://developers.figma.com/docs/figma-mcp-server/remote-server-installation/\u003c/url\u003e\n\u003ccontent\u003eNote: Only clients listed in the Figma MCP Catalog like VS Code, Cursor, or Claude Code can connect to the Figma MCP Server. If you're a developer interested in connecting a new MCP client, you can join the waitlist.\n...\nNote: We're quickly improving how Figma supports AI agents. This will eventually be a usage-based paid feature, but is currently available for free during the beta period.\n...\na list of install guides for supported MCP clients,
+… (output truncated)
+```
+User decision: **accepted**
+
+Status: **completed**
+
+</details></tool-use>
+
+_**Agent (claude-fable-5)**_
+
+<think><details><summary>Thought Process</summary>
+**Recommending low-code prototype approach****Evaluating open-source prototype tools**
+</details></think>
+
+_**Agent (claude-fable-5)**_
+
+<tool-use data-tool-type="unknown" data-tool-name="web_search"><details>
+<summary>Tool use: **web_search**</summary>
+
+Parameters:
+
+```json
+{
+  "searchTerm": "Pencil MCP Cursor free pricing wireframe 2026 official"
+}
+```
+Result:
+
+```json
+{
+  "isFinal": true,
+  "references": [
+    {
+      "chunk": "Links:\n1. [Pencil.dev Review 2026: Design in Cursor, Land in Code](https://www.toolworthy.ai/tool/pencil-dev)\n2. [Pencil.dev Review: The AI Design Canvas That Lives in Your IDE (2026)](https://inhaq.com/blog/pencil-dev-design-canvas-that-lives-in-your-ide)\n3. [Pencil.dev Review: Design on Canvas. Land in Code.](https://aiforpro.ai/ai-tools/pencil-dev-review-design-on-canvas-land-in-code/)\n4. [AI Integration](https://docs.pencil.dev/getting-started/ai-integration)\n5. [Installation](https://docs.pencil.dev/getting-started/installation)\n\nSynthesis:\nPencil.dev is an IDE-native canvas tool that enables two-way design-to-code synchronization by storing design files as.pen files within your Git repository [1][2][3]. It functions as an AI-powered design bridge that uses the Model Context Protocol (MCP) to allow AI assistants like Cursor and Claude Code to read and manipulate your design specifications directly [4][5][6].\n\nAs of August 2026, Pencil.dev is free for all users during its early access phase, with no published paid tiers or enterprise pricing [1][7][2]. While the tool itself is free, using its AI generation capabilities typically requires an active subscription to an AI coding agent, such as Claude Code, which starts at $20 per month [7][2][8]. The developers have stated that paid tiers may be introduced in the future [2][6][9].\n\nHighlights:\n\u003cresult id=\"1\"\u003e\n\u003ctitle\u003ePencil.dev Review 2026: Design in Cursor, Land in Code\u003c/title\u003e\n\u003curl\u003ehttps://www.toolworthy.ai/tool/pencil-dev\u003c/url\u003e\n\u003ccontent\u003etwo-way\n...\nPricing:100% Free\n...\nPencil also exposes a local MCP server so assistants like Claude Code, Cursor, and Codex can read and modify`.pen` files while Pencil is running. That makes it part design canvas, part developer toolchain layer, and part bridge between visual editing and code generation. For teams already using Model Contex
+… (output truncated)
+```
+User decision: **accepted**
+
+Status: **completed**
+
+</details></tool-use>
+
+_**Agent (claude-fable-5)**_
+
+<tool-use data-tool-type="unknown" data-tool-name="web_search"><details>
+<summary>Tool use: **web_search**</summary>
+
+Parameters:
+
+```json
+{
+  "searchTerm": "Excalidraw MCP server Cursor open source GitHub 2026 wireframe"
+}
+```
+Result:
+
+```json
+{
+  "isFinal": true,
+  "references": [
+    {
+      "chunk": "Links:\n1. [excalidraw/excalidraw-mcp](https://github.com/excalidraw/excalidraw-mcp?tab=readme-ov-file)\n2. [GitHub - yctimlin/mcp_excalidraw at refs/heads/main · GitHub](https://github.com/yctimlin/mcp_excalidraw/tree/refs/heads/main)\n3. [yctimlin/mcp_excalidraw](https://github.com/yctimlin/mcp_excalidraw)\n4. [excalidraw/excalidraw-mcp](https://github.com/excalidraw/excalidraw-mcp)\n5. [excalidraw-app-demo](https://mcpservers.org/remote-mcp-servers/excalidraw-app-demo)\n\nSynthesis:\nYes, there are several open-source Excalidraw MCP servers available for use in Cursor, Claude Desktop, and other MCP-compatible clients [1][2][3].\n\nThe most prominent options are:\n\nThe official Excalidraw MCP app provides a streamable interface for interactive hand-drawn diagrams [1][4]. You can use the hosted endpoint `https://excalidraw-mcp-app.vercel.app/mcp` as a remote connector [5], or deploy your own instance to Vercel by forking the repository [4][6].\n\nFor coding agents requiring deep, programmatic canvas control (such as persistent state, element-level CRUD, and real-time syncing), the mcp-excalidraw-server project is designed as a developer workbench [2][3]. It supports CLI-driven workflows and can be configured in Cursor via your `.cursor/mcp.json` file [2][3]:\n\n{\n \"mcpServers\": {\n \"excalidraw\": {\n \"command\": \"npx\",\n \"args\": [\"-y\", \"mcp-excalidraw-server\"]\n }\n }\n}\n\nYou can also find security-hardened alternatives, such as the excalidraw-mcp-server, which includes API key authentication and rate limiting for more complex infrastructure needs [7]. Most of these servers are built with TypeScript and can be integrated into Cursor by adding the respective command or URL to your MCP configuration file [2][8][9].\n\nHighlights:\n\u003cresult id=\"1\"\u003e\n\u003ctitle\u003eexcalidraw/excalidraw-mcp\u003c/title\u003e\n\u003curl\u003ehttps://github.com/excalidraw/excalidraw-mcp?tab=readme-o
+… (output truncated)
+```
+User decision: **accepted**
+
+Status: **completed**
+
+</details></tool-use>
+
+_**Agent (claude-fable-5)**_
+
+<tool-use data-tool-type="unknown" data-tool-name="web_search"><details>
+<summary>Tool use: **web_search**</summary>
+
+Parameters:
+
+```json
+{
+  "searchTerm": "site:skills.sh/anthropics/skills frontend-design installs 2026"
+}
+```
+Result:
+
+```json
+{
+  "isFinal": true,
+  "references": [
+    {
+      "chunk": "Links:\n1. [frontend-design](https://www.skills.sh/anthropics/skills/frontend-design)\n2. [frontend-design](https://www.skills.sh/anthropics/skills/frontend-design/security/socket)\n3. [frontend-design](https://www.skills.sh/anthropics/skills/frontend-design/security/agent-trust-hub)\n4. [frontend-design](https://www.skills.sh/anthropics/skills/frontend-design/security/snyk)\n5. [anthropics/skills — Agent skills](https://www.skills.sh/anthropics/skills)\n\nSynthesis:\nThe frontend-design skill has reached 731.4K installs as of early 2026 [1]. You can install this skill, which provides design patterns and visual guidance for AI agents, by running the command npx skills add https://github.com/anthropics/skills --skill frontend-design [1]. The package has passed security audits from Socket, Snyk, and the Gen Agent Trust Hub, with the latter confirming it consists solely of natural language instructions without executable code [2][3][4].\n\nHighlights:\n\u003cresult id=\"1\"\u003e\n\u003ctitle\u003efrontend-design\u003c/title\u003e\n\u003curl\u003ehttps://www.skills.sh/anthropics/skills/frontend-design\u003c/url\u003e\n\u003ccontent\u003e# frontend-design\n...\n`$ npx skills add https://github.com/anthropics/skills --skill frontend-design`\n...\n# Frontend Design\n...\n731.4K\n...\nJan 19, 2026\u003c/content\u003e\n\u003c/result\u003e\n\n\u003cresult id=\"2\"\u003e\n\u003ctitle\u003efrontend-design\u003c/title\u003e\n\u003curl\u003ehttps://www.skills.sh/anthropics/skills/frontend-design/security/socket\u003c/url\u003e\n\u003ccontent\u003e# frontend-design\n\nPass\n\nAudited by Socket on Mar 18, 2026\n\nChecks\n\nMalicious behaviorInjection, exfiltration, untrusted installs\n\nSecurity concernsCredential exposure, tool/trust exploitation\n\nCode obfuscationHidden or obfuscated code\n\nSuspicious patternsReconnaissance, excessive autonomy, resource use\n\nAudit Metadata\n\nAnalyzed AtMar 18, 2026, 04:47 PM\n\nPa
+… (output truncated)
+```
+User decision: **accepted**
+
+Status: **completed**
+
+</details></tool-use>
+
+_**Agent (claude-fable-5)**_
+
+<tool-use data-tool-type="unknown" data-tool-name="web_search"><details>
+<summary>Tool use: **web_search**</summary>
+
+Parameters:
+
+```json
+{
+  "searchTerm": "site:skills.sh microsoft playwright cli skill browser automation 2026"
+}
+```
+Result:
+
+```json
+{
+  "isFinal": true,
+  "references": [
+    {
+      "chunk": "Links:\n1. [playwright-cli](https://www.skills.sh/microsoft/playwright-cli/playwright-cli)\n2. [playwright-cli](https://www.skills.sh/microsoft/playwright/playwright-cli)\n3. [microsoft/playwright — Agent skills](https://www.skills.sh/microsoft/playwright)\n4. [playwright-cli](https://www.skills.sh/testdino-hq/playwright-skill/playwright-cli)\n5. [Playwright CLI Skill](https://www.skills.sh/openai/skills/playwright)\n\nSynthesis:\nThe Playwright CLI is a tool for terminal-driven browser automation that supports Chrome, Firefox, WebKit, and Edge [1]. You can add it to your environment using the command npx skills add microsoft/playwright --skill playwright-cli [2][3]. It enables navigation, element interaction, storage management, and network mocking without requiring formal test scripts [1][4]. Basic usage follows a pattern of opening a browser, navigating to a URL, and performing actions like clicking or typing [1][2]. Always validate URLs and sanitize extracted data to mitigate risks of indirect prompt injection [4].\n\nHighlights:\n\u003cresult id=\"1\"\u003e\n\u003ctitle\u003eplaywright-cli\u003c/title\u003e\n\u003curl\u003ehttps://www.skills.sh/microsoft/playwright-cli/playwright-cli\u003c/url\u003e\n\u003ccontent\u003e# playwright-cli\n\nInstallation\n\nCommandPrompt\n\n`$ npx skills add https://github.com/microsoft/playwright-cli --skill playwright-cli`\n\nSummary\n\nBrowser automation with 40+ commands for navigation, interaction, form filling, and web testing.\n\n- Supports multiple browsers (Chrome, Firefox, WebKit, Edge) with persistent profiles, extensions, and custom configurations\n- Core interactions include clicking, typing, dragging, selecting, uploading files, and handling dialogs across page elements\n- Storage management for cookies, localStorage, and sessionStorage; network request mocking and routing for testing\n- DevTools integration with console logging, network inspection, tracing
+… (output truncated)
+```
+User decision: **accepted**
+
+Status: **completed**
+
+</details></tool-use>
+
+_**Agent (claude-fable-5)**_
+
+<think><details><summary>Thought Process</summary>
+**Recommending free digital design tools****Clarifying prototype types and installs****Drafting combined MCP config example**
+</details></think>
+
+_**Agent (claude-fable-5)**_
+
+
+
+可以。你现在做的是“数字产品低保真”，通常会同时涉及：
+
+- 页面线框图
+- 页面跳转与操作流程
+- 可点击 Web 原型
+- 从需求/架构文档生成页面
+- 浏览器验收和迭代
+
+[INFERRED] 结合你当前仓库里已有的数据模型、RFC、ADR 和架构说明书，最合适的不是直接上复杂的 Figma 工作流，而是采用 **Skill 负责设计方法，Pencil/Excalidraw 负责画布，React 原型负责可点击交互，Playwright 负责自动验收**。
+
+## 一、最推荐的免费组合
+
+### 1. Pencil MCP：主要的低保真设计画布
+
+**推荐程度：最高**
+
+[Pencil](https://www.pencil.dev/) 是运行在 Cursor/VS Code 内的设计画布，设计文件以 `.pen` 文件保存在项目中。Cursor 可以通过 MCP 读取和修改画布。
+
+适合：
+
+- 后台管理系统页面线框图
+- 表格、表单、树形结构、详情页
+- 根据 RFC 自动生成页面
+- 在画布中人工拖拽，然后让 Cursor 继续修改
+- 将设计文件和代码一起纳入 Git
+
+优点：
+
+- 目前早期访问阶段免费
+- Windows 可用
+- 与 Cursor 集成直接
+- MCP 在本机运行，设计操作不依赖远程服务
+- `.pen` 文件可以和代码一起版本管理
+- Cursor 可以直接创建、读取和修改设计节点
+- 比“截图交给 AI 猜布局”精确得多
+
+安装方式：
+
+1. 打开 Cursor 扩展市场。
+2. 搜索 `Pencil` 或 `pen.dev`。
+3. 安装扩展。
+4. 新建一个 `.pen` 文件。
+5. 打开 `Cursor Settings → Tools & MCP`。
+6. 确认 `pencil` 已连接。
+
+官方说明：
+
+- [安装文档](https://docs.pencil.dev/getting-started/installation)
+- [AI/MCP 集成](https://docs.pencil.dev/getting-started/ai-integration)
+
+注意：它现在免费，但未来可能调整收费模式；此外，一些 AI 操作会消耗你现有的 Cursor 模型额度。
+
+推荐提示词：
+
+```text
+请使用 Pencil，为数字产品维护平台创建一套低保真线框图。
+
+先读取：
+- docs/数字产品系统架构设计说明书.md
+- docs/数字产品数据模型.md
+- docs/adr/RFC-003-数据通用维护服务-通用对象表映射机制.md
+
+本轮只生成低保真原型，不生成业务代码。
+
+第一批页面：
+1. 数字产品列表页
+2. 数字产品详情页
+3. 通用对象列表页
+4. 通用对象编辑页
+5. 版本发布确认页
+
+要求：
+- 桌面端 1440px
+- 左侧导航、顶部上下文栏
+- 只使用灰阶
+- 不使用装饰图片、渐变和复杂阴影
+- 明确展示加载、空数据、校验失败和无权限状态
+- 页面间建立可追踪的操作流
+- 在画布旁标记每个页面对应的 RFC 条款
+```
+
+---
+
+### 2. `frontend-design` Skill：让 Cursor 不生成“AI 味模板”
+
+你当前 Cursor 环境中已经有这个 Skill，一般不需要重复安装。
+
+它适合：
+
+- 把业务需求转成合理的页面层级
+- 改善表单、导航、表格、详情页的信息架构
+- 避免生成过度装饰、缺少层次的界面
+- 后期从低保真升级到中高保真
+
+这是 `anthropics/skills` 中非常成熟的设计 Skill，当前安装量较高，并通过了多个安全审查：
+
+- [frontend-design Skill](https://www.skills.sh/anthropics/skills/frontend-design)
+
+如果其他环境没有，可以安装：
+
+```powershell
+npx skills add https://github.com/anthropics/skills --skill frontend-design
+```
+
+使用方式不用特别复杂，在提示词里明确说：
+
+```text
+使用 frontend-design 工作流，但本轮保持低保真。
+
+请先进行：
+1. 用户任务识别
+2. 页面信息架构
+3. 页面状态枚举
+4. 操作路径设计
+5. 低保真布局
+
+不要提前添加品牌色、渐变、插画和营销型视觉效果。
+```
+
+“保持低保真”这一句很重要，否则设计类 Skill 往往会主动把页面做得比较精致。
+
+---
+
+### 3. Wireframe Skill：快速输出页面结构草图
+
+推荐：
+
+- [UI Wireframe & Mockup Generator](https://www.skills.sh/markdown-viewer/skills/wireframe)
+
+它主要通过 Draw.io 风格的结构生成线框图，适合：
+
+- 快速讨论页面布局
+- 一次生成多个页面
+- 表达页面跳转关系
+- 在正式做 Pencil 或 React 原型之前确认结构
+
+安装：
+
+```powershell
+npx skills add https://github.com/markdown-viewer/skills --skill wireframe
+```
+
+优点：
+
+- 免费、开源
+- 源仓库成熟度相对不错
+- 非常符合“低保真”要求
+- 生成速度快
+
+不足：
+
+- 更偏静态线框图
+- 交互能力不如可运行的 React 原型
+- Draw.io 内容复杂以后不如 Pencil 容易精细编辑
+
+[INFERRED] 对你的项目，可以先用 Wireframe Skill 一次生成“页面地图”，确认范围后，再将核心页面放进 Pencil 或 React 中实现。
+
+---
+
+### 4. Playwright CLI Skill：自动操作和验收原型
+
+你当前环境中已经有 `webapp-testing` Skill。如果还希望获得更直接的浏览器操作能力，可以增加微软官方的 Playwright CLI Skill：
+
+- [Microsoft Playwright CLI Skill](https://www.skills.sh/microsoft/playwright-cli/playwright-cli)
+
+安装：
+
+```powershell
+npx skills add https://github.com/microsoft/playwright-cli --skill playwright-cli
+```
+
+适合：
+
+- 打开本地原型
+- 自动点击菜单和按钮
+- 填写表单
+- 检查弹窗、空状态、错误状态
+- 截图对比
+- 验证完整业务路径
+- 找出无法点击、文案不一致和流程中断问题
+
+推荐提示词：
+
+```text
+启动本地低保真原型后，使用 Playwright 执行以下体验巡检：
+
+1. 从数字产品列表进入产品详情
+2. 创建一个通用对象
+3. 故意遗漏必填字段并检查错误提示
+4. 补全字段并保存
+5. 进入版本发布流程
+6. 取消一次发布，再重新确认发布
+
+输出：
+- 无法完成的步骤
+- 缺失的反馈状态
+- 容易误解的按钮文案
+- 页面跳转不一致
+- 键盘操作和可访问性问题
+
+不要修改代码，先给出巡检结果。
+```
+
+---
+
+### 5. Context7 MCP：查询最新组件库文档
+
+[Context7](https://github.com/upstash/context7) 用来让 Cursor 获取最新、指定版本的框架和组件库文档。
+
+它不会直接画原型，但在你使用以下技术生成可运行低保真时很有用：
+
+- React
+- Vue
+- Tailwind CSS
+- shadcn/ui
+- Ant Design
+- React Router
+- TanStack Table
+
+基本使用免费；API Key 不是必需的，免费 Key 可以提高限额。
+
+推荐远程配置：
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "url": "https://mcp.context7.com/mcp"
+    }
+  }
+}
+```
+
+也可以本地运行：
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    }
+  }
+}
+```
+
+之后提示 Cursor：
+
+```text
+使用 Context7 查询当前项目中 Ant Design 对应版本的 Form、Table、
+Tree、Drawer 和 Steps 文档，再实现低保真原型。
+
+不要使用训练数据中可能已经过期的 API。
+```
+
+---
+
+## 二、如果要画业务流程图：Excalidraw MCP
+
+如果你除了页面线框图，还需要表达：
+
+- 产品维护流程
+- 维护态到发布态的转换
+- 数据审批流程
+- 角色操作路径
+- 页面导航地图
+- 服务和模块关系
+
+可以使用 Excalidraw。
+
+### 方案 A：社区持久化画布 MCP
+
+推荐项目：
+
+- [yctimlin/mcp_excalidraw](https://github.com/yctimlin/mcp_excalidraw)
+
+特点：
+
+- MIT 开源
+- 支持 Cursor
+- 持久画布
+- 支持元素级创建、编辑和删除
+- 支持导入、导出和实时同步
+- 比一次性生成图片更适合反复修改
+
+配置：
+
+```json
+{
+  "mcpServers": {
+    "excalidraw": {
+      "command": "npx",
+      "args": ["-y", "mcp-excalidraw-server"]
+    }
+  }
+}
+```
+
+### 方案 B：Excalidraw 官方 MCP
+
+- [Excalidraw 官方 MCP](https://github.com/excalidraw/excalidraw-mcp)
+
+官方版本适合快速生成手绘风图，但社区持久化画布版本对编码 Agent 的反复编辑更友好。
+
+建议用途：
+
+- Excalidraw：页面地图、业务流程、状态转换
+- Pencil：具体页面线框图
+- React：可点击、可输入、可验证的交互原型
+
+不要把 Excalidraw 当成复杂后台页面设计工具，它更擅长“关系和流程”，不擅长大量精细表格、抽屉和表单。
+
+---
+
+## 三、Figma MCP 是否推荐
+
+### Figma 官方 MCP
+
+官方地址：
+
+- [Figma MCP 使用指南](https://help.figma.com/hc/en-us/articles/32132100833559-Guide-to-the-Figma-MCP-server)
+- [Figma MCP 限额](https://developers.figma.com/docs/figma-mcp-server/rate-limits-access/)
+
+Cursor 可以直接连接：
+
+```json
+{
+  "mcpServers": {
+    "figma": {
+      "url": "https://mcp.figma.com/mcp"
+    }
+  }
+}
+```
+
+但不建议把它作为你的首选免费方案，原因是：
+
+- 官方 MCP 当前测试期免费，但未来计划变为按使用量收费。
+- Starter 免费计划或 View/Collab 席位通常最多只有每月 6 次读取类工具调用。
+- 对频繁迭代低保真来说，这个额度明显不够。
+- 更适合已经在 Figma 中维护正式设计系统的团队。
+
+### 免费开源的 Figma 替代 MCP
+
+可关注：
+
+- [OpenPencil](https://github.com/open-pencil/open-pencil)：MIT 开源、设计数据本地、MCP 可读写。
+- [OpenFigma MCP](https://github.com/Shivam990q/open-figma-mcp)：通过 Figma REST API 和配套插件提供读写能力。
+- [Plumb MCP](https://github.com/tathagat22/plumb-mcp)：通过 Figma 插件读取内存文档，避免 REST 限额。
+
+这些方案功能很强，但配置、插件连接和稳定性成本高于 Pencil。对于“先把低保真做出来”，优先级可以放在第二阶段。
+
+---
+
+## 四、你当前已有、可以直接利用的 Skill
+
+你的 Cursor 环境已经具备几项非常适合本项目的 Skill：
+
+### `frontend-design`
+
+用于页面设计、信息层级、交互状态与前端实现。
+
+### `webapp-testing`
+
+用于运行和验证本地 Web 原型，包括交互、截图和浏览器日志。
+
+### `web-artifacts-builder`
+
+适合制作多页面、多组件、有状态的 React 原型，例如：
+
+- 左侧导航
+- 多页面路由
+- 表格筛选
+- 新增编辑抽屉
+- 发布确认弹窗
+- 模拟数据切换
+
+### `canvas`
+
+适合呈现数据较多的分析型界面或交互式分析成果，但不建议拿它替代完整产品原型代码。
+
+### `rfc-arch`
+
+适合从当前架构说明书和 ADR/RFC 中进一步推导页面边界、服务职责和业务流程。它不是 UI Skill，但可以减少“页面与架构设计脱节”。
+
+[INFERRED] 你当前真正缺少的并不是更多通用设计 Skill，而是一套固定的“架构文档 → 页面清单 → 低保真 → 可点击原型 → 自动验收”工作流。
+
+---
+
+## 五、推荐的最终工具栈
+
+### 极简方案：最推荐
+
+1. `frontend-design`：整理信息架构和页面结构
+2. Pencil MCP：制作低保真页面
+3. `webapp-testing`：验证原型
+
+成本：Pencil 当前免费，使用你已有的 Cursor 能力。
+
+### 纯开源方案
+
+1. `frontend-design`
+2. Wireframe Skill
+3. Excalidraw MCP
+4. React + Tailwind 或 Ant Design
+5. Playwright CLI Skill
+
+优点是开放、文件都能进 Git；缺点是需要自己维护可运行原型。
+
+### 最适合你的完整方案
+
+1. 读取现有架构说明书、数据模型、RFC 和 ADR
+2. 用 Excalidraw 输出页面地图和业务流程
+3. 用 Pencil 输出核心页面线框
+4. 用 React/Ant Design 生成可点击原型
+5. 用 Playwright 自动执行用户路径
+6. 根据测试反馈回写页面和 RFC
+
+## 六、安装优先级
+
+不建议一口气安装很多 MCP。先装下面两个就足够开始：
+
+1. **Pencil 扩展及其自动配置的 MCP**
+2. **Context7 MCP**
+
+然后根据需要增加：
+
+3. Wireframe Skill
+4. Playwright CLI Skill
+5. Excalidraw MCP
+
+[INFERRED] 对你这套偏企业后台、数据维护和版本发布的数字产品，**Pencil + Ant Design 可运行原型 + Playwright 验收**会比单纯使用 Figma 更省钱、更贴近代码，也更适合让 Cursor持续迭代。
+
+---
+
+_**User**_
+
+请读取@docs下的  架构说明书、数据模型、RFC 和 ADR, 请生成一个低保证，独立输出到一个文件夹，就使用Pencil + Ant Design 可运行原型 + Playwright 验收技术栈， 请先生成静态页面，把主要的业务场景走通  我个人对数字产品低保真的构想大概是这样的：
+
+1. 总体定位与风格
+   本产品定位为一个类似于设计软件的数字产品建模工具。它的整体风格偏向技术建模风。
+   比方说，就像我们画系统架构图一样，拖一个图标代表系统，再拖一个图标代表接口，大概是这种感觉。
+
+2. 角色与流程串联
+   系统主要包含三个角色：
+   • IT 数据架构师
+   • 产品数据架构师
+   • 产品数据工程师
+   
+   我们需要把这三个角色的核心流程全部串起来，并且要用我们现有服务器的数据来跑通。具体的核心步骤是：先建模板，再建产品模型，最后做实例化。
+
+3. “图”的核心思想与视觉呈现
+   “图”（Graph）是整个设计的核心思想。虽然我们有部分数据因为客观原因仍存储在关系数据库中，但总体上一定要给用户一种“在构建一张图”的直观感觉。
+   • 无论是建模板、建产品模型，还是进行实例化，每一个阶段在视觉上都是一张图。
+   • 图的预览效果和交互一定要非常突出。在这三个操作中，用户的交互体验应该像是在图上任意添加节点、添加边。
+   • 数据的展示也必须完全以图的方式来呈现。
+
+你帮我按照这个思路，把这部分的低保真原型设计一下。
+
+---
+
+_**Agent (claude-fable-5)**_
+
+<think><details><summary>Thought Process</summary>
+
+The user wants me to read the architecture, data model, RFC, and ADR documents, then create a low-fidelity prototype for a digital product modeling tool with the following characteristics:
+
+1. Design philosophy similar to system architecture diagram tools (dragging icons for systems, interfaces)
+2. Three roles: IT Data Architect, Product Data Architect, Product Data Engineer
+3. Core workflow: Template → Product Model → Instantiation
+4. "Graph" as the core concept throughout
+5. Visual representation as a graph at each stage
+
+Tech stack: Pencil + Ant Design + Playwright
+
+Let me first read the relevant documents to understand the system.
+</details></think>
+
+_**Agent (claude-fable-5)**_
+
+
+
+我先读取所有相关的架构和 RFC 文档，然后按照你的构想生成低保真原型。
+
+
+_**Agent (claude-fable-5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: c:\Users\Administrator\WorkBuddy\2026-07-20-21-20-36\outputs\digitalproduct\docs\数字产品系统架构设计说明书.md</summary>
+
+</details></tool-use>
+
+_**Agent (claude-fable-5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: c:\Users\Administrator\WorkBuddy\2026-07-20-21-20-36\outputs\digitalproduct\docs\数字产品数据模型.md</summary>
+
+</details></tool-use>

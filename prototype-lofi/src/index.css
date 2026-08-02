@@ -1,0 +1,284 @@
+/* ============================================================
+   数字产品系统 - 全局样式
+   ============================================================ */
+
+/* 导入字体 */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* 全局重置 */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: #0a0a14;
+  color: #e0e0e0;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Ant Design 覆盖样式 */
+.ant-layout {
+  background: #0a0a14;
+}
+
+.ant-layout-sider {
+  background: #12121f !important;
+}
+
+.ant-menu-dark {
+  background: transparent;
+}
+
+.ant-card {
+  background: #1a1a2e;
+  border-color: #2a2a4c;
+}
+
+.ant-card-head {
+  border-bottom-color: #2a2a4c;
+  color: #e0e0e0;
+}
+
+.ant-card-head-title {
+  color: #e0e0e0;
+}
+
+.ant-card-body {
+  color: #e0e0e0;
+}
+
+.ant-table {
+  background: transparent;
+}
+
+.ant-table-thead > tr > th {
+  background: #2a2a4c !important;
+  color: #8888aa !important;
+  border-bottom: 1px solid #3a3a5c !important;
+}
+
+.ant-table-tbody > tr > td {
+  border-bottom: 1px solid #2a2a4c !important;
+  color: #e0e0e0;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: rgba(24, 144, 255, 0.05) !important;
+}
+
+.ant-btn-primary {
+  background: #1890ff;
+  border-color: #1890ff;
+}
+
+.ant-btn-primary:hover {
+  background: #40a9ff;
+  border-color: #40a9ff;
+}
+
+.ant-input,
+.ant-select-selector,
+.ant-picker {
+  background: #2a2a4c !important;
+  border-color: #3a3a5c !important;
+  color: #e0e0e0 !important;
+}
+
+.ant-input:hover,
+.ant-select-selector:hover,
+.ant-picker:hover {
+  border-color: #1890ff !important;
+}
+
+.ant-input:focus,
+.ant-select-focused .ant-select-selector,
+.ant-picker-focused {
+  border-color: #1890ff !important;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+}
+
+.ant-select-dropdown,
+.ant-picker-dropdown {
+  background: #1a1a2e;
+}
+
+.ant-select-item {
+  color: #e0e0e0;
+}
+
+.ant-select-item-option-selected {
+  background: rgba(24, 144, 255, 0.15);
+}
+
+.ant-select-item-option-active {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.ant-drawer-content {
+  background: #1a1a2e;
+}
+
+.ant-drawer-header {
+  background: #1a1a2e;
+  border-bottom-color: #2a2a4c;
+}
+
+.ant-drawer-title {
+  color: #e0e0e0;
+}
+
+.ant-drawer-close {
+  color: #8888aa;
+}
+
+.ant-modal-content {
+  background: #1a1a2e;
+}
+
+.ant-modal-header {
+  background: #1a1a2e;
+  border-bottom-color: #2a2a4c;
+}
+
+.ant-modal-title {
+  color: #e0e0e0;
+}
+
+.ant-modal-footer {
+  border-top-color: #2a2a4c;
+}
+
+.ant-modal-close {
+  color: #8888aa;
+}
+
+.ant-steps-item-title {
+  color: #e0e0e0 !important;
+}
+
+.ant-steps-item-description {
+  color: #8888aa !important;
+}
+
+.ant-tag {
+  border-radius: 4px;
+}
+
+.ant-statistic-title {
+  color: #8888aa;
+}
+
+.ant-statistic-content {
+  color: #e0e0e0;
+}
+
+.ant-badge-status-text {
+  color: #e0e0e0;
+}
+
+.ant-progress-text {
+  color: #e0e0e0;
+}
+
+.ant-divider {
+  border-color: #2a2a4c;
+}
+
+.ant-space {
+  color: #e0e0e0;
+}
+
+.ant-form-item-label > label {
+  color: #8888aa;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #12121f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3a3a5c;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #5a5a7c;
+}
+
+/* 代码块 */
+code {
+  font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+  background: rgba(42, 42, 76, 0.8);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #1890ff;
+}
+
+/* 链接 */
+a {
+  color: #1890ff;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #40a9ff;
+}
+
+/* 选中文字 */
+::selection {
+  background: rgba(24, 144, 255, 0.3);
+  color: #ffffff;
+}
+
+/* 空状态 */
+.ant-empty-description {
+  color: #8888aa;
+}
+
+/* 消息提示 */
+.ant-message-notice-content {
+  background: #1a1a2e;
+  color: #e0e0e0;
+  border: 1px solid #2a2a4c;
+}
+
+/* 标签页 */
+.ant-tabs-tab {
+  color: #8888aa;
+}
+
+.ant-tabs-tab:hover {
+  color: #e0e0e0;
+}
+
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #1890ff !important;
+}
+
+.ant-tabs-ink-bar {
+  background: #1890ff;
+}

@@ -1,0 +1,221 @@
+/* ============================================================
+   数字产品系统 - 主布局样式
+   ============================================================ */
+
+.layout {
+  min-height: 100vh;
+  background: #0a0a14;
+}
+
+/* 顶部导航 */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: #1a1a2e;
+  border-bottom: 1px solid #2a2a4c;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logoText {
+  font-size: 18px;
+  font-weight: 600;
+  color: #e0e0e0;
+  letter-spacing: -0.5px;
+}
+
+.headerCenter {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.headerIcon {
+  font-size: 18px;
+  color: #8888aa;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.headerIcon:hover {
+  color: #e0e0e0;
+}
+
+.userInfo {
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.userInfo:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.userName {
+  color: #e0e0e0;
+  font-size: 14px;
+}
+
+/* 侧边栏 */
+.sider {
+  background: #12121f;
+  border-right: 1px solid #2a2a4c;
+  position: sticky;
+  top: 56px;
+  height: calc(100vh - 56px);
+  overflow-y: auto;
+}
+
+.sider::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sider::-webkit-scrollbar-track {
+  background: #12121f;
+}
+
+.sider::-webkit-scrollbar-thumb {
+  background: #3a3a5c;
+  border-radius: 3px;
+}
+
+.menu {
+  background: transparent;
+  border-right: none;
+  padding: 12px 8px;
+}
+
+.menu :global(.ant-menu-item) {
+  color: #aaaacc;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  height: 40px;
+  line-height: 40px;
+}
+
+.menu :global(.ant-menu-item:hover) {
+  color: #e0e0e0;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.menu :global(.ant-menu-item-selected) {
+  color: #1890ff;
+  background: rgba(24, 144, 255, 0.15);
+}
+
+.menu :global(.ant-menu-item-selected::after) {
+  display: none;
+}
+
+/* 阶段指示器 */
+.phaseIndicator {
+  padding: 16px;
+  margin: 16px;
+  background: #1a1a2e;
+  border-radius: 8px;
+  border: 1px solid #2a2a4c;
+}
+
+.phaseTitle {
+  font-size: 11px;
+  color: #8888aa;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.phaseSteps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.phaseStep {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.stepNumber {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #2a2a4c;
+  color: #8888aa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.phaseStep.active .stepNumber {
+  background: #1890ff;
+  color: #fff;
+}
+
+.phaseStep.completed .stepNumber {
+  background: #52c41a;
+  color: #fff;
+}
+
+.stepContent {
+  flex: 1;
+}
+
+.stepName {
+  font-size: 13px;
+  color: #aaaacc;
+  line-height: 1.3;
+}
+
+.phaseStep.active .stepName {
+  color: #e0e0e0;
+  font-weight: 500;
+}
+
+.stepRole {
+  font-size: 11px;
+  color: #6666888;
+  margin-top: 2px;
+}
+
+.phaseLine {
+  width: 2px;
+  height: 16px;
+  background: #2a2a4c;
+  margin-left: 11px;
+}
+
+/* 主内容区 */
+.content {
+  background: #0a0a14;
+  min-height: calc(100vh - 56px);
+  padding: 20px;
+  overflow-x: hidden;
+}
