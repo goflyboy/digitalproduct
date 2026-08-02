@@ -21,5 +21,4 @@ node_modules/
 # Cursor / Agents local state
 .agents/
 .cursor/
-.cursorindexingignore
-.specstory/
+.cursorindexingignore 
