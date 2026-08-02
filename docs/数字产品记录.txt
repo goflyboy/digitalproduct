@@ -434,3 +434,6 @@ UC-B1b：发布销售产品实例
 s
  "relation_type": "SPEC",
   "model_category": "ModuleStructRelation",
+
+
+TODO：关系的优化  PartSpecvale怎么搞？
