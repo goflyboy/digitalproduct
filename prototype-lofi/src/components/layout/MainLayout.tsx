@@ -55,7 +55,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
     {
       key: '/',
       icon: <HomeOutlined />,
-      label: '图概览',
+      label: '产品总览',
     },
     {
       key: '/template',
@@ -65,17 +65,17 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
     {
       key: '/model',
       icon: <GatewayOutlined />,
-      label: '产品模型',
+      label: '产品建模',
     },
-    {
+      {
       key: '/instance',
       icon: <ShopOutlined />,
-      label: '实例化发布',
+      label: '产品实例化',
     },
     {
       key: '/explore',
       icon: <NodeIndexOutlined />,
-      label: '图探索',
+      label: '数据探索',
     },
   ];
 
@@ -181,7 +181,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
               <div className={`${styles.phaseStep} ${location.pathname === '/instance' ? styles.active : ''}`}>
                 <div className={styles.stepNumber}>3</div>
                 <div className={styles.stepContent}>
-                  <div className={styles.stepName}>实例化发布</div>
+                  <div className={styles.stepName}>产品实例化</div>
                   <div className={styles.stepRole}>数据工程师</div>
                 </div>
               </div>

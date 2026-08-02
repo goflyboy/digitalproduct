@@ -19,45 +19,19 @@
   align-items: center;
 }
 
-/* 角色卡片 */
-.roleCard {
-  background: linear-gradient(135deg, #722ed120 0%, #1890ff10 100%);
-  border: 1px solid #722ed140;
-  border-radius: 8px;
-}
-
-.roleContent {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.roleIcon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: rgba(114, 46, 209, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  color: #722ed1;
-}
-
-.roleInfo {
-  flex: 1;
-}
-
 /* 画布卡片 */
 .canvasCard {
-  background: #1a1a2e;
-  border: 1px solid #2a2a4c;
+  background: #ffffff;
+  border: 1px solid #dde5f4;
   border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(30, 42, 69, 0.06);
 }
 
 .canvasHeader {
   display: flex;
   margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .phaseTag {
@@ -65,30 +39,47 @@
   align-items: center;
   gap: 6px;
   padding: 4px 12px;
-  background: rgba(24, 144, 255, 0.1);
-  border: 1px solid rgba(24, 144, 255, 0.3);
+  background: rgba(43, 109, 225, 0.08);
+  border: 1px solid rgba(43, 109, 225, 0.2);
   border-radius: 4px;
   font-size: 12px;
-  color: #1890ff;
+  color: #2b6de1;
+}
+
+/* 上下文工具栏（选中节点时出现） */
+.contextToolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.contextDivider {
+  width: 1px;
+  height: 20px;
+  background: #dde5f4;
+  margin: 0 4px;
 }
 
 /* 详情卡片 */
 .detailCard {
-  background: #1a1a2e;
-  border: 1px solid #2a2a4c;
+  background: #ffffff;
+  border: 1px solid #dde5f4;
   border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(30, 42, 69, 0.06);
   height: fit-content;
 }
 
 /* 模板列表卡片 */
 .templateListCard {
-  background: #1a1a2e;
-  border: 1px solid #2a2a4c;
+  background: #ffffff;
+  border: 1px solid #dde5f4;
   border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(30, 42, 69, 0.06);
 }
 
 .templateListCard :global(.ant-card-head) {
-  border-bottom: 1px solid #2a2a4c;
+  border-bottom: 1px solid #eef1f8;
 }
 
 .templateGrid {
@@ -102,28 +93,28 @@
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: rgba(42, 42, 76, 0.5);
-  border: 1px solid #2a2a4c;
+  background: #f8fafd;
+  border: 1px solid #eef1f8;
   border-radius: 6px;
   transition: all 0.2s;
   cursor: pointer;
 }
 
 .templateItem:hover {
-  border-color: #1890ff;
-  background: rgba(24, 144, 255, 0.05);
+  border-color: #2b6de1;
+  background: rgba(43, 109, 225, 0.04);
 }
 
 .templateIcon {
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  background: rgba(24, 144, 255, 0.1);
+  background: rgba(43, 109, 225, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
-  color: #1890ff;
+  color: #2b6de1;
   flex-shrink: 0;
 }
 
@@ -135,7 +126,7 @@
 .templateName {
   font-size: 13px;
   font-weight: 500;
-  color: #e0e0e0;
+  color: #1a1f36;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -143,7 +134,7 @@
 
 .templateCode {
   font-size: 11px;
-  color: #8888aa;
+  color: #6b7594;
   font-family: 'Monaco', 'Consolas', monospace;
   white-space: nowrap;
   overflow: hidden;
@@ -186,23 +177,25 @@
 }
 
 .searchCard {
-  background: #1a1a2e;
-  border: 1px solid #2a2a4c;
+  background: #ffffff;
+  border: 1px solid #dde5f4;
   border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(30, 42, 69, 0.06);
 }
 
 .relationCard {
   flex: 1;
-  background: #1a1a2e;
-  border: 1px solid #2a2a4c;
+  background: #ffffff;
+  border: 1px solid #dde5f4;
   border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(30, 42, 69, 0.06);
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
 .relationCard :global(.ant-card-head) {
-  border-bottom: 1px solid #2a2a4c;
+  border-bottom: 1px solid #eef1f8;
   min-height: 48px;
 }
 
@@ -221,37 +214,37 @@
 
 .relationItem {
   padding: 10px 12px;
-  background: rgba(42, 42, 76, 0.5);
-  border: 1px solid #2a2a4c;
+  background: #f8fafd;
+  border: 1px solid #eef1f8;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .relationItem:hover {
-  border-color: #1890ff;
-  background: rgba(24, 144, 255, 0.05);
+  border-color: #2b6de1;
+  background: rgba(43, 109, 225, 0.04);
 }
 
 .relationItem.selected {
-  border-color: #1890ff;
-  background: rgba(24, 144, 255, 0.1);
+  border-color: #2b6de1;
+  background: rgba(43, 109, 225, 0.06);
 }
 
 .relationSource {
   font-size: 12px;
-  color: #8888aa;
+  color: #6b7594;
   margin-bottom: 4px;
 }
 
 .relationType {
   font-size: 13px;
-  color: #e0e0e0;
+  color: #1a1f36;
   font-weight: 500;
 }
 
 .relationTarget {
   font-size: 12px;
-  color: #8888aa;
+  color: #6b7594;
   margin-top: 4px;
 }

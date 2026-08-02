@@ -1,18 +1,18 @@
 // ============================================================
-// 数字产品系统 - 产品模型页面
-// 角色：产品数据架构师
+// 数字产品系统 - 产品建模页面
 // ============================================================
 
 import React, { useState } from 'react';
-import { Card, Row, Col, Button, Space, Typography, Tag, Divider, Drawer, Form, Input, Select, Table, message } from 'antd';
+import { Card, Row, Col, Button, Space, Typography, Tag, Divider, Drawer, Form, Input, Select, Table, message, Dropdown } from 'antd';
+import type { MenuProps } from 'antd';
 import {
   PlusOutlined,
   SaveOutlined,
   GatewayOutlined,
   AppstoreOutlined,
   FileTextOutlined,
-  ArrowRightOutlined,
   LinkOutlined,
+  NodeIndexOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { GraphCanvas } from '../components/graph/GraphCanvas';
@@ -20,28 +20,86 @@ import { NodeDetailPanel } from '../components/graph/NodeDetailPanel';
 import { EdgeDetailPanel } from '../components/graph/EdgeDetailPanel';
 import { useGraphStore, useSelectedNode, useSelectedEdge } from '../store/graphStore';
 import { moduleAttributes } from '../data/mockData';
-import type { GraphNode, GraphEdge, ModuleAttribute } from '../types';
+import type { GraphNode, ModuleAttribute } from '../types';
 import styles from './ModelingPage.module.css';
 
 const { Title, Text } = Typography;
 
+// 级联约束：选中节点后，可添加的子类型
+const CHILD_TYPE_RULES: Record<string, string[]> = {
+  PRODUCT_CLASS: ['PART_CLASS', 'PART'],
+  PART_CLASS: ['PART'],
+  PART: [],
+};
+
+const TYPE_LABEL: Record<string, string> = {
+  PRODUCT_CLASS: 'Product Class',
+  PART_CLASS: 'Part Class',
+  PART: 'Part',
+};
+
+const TYPE_ICON: Record<string, React.ReactNode> = {
+  PRODUCT_CLASS: <GatewayOutlined style={{ color: '#2b6de1' }} />,
+  PART_CLASS: <AppstoreOutlined style={{ color: '#27ae60' }} />,
+  PART: <FileTextOutlined style={{ color: '#9b59b6' }} />,
+};
+
 export const ProductModelPage: React.FC = () => {
   const [drawerVisible, setDrawerVisible] = useState(false);
+  const [drawerMode, setDrawerMode] = useState<'node' | 'edge'>('node');
   const [form] = Form.useForm();
   const { nodes, edges, selectedNodeId, selectedEdgeId, selectNode, selectEdge, updateNodePosition } = useGraphStore();
   const selectedNode = useSelectedNode();
   const selectedEdge = useSelectedEdge();
 
-  // 产品模型阶段：显示产品类、部件分类、部件
-  const modelNodes = nodes.filter(n => 
-    n.structType === 'PRODUCT_CLASS' || 
+  // 产品模型阶段：Product Class + Part Class + Part
+  const modelNodes = nodes.filter(n =>
+    n.structType === 'PRODUCT_CLASS' ||
     n.structType === 'PART_CLASS' ||
     n.structType === 'PART'
   );
-  const modelEdges = edges.filter(e => 
-    modelNodes.some(n => n.id === e.sourceId) && 
+  const modelEdges = edges.filter(e =>
+    modelNodes.some(n => n.id === e.sourceId) &&
     modelNodes.some(n => n.id === e.targetId)
   );
+
+  // 根据选中节点决定可选的模板类型
+  const allowedTypes = selectedNode
+    ? (CHILD_TYPE_RULES[selectedNode.structType] || [])
+    : ['PRODUCT_CLASS', 'PART_CLASS', 'PART'];
+
+  // 下拉菜单项
+  const addObjectMenuItems: MenuProps['items'] = [
+    ...allowedTypes.map(type => ({
+      key: type,
+      label: (
+        <Space>
+          {TYPE_ICON[type]}
+          添加 {TYPE_LABEL[type]}
+        </Space>
+      ),
+      onClick: () => {
+        setDrawerMode('node');
+        form.setFieldsValue({ type });
+        setDrawerVisible(true);
+      },
+    })),
+    { type: 'divider' as const },
+    {
+      key: 'addEdge',
+      label: (
+        <Space>
+          <LinkOutlined />
+          添加关系
+        </Space>
+      ),
+      onClick: () => {
+        setDrawerMode('edge');
+        form.resetFields();
+        setDrawerVisible(true);
+      },
+    },
+  ];
 
   const attributeColumns: ColumnsType<ModuleAttribute> = [
     {
@@ -54,7 +112,7 @@ export const ProductModelPage: React.FC = () => {
       title: '名称',
       dataIndex: 'name',
       key: 'name',
-      render: (name) => <Text style={{ color: '#e0e0e0' }}>{name}</Text>,
+      render: (name) => <Text style={{ color: '#1a1f36' }}>{name}</Text>,
     },
     {
       title: '维度',
@@ -89,38 +147,37 @@ export const ProductModelPage: React.FC = () => {
       {/* 页面标题 */}
       <div className={styles.pageHeader}>
         <div className={styles.headerLeft}>
-          <GatewayOutlined style={{ fontSize: 24, color: '#1890ff', marginRight: 12 }} />
+          <GatewayOutlined style={{ fontSize: 24, color: '#2b6de1', marginRight: 12 }} />
           <div>
-            <Title level={3} style={{ margin: 0, color: '#e0e0e0' }}>
-              产品模型
+            <Title level={3} style={{ margin: 0, color: '#1a1f36' }}>
+              产品建模
             </Title>
-            <Text type="secondary">构建部件分类和属性关联</Text>
+            <Text type="secondary">基于模板构建产品结构，关联规格属性，建立对象之间的 HAS 关系</Text>
           </div>
         </div>
         <Space>
-          <Button icon={<LinkOutlined />}>
-            关联属性
-          </Button>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setDrawerVisible(true)}>
-            添加部件分类
-          </Button>
+          {/* 上下文工具栏：选中节点时出现 */}
+          {selectedNode && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                选中：{selectedNode.name}
+              </Text>
+              <Dropdown menu={{ items: addObjectMenuItems }} trigger={['click']}>
+                <Button type="primary" icon={<PlusOutlined />}>
+                  添加对象
+                </Button>
+              </Dropdown>
+            </div>
+          )}
+          {!selectedNode && (
+            <Dropdown menu={{ items: addObjectMenuItems }} trigger={['click']}>
+              <Button type="primary" icon={<PlusOutlined />}>
+                添加对象
+              </Button>
+            </Dropdown>
+          )}
         </Space>
       </div>
-
-      {/* 角色指示器 */}
-      <Card className={styles.roleCard} style={{ background: 'linear-gradient(135deg, #1890ff20 0%, #52c41a10 100%)', border: '1px solid #1890ff40' }}>
-        <div className={styles.roleContent}>
-          <div className={styles.roleIcon} style={{ background: 'rgba(24, 144, 255, 0.2)', color: '#1890ff' }}>
-            <GatewayOutlined />
-          </div>
-          <div className={styles.roleInfo}>
-            <Text strong style={{ color: '#e0e0e0' }}>当前角色：产品数据架构师</Text>
-            <Text type="secondary" style={{ fontSize: 12, display: 'block' }}>
-              定义部件分类和 ModuleAttribute 之间的 HAS 关系，构建产品结构
-            </Text>
-          </div>
-        </div>
-      </Card>
 
       {/* 主内容区 */}
       <Row gutter={[16, 16]}>
@@ -130,17 +187,44 @@ export const ProductModelPage: React.FC = () => {
             <div className={styles.canvasHeader}>
               <div className={styles.phaseTag}>
                 <GatewayOutlined />
-                <span>产品类</span>
+                <span>Product Class</span>
               </div>
-              <div className={styles.phaseTag} style={{ marginLeft: 8, background: 'rgba(250, 140, 22, 0.1)', borderColor: 'rgba(250, 140, 22, 0.3)', color: '#fa8c16' }}>
+              <div className={styles.phaseTag} style={{
+                background: 'rgba(39, 174, 96, 0.08)',
+                borderColor: 'rgba(39, 174, 96, 0.2)',
+                color: '#27ae60',
+              }}>
                 <AppstoreOutlined />
-                <span>部件分类</span>
+                <span>Part Class</span>
               </div>
-              <div className={styles.phaseTag} style={{ marginLeft: 8, background: 'rgba(114, 46, 209, 0.1)', borderColor: 'rgba(114, 46, 209, 0.3)', color: '#722ed1' }}>
+              <div className={styles.phaseTag} style={{
+                background: 'rgba(155, 89, 182, 0.08)',
+                borderColor: 'rgba(155, 89, 182, 0.2)',
+                color: '#9b59b6',
+              }}>
                 <FileTextOutlined />
-                <span>部件</span>
+                <span>Part</span>
               </div>
+
+              {/* 选中节点后，提示约束信息 */}
+              {selectedNode && allowedTypes.length > 0 && (
+                <div className={styles.contextToolbar}>
+                  <div className={styles.contextDivider} />
+                  <Text type="secondary" style={{ fontSize: 12 }}>
+                    可添加：{allowedTypes.map(t => TYPE_LABEL[t]).join(' / ')}
+                  </Text>
+                </div>
+              )}
+              {selectedNode && allowedTypes.length === 0 && (
+                <div className={styles.contextToolbar}>
+                  <div className={styles.contextDivider} />
+                  <Text type="secondary" style={{ fontSize: 12, color: '#6b7594' }}>
+                    无可添加子类型
+                  </Text>
+                </div>
+              )}
             </div>
+
             <GraphCanvas
               nodes={modelNodes}
               edges={modelEdges}
@@ -159,13 +243,13 @@ export const ProductModelPage: React.FC = () => {
           <Col xs={24} xl={10}>
             <Card className={styles.detailCard}>
               {selectedNode && (
-                <NodeDetailPanel 
+                <NodeDetailPanel
                   node={selectedNode}
                   onClose={() => selectNode(null)}
                 />
               )}
               {selectedEdge && !selectedNode && (
-                <EdgeDetailPanel 
+                <EdgeDetailPanel
                   edge={selectedEdge}
                   onClose={() => selectEdge(null)}
                 />
@@ -176,7 +260,7 @@ export const ProductModelPage: React.FC = () => {
       </Row>
 
       {/* 属性定义列表 */}
-      <Card title={<span style={{ color: '#e0e0e0' }}>已定义的属性</span>} className={styles.templateListCard}>
+      <Card title={<span style={{ color: '#1a1f36' }}>已定义的属性</span>} className={styles.templateListCard}>
         <Table
           dataSource={moduleAttributes}
           columns={attributeColumns}
@@ -186,70 +270,188 @@ export const ProductModelPage: React.FC = () => {
         />
       </Card>
 
-      {/* 添加部件分类抽屉 */}
+      {/* 添加对象抽屉 */}
       <Drawer
-        title="添加部件分类"
+        title={drawerMode === 'node' ? '添加对象' : '添加关系'}
         open={drawerVisible}
         onClose={() => setDrawerVisible(false)}
         width={480}
-        styles={{ body: { background: '#1a1a2e' } }}
+        styles={{ body: { background: '#f8fafd' } }}
       >
-        <Form
-          form={form}
-          layout="vertical"
-        >
-          <Form.Item
-            name="name"
-            label={<span style={{ color: '#8888aa' }}>部件分类名称</span>}
-            rules={[{ required: true, message: '请输入部件分类名称' }]}
-          >
-            <Input placeholder="如：路由器CPU、路由器端口" />
-          </Form.Item>
+        <Form form={form} layout="vertical">
+          {drawerMode === 'node' ? (
+            // ========== 添加对象 ==========
+            <>
+              {/* 提示选中节点 */}
+              {selectedNode && (
+                <div style={{
+                  padding: '8px 12px',
+                  background: 'rgba(43, 109, 225, 0.06)',
+                  border: '1px solid rgba(43, 109, 225, 0.15)',
+                  borderRadius: 6,
+                  marginBottom: 16,
+                  fontSize: 12,
+                  color: '#6b7594',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                }}>
+                  {TYPE_ICON[selectedNode.structType]}
+                  上级：<strong style={{ color: '#1a1f36' }}>{selectedNode.name}</strong>
+                  <Text type="secondary">（将建立 HAS 关系）</Text>
+                </div>
+              )}
 
-          <Form.Item
-            name="code"
-            label={<span style={{ color: '#8888aa' }}>部件分类编码</span>}
-            rules={[{ required: true, message: '请输入部件分类编码' }]}
-          >
-            <Input placeholder="如：router_cpu" />
-          </Form.Item>
+              <Form.Item
+                name="type"
+                label={<span style={{ color: '#6b7594' }}>对象类型</span>}
+              >
+                <Select disabled>
+                  {allowedTypes.map(type => (
+                    <Select.Option key={type} value={type}>
+                      <Space>
+                        {TYPE_ICON[type]}
+                        {TYPE_LABEL[type]}
+                      </Space>
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
 
-          <Form.Item
-            name="parent"
-            label={<span style={{ color: '#8888aa' }}>所属产品类</span>}
-            rules={[{ required: true, message: '请选择所属产品类' }]}
-          >
-            <Select placeholder="选择产品类">
-              <Select.Option value="ROUTER_PLATFORM">路由器产品平台 (ROUTER_PLATFORM)</Select.Option>
-            </Select>
-          </Form.Item>
+              <Form.Item
+                name="name"
+                label={<span style={{ color: '#6b7594' }}>对象名称</span>}
+                rules={[{ required: true, message: '请输入对象名称' }]}
+              >
+                <Input placeholder="如：基础计算单元、存储模块" />
+              </Form.Item>
 
-          <Form.Item
-            name="policy"
-            label={<span style={{ color: '#8888aa' }}>选择策略</span>}
-          >
-            <Select>
-              <Select.Option value="REQUIRED">必选（REQUIRED）</Select.Option>
-              <Select.Option value="OPTIONAL">可选（OPTIONAL）</Select.Option>
-            </Select>
-          </Form.Item>
+              <Form.Item
+                name="code"
+                label={<span style={{ color: '#6b7594' }}>编码</span>}
+                rules={[{ required: true, message: '请输入编码' }]}
+              >
+                <Input placeholder="如：base_compute_module" />
+              </Form.Item>
 
-          <Form.Item
-            name="cardinality"
-            label={<span style={{ color: '#8888aa' }}>数量约束</span>}
-          >
-            <Input.Group compact>
-              <Input type="number" placeholder="最小" style={{ width: '50%' }} />
-              <Input type="number" placeholder="最大" style={{ width: '50%' }} />
-            </Input.Group>
-          </Form.Item>
+              <Form.Item
+                name="policy"
+                label={<span style={{ color: '#6b7594' }}>选择策略</span>}
+              >
+                <Select placeholder="选择策略">
+                  <Select.Option value="REQUIRED">必选（Required）</Select.Option>
+                  <Select.Option value="OPTIONAL">可选（Optional）</Select.Option>
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                name="cardinality"
+                label={<span style={{ color: '#6b7594' }}>数量约束</span>}
+              >
+                <Input.Group compact>
+                  <Input type="number" placeholder="最小" style={{ width: '50%' }} />
+                  <Input type="number" placeholder="最大" style={{ width: '50%' }} />
+                </Input.Group>
+              </Form.Item>
+
+              <Form.Item
+                name="description"
+                label={<span style={{ color: '#6b7594' }}>描述</span>}
+              >
+                <Input.TextArea rows={3} placeholder="描述该对象的用途和结构" />
+              </Form.Item>
+            </>
+          ) : (
+            // ========== 添加关系 ==========
+            <>
+              {selectedNode && (
+                <div style={{
+                  padding: '8px 12px',
+                  background: 'rgba(43, 109, 225, 0.06)',
+                  border: '1px solid rgba(43, 109, 225, 0.15)',
+                  borderRadius: 6,
+                  marginBottom: 16,
+                  fontSize: 12,
+                  color: '#6b7594',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                }}>
+                  <GatewayOutlined style={{ color: '#2b6de1' }} />
+                  源节点：<strong style={{ color: '#1a1f36' }}>{selectedNode.name}</strong>
+                </div>
+              )}
+
+              <Form.Item
+                name="targetId"
+                label={<span style={{ color: '#6b7594' }}>目标节点</span>}
+                rules={[{ required: true, message: '请选择目标节点' }]}
+              >
+                <Select placeholder="选择目标节点">
+                  {modelNodes
+                    .filter(n => n.id !== selectedNodeId)
+                    .map(n => (
+                      <Select.Option key={n.id} value={n.id}>
+                        <Space>
+                          {TYPE_ICON[n.structType]}
+                          {n.name} ({n.code})
+                        </Space>
+                      </Select.Option>
+                    ))}
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                name="relationType"
+                label={<span style={{ color: '#6b7594' }}>关系类型</span>}
+              >
+                <Select>
+                  <Select.Option value="HAS">
+                    <Space>
+                      <LinkOutlined />
+                      具备（HAS）
+                    </Space>
+                  </Select.Option>
+                  <Select.Option value="EXTENDS">
+                    <Space>
+                      <NodeIndexOutlined />
+                      扩展（Extends）
+                    </Space>
+                  </Select.Option>
+                  <Select.Option value="OVERRIDES">
+                    <Space>
+                      <NodeIndexOutlined />
+                      覆盖（Overrides）
+                    </Space>
+                  </Select.Option>
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                name="cardinality"
+                label={<span style={{ color: '#6b7594' }}>数量约束</span>}
+              >
+                <Input.Group compact>
+                  <Input type="number" placeholder="最小" style={{ width: '50%' }} />
+                  <Input type="number" placeholder="最大" style={{ width: '50%' }} />
+                </Input.Group>
+              </Form.Item>
+
+              <Form.Item
+                name="description"
+                label={<span style={{ color: '#6b7594' }}>描述</span>}
+              >
+                <Input.TextArea rows={3} placeholder="描述该关系的用途" />
+              </Form.Item>
+            </>
+          )}
 
           <Divider />
 
           <Space>
             <Button type="primary" icon={<SaveOutlined />} onClick={() => {
               form.validateFields().then(() => {
-                message.success('部件分类已添加');
+                message.success(drawerMode === 'node' ? '对象已添加' : '关系已添加');
                 setDrawerVisible(false);
                 form.resetFields();
               });

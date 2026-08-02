@@ -1,38 +1,23 @@
 /* ============================================================
-   数字产品系统 - 图画布样式
+   数字产品系统 - 图画布样式（浅色科技风）
    ============================================================ */
 
 .canvasContainer {
   position: relative;
-  background: #0d0d1a;
+  background: #f0f4fb;
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid #2a2a4c;
+  border: 1px solid #dde5f4;
 }
 
 .canvas {
   display: block;
-  background: linear-gradient(135deg, #0d0d1a 0%, #1a1a2e 100%);
+  background: #f8fafd;
   cursor: grab;
 }
 
 .canvas:active {
   cursor: grabbing;
-}
-
-/* 网格背景 */
-.canvas::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: 
-    linear-gradient(rgba(58, 58, 92, 0.3) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(58, 58, 92, 0.3) 1px, transparent 1px);
-  background-size: 20px 20px;
-  pointer-events: none;
 }
 
 /* 节点样式 */
@@ -51,8 +36,8 @@
 }
 
 .nodeDragging {
-  opacity: 0.8;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+  opacity: 0.85;
+  filter: drop-shadow(0 4px 8px rgba(30, 42, 69, 0.15));
 }
 
 .nodeSelected {
@@ -69,16 +54,17 @@
   position: absolute;
   bottom: 16px;
   left: 16px;
-  background: rgba(26, 26, 46, 0.95);
-  border: 1px solid #3a3a5c;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #dde5f4;
   border-radius: 8px;
   padding: 12px;
   min-width: 120px;
+  box-shadow: 0 2px 8px rgba(30, 42, 69, 0.08);
 }
 
 .legendTitle {
   font-size: 11px;
-  color: #8888aa;
+  color: #6b7594;
   font-weight: 500;
   margin-bottom: 8px;
   text-transform: uppercase;
@@ -90,7 +76,7 @@
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  color: #e0e0e0;
+  color: #1a1f36;
   margin-bottom: 6px;
 }
 
@@ -117,8 +103,8 @@
   align-items: center;
   gap: 12px;
   padding: 16px;
-  background: #1a1a2e;
-  border-bottom: 1px solid #3a3a5c;
+  background: #f0f4fb;
+  border-bottom: 1px solid #e8eefb;
 }
 
 .nodeDetailIcon {
@@ -138,13 +124,13 @@
 .nodeDetailName {
   font-size: 16px;
   font-weight: 600;
-  color: #e0e0e0;
+  color: #1a1f36;
   margin: 0 0 4px 0;
 }
 
 .nodeDetailCode {
   font-size: 12px;
-  color: #8888aa;
+  color: #6b7594;
   font-family: 'Monaco', 'Consolas', monospace;
 }
 
@@ -162,7 +148,7 @@
 
 .nodeDetailSectionTitle {
   font-size: 11px;
-  color: #8888aa;
+  color: #6b7594;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 8px;
@@ -175,20 +161,20 @@
 
 .edgeDetailHeader {
   padding: 16px;
-  background: #1a1a2e;
-  border-bottom: 1px solid #3a3a5c;
+  background: #f0f4fb;
+  border-bottom: 1px solid #e8eefb;
 }
 
 .edgeDetailTitle {
   font-size: 14px;
   font-weight: 600;
-  color: #e0e0e0;
+  color: #1a1f36;
   margin: 0 0 4px 0;
 }
 
 .edgeDetailType {
   font-size: 12px;
-  color: #8888aa;
+  color: #6b7594;
 }
 
 .edgeDetailContent {
@@ -197,20 +183,20 @@
   overflow-y: auto;
 }
 
-/* 滚动条样式 */
+/* 滚动条 */
 .edgeDetailContent::-webkit-scrollbar {
   width: 6px;
 }
 
 .edgeDetailContent::-webkit-scrollbar-track {
-  background: #1a1a2e;
+  background: #f0f4fb;
 }
 
 .edgeDetailContent::-webkit-scrollbar-thumb {
-  background: #3a3a5c;
+  background: #c8d0e8;
   border-radius: 3px;
 }
 
 .edgeDetailContent::-webkit-scrollbar-thumb:hover {
-  background: #5a5a7c;
+  background: #a0aec0;
 }

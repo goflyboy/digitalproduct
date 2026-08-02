@@ -13,40 +13,40 @@ import ProductModelPage from './pages/ProductModelPage';
 import InstancePage from './pages/InstancePage';
 import ExplorePage from './pages/ExplorePage';
 
-// Ant Design 暗色主题配置
-const darkTheme = {
-  algorithm: theme.darkAlgorithm,
+// Ant Design 浅色主题配置（清新科技风）
+const lightTheme = {
+  algorithm: theme.defaultAlgorithm,
   token: {
-    colorPrimary: '#1890ff',
-    colorBgContainer: '#1a1a2e',
-    colorBgElevated: '#1a1a2e',
-    colorBorder: '#2a2a4c',
-    colorBorderSecondary: '#3a3a5c',
-    colorText: '#e0e0e0',
-    colorTextSecondary: '#8888aa',
-    colorTextTertiary: '#6666888',
+    colorPrimary: '#2b6de1',
+    colorBgContainer: '#ffffff',
+    colorBgElevated: '#ffffff',
+    colorBorder: '#dde5f4',
+    colorBorderSecondary: '#e8eefb',
+    colorText: '#1a1f36',
+    colorTextSecondary: '#6b7594',
+    colorTextTertiary: '#8a93b8',
     borderRadius: 6,
     fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
   },
   components: {
     Menu: {
       darkItemBg: 'transparent',
-      darkItemSelectedBg: 'rgba(24, 144, 255, 0.15)',
-      darkItemHoverBg: 'rgba(255, 255, 255, 0.05)',
+      darkItemSelectedBg: 'rgba(43, 109, 225, 0.18)',
+      darkItemHoverBg: 'rgba(255, 255, 255, 0.06)',
     },
     Card: {
-      colorBgContainer: '#1a1a2e',
+      colorBgContainer: '#ffffff',
     },
     Table: {
       colorBgContainer: 'transparent',
-      headerBg: '#2a2a4c',
+      headerBg: '#f0f4fb',
     },
     Drawer: {
-      colorBgElevated: '#1a1a2e',
+      colorBgElevated: '#f8fafd',
     },
     Modal: {
-      contentBg: '#1a1a2e',
-      headerBg: '#1a1a2e',
+      contentBg: '#ffffff',
+      headerBg: '#ffffff',
     },
   },
 };
@@ -54,7 +54,7 @@ const darkTheme = {
 const App: React.FC = () => {
   return (
     <ConfigProvider
-      theme={darkTheme}
+      theme={lightTheme}
       locale={zhCN}
     >
       <BrowserRouter>

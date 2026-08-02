@@ -1,38 +1,35 @@
 // ============================================================
-// 数字产品系统 - 首页（图概览仪表板）
+// 数字产品系统 - 产品总览
 // ============================================================
 
 import React from 'react';
 import { Card, Row, Col, Statistic, Table, Tag, Badge, Progress, Space, Typography } from 'antd';
 import {
   GatewayOutlined,
-  ShopOutlined,
   AppstoreOutlined,
   FileTextOutlined,
-  NodeIndexOutlined,
+  ShopOutlined,
   ArrowRightOutlined,
   RiseOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import type { ColumnsType } from 'antd/es/table';
-import { graphNodes, graphEdges, graphStats } from '../data/mockData';
+import { graphNodes, graphStats } from '../data/mockData';
 import type { GraphNode } from '../types';
 import styles from './Dashboard.module.css';
 
 const { Title, Text } = Typography;
 
-// 节点类型映射
 const structTypeMap: Record<string, { icon: React.ReactNode; label: string; color: string }> = {
-  PRODUCT_CLASS: { icon: <GatewayOutlined />, label: '产品类', color: '#1890ff' },
-  PRODUCT_INSTANCE: { icon: <ShopOutlined />, label: '产品实例', color: '#52c41a' },
-  PART_CLASS: { icon: <AppstoreOutlined />, label: '部件分类', color: '#fa8c16' },
-  PART: { icon: <FileTextOutlined />, label: '部件', color: '#722ed1' },
+  PRODUCT_CLASS: { icon: <GatewayOutlined />, label: 'Product Class', color: '#2b6de1' },
+  PRODUCT_INSTANCE: { icon: <ShopOutlined />, label: 'Product Instance', color: '#27ae60' },
+  PART_CLASS: { icon: <AppstoreOutlined />, label: 'Part Class', color: '#27ae60' },
+  PART: { icon: <FileTextOutlined />, label: 'Part', color: '#9b59b6' },
 };
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
 
-  // 最近更新的节点
   const recentNodes = [...graphNodes]
     .sort((a, b) => a.name.localeCompare(b.name))
     .slice(0, 5);
@@ -47,7 +44,7 @@ export const Dashboard: React.FC = () => {
           <span style={{ color: structTypeMap[record.structType]?.color }}>
             {structTypeMap[record.structType]?.icon}
           </span>
-          <Text style={{ color: '#e0e0e0' }}>{name}</Text>
+          <Text style={{ color: '#1a1f36' }}>{name}</Text>
         </Space>
       ),
     },
@@ -72,9 +69,9 @@ export const Dashboard: React.FC = () => {
       dataIndex: 'status',
       key: 'status',
       render: (status) => (
-        <Badge 
-          status={status === 'PUBLISHED' || status === 'ACTIVE' ? 'success' : 'warning'} 
-          text={status === 'PUBLISHED' || status === 'ACTIVE' ? '已发布' : '草稿'} 
+        <Badge
+          status={status === 'PUBLISHED' || status === 'ACTIVE' ? 'success' : 'warning'}
+          text={status === 'PUBLISHED' || status === 'ACTIVE' ? '已发布' : '草稿'}
         />
       ),
     },
@@ -85,8 +82,8 @@ export const Dashboard: React.FC = () => {
       {/* 页面标题 */}
       <div className={styles.pageHeader}>
         <div>
-          <Title level={3} style={{ margin: 0, color: '#e0e0e0' }}>
-            图概览
+          <Title level={3} style={{ margin: 0, color: '#1a1f36' }}>
+            产品总览
           </Title>
           <Text type="secondary">
             数字产品模型 — 路由器产品平台
@@ -103,50 +100,50 @@ export const Dashboard: React.FC = () => {
         <Col xs={24} sm={12} lg={6}>
           <Card className={styles.statCard}>
             <Statistic
-              title={<span style={{ color: '#8888aa' }}>图节点总数</span>}
+              title={<span style={{ color: '#6b7594' }}>节点总数</span>}
               value={graphStats.totalNodes}
-              prefix={<NodeIndexOutlined style={{ color: '#1890ff' }} />}
-              valueStyle={{ color: '#e0e0e0' }}
+              prefix={<GatewayOutlined style={{ color: '#2b6de1' }} />}
+              valueStyle={{ color: '#1a1f36' }}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
           <Card className={styles.statCard}>
             <Statistic
-              title={<span style={{ color: '#8888aa' }}>关系边总数</span>}
+              title={<span style={{ color: '#6b7594' }}>关系边总数</span>}
               value={graphStats.totalEdges}
-              prefix={<ArrowRightOutlined style={{ color: '#52c41a' }} />}
-              valueStyle={{ color: '#e0e0e0' }}
+              prefix={<ArrowRightOutlined style={{ color: '#27ae60' }} />}
+              valueStyle={{ color: '#1a1f36' }}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
           <Card className={styles.statCard}>
             <Statistic
-              title={<span style={{ color: '#8888aa' }}>已发布节点</span>}
+              title={<span style={{ color: '#6b7594' }}>已发布节点</span>}
               value={graphStats.publishedNodes}
               prefix={<Badge status="success" />}
-              valueStyle={{ color: '#52c41a' }}
+              valueStyle={{ color: '#27ae60' }}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
           <Card className={styles.statCard}>
             <Statistic
-              title={<span style={{ color: '#8888aa' }}>草稿节点</span>}
+              title={<span style={{ color: '#6b7594' }}>草稿节点</span>}
               value={graphStats.draftNodes}
               prefix={<Badge status="warning" />}
-              valueStyle={{ color: '#faad14' }}
+              valueStyle={{ color: '#f0b429' }}
             />
           </Card>
         </Col>
       </Row>
 
-      {/* 节点类型分布 */}
+      {/* 节点类型分布 + 关系分布 */}
       <Row gutter={[16, 16]} className={styles.statsRow}>
         <Col xs={24} lg={16}>
-          <Card 
-            title={<span style={{ color: '#e0e0e0' }}>节点类型分布</span>}
+          <Card
+            title={<span style={{ color: '#1a1f36' }}>节点类型分布</span>}
             className={styles.card}
           >
             <Row gutter={[16, 16]}>
@@ -158,9 +155,9 @@ export const Dashboard: React.FC = () => {
               ].map((item) => (
                 <Col xs={12} sm={6} key={item.type}>
                   <div className={styles.nodeTypeItem}>
-                    <div 
+                    <div
                       className={styles.nodeTypeIcon}
-                      style={{ background: `${structTypeMap[item.type]?.color}20` }}
+                      style={{ color: structTypeMap[item.type]?.color }}
                     >
                       {structTypeMap[item.type]?.icon}
                     </div>
@@ -174,7 +171,7 @@ export const Dashboard: React.FC = () => {
                       percent={Math.round((item.count / item.total) * 100)}
                       showInfo={false}
                       strokeColor={structTypeMap[item.type]?.color}
-                      trailColor="#2a2a4c"
+                      trailColor="#eef1f8"
                       size="small"
                     />
                   </div>
@@ -184,14 +181,14 @@ export const Dashboard: React.FC = () => {
           </Card>
         </Col>
         <Col xs={24} lg={8}>
-          <Card 
-            title={<span style={{ color: '#e0e0e0' }}>关系类型分布</span>}
+          <Card
+            title={<span style={{ color: '#1a1f36' }}>关系类型分布</span>}
             className={styles.card}
           >
             <div className={styles.edgeStats}>
               <div className={styles.edgeStatItem}>
                 <div className={styles.edgeStatLabel}>
-                  <Tag color="default">包含关系</Tag>
+                  <Tag>包含关系</Tag>
                 </div>
                 <div className={styles.edgeStatValue}>{graphStats.containsEdges}</div>
               </div>
@@ -203,18 +200,18 @@ export const Dashboard: React.FC = () => {
               </div>
             </div>
             <div className={styles.edgeRatio}>
-              <RiseOutlined style={{ color: '#52c41a', marginRight: 4 }} />
+              <RiseOutlined style={{ color: '#27ae60', marginRight: 4 }} />
               <Text type="secondary">3 个产品实例已实例化</Text>
             </div>
           </Card>
         </Col>
       </Row>
 
-      {/* 最近更新的节点 */}
-      <Card 
-        title={<span style={{ color: '#e0e0e0' }}>节点列表</span>}
+      {/* 节点列表 */}
+      <Card
+        title={<span style={{ color: '#1a1f36' }}>节点列表</span>}
         extra={
-          <a onClick={() => navigate('/explore')} style={{ color: '#1890ff' }}>
+          <a onClick={() => navigate('/explore')} style={{ color: '#2b6de1' }}>
             查看全部 →
           </a>
         }
@@ -226,61 +223,78 @@ export const Dashboard: React.FC = () => {
           rowKey="id"
           size="small"
           pagination={false}
-          className={styles.table}
         />
       </Card>
 
-      {/* 快速入口 */}
+      {/* 快速入口：四大阶段 */}
       <Row gutter={[16, 16]} className={styles.quickActions}>
-        <Col xs={24} sm={8}>
-          <Card 
+        <Col xs={24} sm={12} lg={6}>
+          <Card
             className={styles.quickActionCard}
             onClick={() => navigate('/template')}
             hoverable
           >
-            <div className={styles.quickActionIcon}>
+            <div className={styles.quickActionIcon} style={{ background: 'rgba(43, 109, 225, 0.08)', color: '#2b6de1' }}>
               <GatewayOutlined />
             </div>
             <div className={styles.quickActionContent}>
               <div className={styles.quickActionTitle}>模板建模</div>
               <div className={styles.quickActionDesc}>
-                定义产品结构模板和属性模板
+                定义 Part Class，建立结构关系
               </div>
             </div>
             <ArrowRightOutlined className={styles.quickActionArrow} />
           </Card>
         </Col>
-        <Col xs={24} sm={8}>
-          <Card 
+        <Col xs={24} sm={12} lg={6}>
+          <Card
             className={styles.quickActionCard}
             onClick={() => navigate('/model')}
             hoverable
           >
-            <div className={styles.quickActionIcon} style={{ background: 'rgba(250, 140, 22, 0.2)' }}>
-              <AppstoreOutlined style={{ color: '#fa8c16' }} />
+            <div className={styles.quickActionIcon} style={{ background: 'rgba(39, 174, 96, 0.08)', color: '#27ae60' }}>
+              <AppstoreOutlined />
             </div>
             <div className={styles.quickActionContent}>
-              <div className={styles.quickActionTitle}>产品模型</div>
+              <div className={styles.quickActionTitle}>产品建模</div>
               <div className={styles.quickActionDesc}>
-                构建部件分类和属性关联
+                关联规格属性，建立 HAS 关系
               </div>
             </div>
             <ArrowRightOutlined className={styles.quickActionArrow} />
           </Card>
         </Col>
-        <Col xs={24} sm={8}>
-          <Card 
+        <Col xs={24} sm={12} lg={6}>
+          <Card
             className={styles.quickActionCard}
             onClick={() => navigate('/instance')}
             hoverable
           >
-            <div className={styles.quickActionIcon} style={{ background: 'rgba(82, 196, 26, 0.2)' }}>
-              <ShopOutlined style={{ color: '#52c41a' }} />
+            <div className={styles.quickActionIcon} style={{ background: 'rgba(250, 140, 22, 0.08)', color: '#f08c16' }}>
+              <ShopOutlined />
             </div>
             <div className={styles.quickActionContent}>
-              <div className={styles.quickActionTitle}>实例化发布</div>
+              <div className={styles.quickActionTitle}>产品实例化</div>
               <div className={styles.quickActionDesc}>
-                创建销售产品并发布
+                创建 Product Instance 并发布
+              </div>
+            </div>
+            <ArrowRightOutlined className={styles.quickActionArrow} />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <Card
+            className={styles.quickActionCard}
+            onClick={() => navigate('/explore')}
+            hoverable
+          >
+            <div className={styles.quickActionIcon} style={{ background: 'rgba(155, 89, 182, 0.08)', color: '#9b59b6' }}>
+              <FileTextOutlined />
+            </div>
+            <div className={styles.quickActionContent}>
+              <div className={styles.quickActionTitle}>数据探索</div>
+              <div className={styles.quickActionDesc}>
+                浏览和检索完整产品数据
               </div>
             </div>
             <ArrowRightOutlined className={styles.quickActionArrow} />

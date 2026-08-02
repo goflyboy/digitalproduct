@@ -1,5 +1,5 @@
 /* ============================================================
-   数字产品系统 - 首页仪表板样式
+   数字产品系统 - 首页仪表板样式（浅色科技风）
    ============================================================ */
 
 .dashboard {
@@ -19,9 +19,10 @@
 }
 
 .statCard {
-  background: #1a1a2e;
-  border: 1px solid #2a2a4c;
+  background: #ffffff;
+  border: 1px solid #dde5f4;
   border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(30, 42, 69, 0.06);
 }
 
 .statCard :global(.ant-statistic-title) {
@@ -33,19 +34,21 @@
 }
 
 .card {
-  background: #1a1a2e;
-  border: 1px solid #2a2a4c;
+  background: #ffffff;
+  border: 1px solid #dde5f4;
   border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(30, 42, 69, 0.06);
 }
 
 .card :global(.ant-card-head) {
-  border-bottom: 1px solid #2a2a4c;
+  border-bottom: 1px solid #e8eefb;
   min-height: 48px;
 }
 
 .card :global(.ant-card-head-title) {
   font-size: 14px;
   font-weight: 500;
+  color: #1a1f36;
 }
 
 .card :global(.ant-card-body) {
@@ -58,7 +61,7 @@
   flex-direction: column;
   align-items: center;
   padding: 12px;
-  background: rgba(42, 42, 76, 0.5);
+  background: #f8fafd;
   border-radius: 8px;
   gap: 8px;
 }
@@ -71,7 +74,7 @@
   align-items: center;
   justify-content: center;
   font-size: 24px;
-  color: #1890ff;
+  color: #2b6de1;
 }
 
 .nodeTypeInfo {
@@ -81,13 +84,13 @@
 .nodeTypeCount {
   font-size: 24px;
   font-weight: 600;
-  color: #e0e0e0;
+  color: #1a1f36;
   line-height: 1;
 }
 
 .nodeTypeLabel {
   font-size: 12px;
-  color: #8888aa;
+  color: #6b7594;
   margin-top: 4px;
 }
 
@@ -104,7 +107,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 12px;
-  background: rgba(42, 42, 76, 0.5);
+  background: #f8fafd;
   border-radius: 6px;
 }
 
@@ -116,7 +119,7 @@
 .edgeStatValue {
   font-size: 20px;
   font-weight: 600;
-  color: #e0e0e0;
+  color: #1a1f36;
 }
 
 .edgeRatio {
@@ -125,35 +128,14 @@
   font-size: 12px;
 }
 
-/* 表格样式 */
-.table :global(.ant-table) {
-  background: transparent;
-}
-
-.table :global(.ant-table-thead > tr > th) {
-  background: #2a2a4c;
-  color: #8888aa;
-  border-bottom: 1px solid #3a3a5c;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.table :global(.ant-table-tbody > tr > td) {
-  border-bottom: 1px solid #2a2a4c;
-}
-
-.table :global(.ant-table-tbody > tr:hover > td) {
-  background: rgba(24, 144, 255, 0.05);
-}
-
 /* 快速入口 */
 .quickActions {
   margin-top: 16px;
 }
 
 .quickActionCard {
-  background: #1a1a2e;
-  border: 1px solid #2a2a4c;
+  background: #ffffff;
+  border: 1px solid #dde5f4;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
@@ -161,23 +143,24 @@
   align-items: center;
   gap: 16px;
   padding: 16px !important;
+  box-shadow: 0 1px 3px rgba(30, 42, 69, 0.06);
 }
 
 .quickActionCard:hover {
-  border-color: #1890ff;
-  background: rgba(24, 144, 255, 0.05);
+  border-color: #2b6de1;
+  box-shadow: 0 4px 12px rgba(43, 109, 225, 0.1);
 }
 
 .quickActionIcon {
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  background: rgba(24, 144, 255, 0.2);
+  background: rgba(43, 109, 225, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 24px;
-  color: #1890ff;
+  color: #2b6de1;
   flex-shrink: 0;
 }
 
@@ -188,21 +171,21 @@
 .quickActionTitle {
   font-size: 15px;
   font-weight: 600;
-  color: #e0e0e0;
+  color: #1a1f36;
   margin-bottom: 4px;
 }
 
 .quickActionDesc {
   font-size: 12px;
-  color: #8888aa;
+  color: #6b7594;
 }
 
 .quickActionArrow {
   font-size: 16px;
-  color: #3a3a5c;
+  color: #c8d0e8;
   transition: color 0.2s;
 }
 
 .quickActionCard:hover .quickActionArrow {
-  color: #1890ff;
+  color: #2b6de1;
 }

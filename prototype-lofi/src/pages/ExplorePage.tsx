@@ -1,9 +1,9 @@
 // ============================================================
-// 数字产品系统 - 图探索页面
+// 数字产品系统 - 数据探索页面
 // ============================================================
 
 import React, { useState } from 'react';
-import { Card, Input, Select, Space, Typography, Table, Tag, Row, Col, Button } from 'antd';
+import { Card, Input, Select, Space, Typography, Table, Tag, Button } from 'antd';
 import {
   SearchOutlined,
   FilterOutlined,
@@ -14,7 +14,6 @@ import { GraphCanvas } from '../components/graph/GraphCanvas';
 import { NodeDetailPanel } from '../components/graph/NodeDetailPanel';
 import { EdgeDetailPanel } from '../components/graph/EdgeDetailPanel';
 import { useGraphStore, useSelectedNode, useSelectedEdge } from '../store/graphStore';
-import { graphNodes, graphEdges } from '../data/mockData';
 import { NODE_TYPE_CONFIG } from '../types';
 import type { GraphNode, GraphEdge, StructType } from '../types';
 import styles from './ModelingPage.module.css';
@@ -30,7 +29,7 @@ export const ExplorePage: React.FC = () => {
 
   // 过滤节点
   const filteredNodes = nodes.filter(node => {
-    const matchesSearch = !searchText || 
+    const matchesSearch = !searchText ||
       node.name.toLowerCase().includes(searchText.toLowerCase()) ||
       node.code.toLowerCase().includes(searchText.toLowerCase());
     const matchesType = filterType === 'ALL' || node.structType === filterType;
@@ -38,7 +37,7 @@ export const ExplorePage: React.FC = () => {
   });
 
   const filteredNodeIds = new Set(filteredNodes.map(n => n.id));
-  const filteredEdges = edges.filter(e => 
+  const filteredEdges = edges.filter(e =>
     filteredNodeIds.has(e.sourceId) && filteredNodeIds.has(e.targetId)
   );
 
@@ -50,7 +49,7 @@ export const ExplorePage: React.FC = () => {
       render: (name, record) => (
         <Space>
           <span style={{ color: NODE_TYPE_CONFIG[record.structType]?.color }}>
-            {record.name}
+            {name}
           </span>
         </Space>
       ),
@@ -75,8 +74,8 @@ export const ExplorePage: React.FC = () => {
       title: '操作',
       key: 'action',
       render: (_, record) => (
-        <Button 
-          type="link" 
+        <Button
+          type="link"
           size="small"
           onClick={() => selectNode(record.id)}
         >
@@ -91,11 +90,11 @@ export const ExplorePage: React.FC = () => {
       {/* 页面标题 */}
       <div className={styles.exploreHeader}>
         <div className={styles.headerLeft}>
-          <Title level={3} style={{ margin: 0, color: '#e0e0e0' }}>
-            图探索
+          <Title level={3} style={{ margin: 0, color: '#1a1f36' }}>
+            数据探索
           </Title>
           <Text type="secondary" style={{ marginLeft: 12 }}>
-            浏览和探索完整的产品图结构
+            浏览和探索完整的产品结构数据
           </Text>
         </div>
         <Space>
@@ -141,30 +140,30 @@ export const ExplorePage: React.FC = () => {
                 <Select.Option value="PRODUCT_CLASS">
                   <Space>
                     <span style={{ color: NODE_TYPE_CONFIG.PRODUCT_CLASS.color }}>●</span>
-                    产品类
+                    Product Class
                   </Space>
                 </Select.Option>
                 <Select.Option value="PRODUCT_INSTANCE">
                   <Space>
                     <span style={{ color: NODE_TYPE_CONFIG.PRODUCT_INSTANCE.color }}>●</span>
-                    产品实例
+                    Product Instance
                   </Space>
                 </Select.Option>
                 <Select.Option value="PART_CLASS">
                   <Space>
                     <span style={{ color: NODE_TYPE_CONFIG.PART_CLASS.color }}>●</span>
-                    部件分类
+                    Part Class
                   </Space>
                 </Select.Option>
                 <Select.Option value="PART">
                   <Space>
                     <span style={{ color: NODE_TYPE_CONFIG.PART.color }}>●</span>
-                    部件
+                    Part
                   </Space>
                 </Select.Option>
               </Select>
-              <div style={{ color: '#8888aa', fontSize: 12 }}>
-                共找到 <strong style={{ color: '#e0e0e0' }}>{filteredNodes.length}</strong> 个节点
+              <div style={{ color: '#6b7594', fontSize: 12 }}>
+                共找到 <strong style={{ color: '#1a1f36' }}>{filteredNodes.length}</strong> 个节点
               </div>
             </Space>
           </Card>
@@ -173,13 +172,13 @@ export const ExplorePage: React.FC = () => {
           {(selectedNode || selectedEdge) && (
             <Card className={styles.relationCard} title="节点详情">
               {selectedNode && (
-                <NodeDetailPanel 
+                <NodeDetailPanel
                   node={selectedNode}
                   onClose={() => selectNode(null)}
                 />
               )}
               {selectedEdge && !selectedNode && (
-                <EdgeDetailPanel 
+                <EdgeDetailPanel
                   edge={selectedEdge}
                   onClose={() => selectEdge(null)}
                 />
