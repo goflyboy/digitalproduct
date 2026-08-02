@@ -345,56 +345,34 @@ OwlPath：OWL2 本体实现代码知识无损压缩	arXiv (2607.27249, 7/28)	arX
 2
 
 元数据模型与 Schema 的关系：“Schema 层（LinkX）“这个表达不准确， 从元数据视角、本质上来讲，我们这边的元数据和图里面的 schema，其定义基本上是等价的。由于目前 LinkX 底层平台的 schema 不支持一些语义定义，因此在我们的数字产品这一层，还是需要有一个元数据管理模块。
-
-该模块的核心逻辑与设计要点如下：
-
-1. 基础元信息定义
-   (a) 类似于定义什么是 Part Class、什么是 Product Class，以及它们包含哪些属性、这些类之间有什么关系。
-   (b) 所有的 schema 所需的元信息必须完整包含。
-
-2. 额外语义支持
-   在基础元信息之上，我们还需要额外定义一些关于语义的内容（例如同义词等），并在此模块中提供支持。
-
-3. 未来实现流程
-   (a) 新增模板定义：比方说要新定一个参数（parameter）对象，先在我们的元数据中通过 meta 元数据定义出来。
-   (b) 数据同步注册：在我们数字产品的数据库中进行保存，然后同步调用底层的 LinkX，将该数据也注册到图谱上去。
-
-切记一个核心设计点：此处的元数据与图上的 schema 元数据，两者必须是一一对应的。
+ 
+BusinessObject这个业务领域概念不存在，删除掉
 
 
+L1逻辑优化如下
+一、最上层不要叫应用层，就叫接入层。接入层的名字是 DP website。
+
+这一侧不需要展开设计，大概表达一下意思就行，不需要完善。去掉现有图里所谓的应用层和接入层，网关那一层也都可以不画，这样简单一点，只要保留一个 DP website 就行了。
+
+它主要有3大功能：
+
+产品模型模板的维护
+产品模型的维护
+产品实例的维护
 
 
+二、中间就叫DPService,  含下列几个子模块
 
-flowchart TB
-    subgraph MetaLayer["元数据层（MetaData）"]
-        MM["MetaModule<br/>(模块元数据)"]
-        MP["MetaProperty<br/>(属性元数据)"]
-        MR["MetaRelation<br/>(关系元数据)"]
-        MD["MetaDomain<br/>(业务领域元数据)"]
-    end
+模板元数据管理  数据通用维护服务  数据发布服务 数据查询服务 
 
-    subgraph SchemaLayer["Schema 层（LinkX）"]
-        S1["Schema: ProductClass<br/>(产品类 Schema)"]
-        S2["Schema: PartClass<br/>(部件分类 Schema)"]
-        S3["Schema: Part<br/>(部件 Schema)"]
-    end
+LinkClient提供 图chema管理、实例数据查询、数据汇聚等功能 
 
-    subgraph InstanceLayer["实例层（Instance）"]
-        I1["NetworkProduct<br/>(产品类实例)"]
-        I2["RouterPartClass<br/>(部件分类实例)"]
-        I3["RouterBoard-V1<br/>(部件实例)"]
-    end
+通过linkclient访问LinkX  
+模板元数据有先在PG数据存储
 
-    MM -->|定义| S1
-    MM -->|定义| S2
-    MM -->|定义| S3
-    MP -->|定义属性| S1
-    MP -->|定义属性| S2
-    MP -->|定义属性| S3
-    MR -->|定义关系| S1
-    MD -->|归类| MM
-    MD -->|归类| MP
 
-    S1 -->|实例化| I1
-    S2 -->|实例化| I2
-    S3 -->|实例化| I3
+  
+
+最底下就是
+
+这里主要不需要分数据访问层（就直接叫LinkClient), 简单一下
